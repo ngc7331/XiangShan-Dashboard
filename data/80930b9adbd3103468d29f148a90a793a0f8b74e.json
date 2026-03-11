@@ -88,5 +88,32 @@
   },
   "legacy-gcc": {
     "ipc": 1.382226
+  },
+  "astar_rivers_8728": {
+    "ipc": 2.020006
+  },
+  "xalancbmk_9874": {
+    "ipc": 2.805712
+  },
+  "libquantum_81539": {
+    "ipc": 4.966711
+  },
+  "legacy-xalancbmk": {
+    "ipc": 3.644013
+  },
+  "legacy-namd": {
+    "ipc": 3.604377
+  },
+  "perlbench_splitmail_3995": {
+    "ipc": 4.214078
+  },
+  "h264ref_foreman.main_10053": {
+    "ipc": 3.977086
+  },
+  "hmmer_nph3_33214": {
+    "ipc": 5.574726
+  },
+  "bzip2_liberty_739": {
+    "ipc": 6.947161
   }
 }

@@ -88,5 +88,32 @@
   },
   "gamess_gradient_36450": {
     "ipc": 4.779949
+  },
+  "gcc_s04_2772": {
+    "ipc": 2.01216
+  },
+  "legacy-gcc": {
+    "ipc": 1.372553
+  },
+  "sjeng_64284": {
+    "ipc": 2.164236
+  },
+  "xalancbmk_9874": {
+    "ipc": 2.802629
+  },
+  "legacy-xalancbmk": {
+    "ipc": 3.626246
+  },
+  "libquantum_81539": {
+    "ipc": 4.966711
+  },
+  "h264ref_foreman.main_10053": {
+    "ipc": 3.981454
+  },
+  "bzip2_liberty_739": {
+    "ipc": 6.938263
+  },
+  "hmmer_nph3_33214": {
+    "ipc": 5.601094
   }
 }

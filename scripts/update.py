@@ -111,18 +111,25 @@ def main():
             )
 
             # get artifacts for this workflow run
-            artifacts = gh.actions.list_workflow_run_artifacts(
-                "OpenXiangShan",
-                "XiangShan",
-                run["id"],
-            )["artifacts"]
+            artifacts = []
+            for artifact_page in count(1):
+                artifacts_page = gh.actions.list_workflow_run_artifacts(
+                    "OpenXiangShan",
+                    "XiangShan",
+                    run["id"],
+                    page=artifact_page,
+                )["artifacts"]
+                if not artifacts_page:
+                    break
+                artifacts.extend(artifacts_page)
 
             artifacts = list(filter(lambda x: x["name"].startswith("ipc-"), artifacts))
+            logging.info("  -> Found %d artifacts", len(artifacts))
 
             report = ReportJson()
 
             for artifact in artifacts:
-                logging.info("  -> Found artifact %s, downloading...", artifact["name"])
+                logging.info("  -> Download %s ...", artifact["name"])
 
                 artifact_body = gh.actions.download_artifact(
                     "OpenXiangShan",
