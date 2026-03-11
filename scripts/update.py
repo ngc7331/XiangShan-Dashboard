@@ -123,6 +123,11 @@ def main():
                 artifacts.extend(artifacts_page)
 
             artifacts = list(filter(lambda x: x["name"].startswith("ipc-"), artifacts))
+
+            if len(artifacts) == 0:
+                logging.info("  -> No artifact, skip")
+                continue
+
             logging.info("  -> Found %d artifacts", len(artifacts))
 
             report = ReportJson()

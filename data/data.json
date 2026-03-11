@@ -10,30 +10,10 @@
       "title": "chore(datapath): remove useless connect",
       "date": 1773165403
     },
-    "22903433505": {
-      "hash": "de8f19c078df05b1812fb10f7cddc2153a675afe",
-      "title": "feat(nightly): switch to gcc15 and add diff from previous day (#5669)",
-      "date": 1773118448
-    },
-    "22886009111": {
-      "hash": "aee630f83ba22a816830606248d6adb494ab071b",
-      "title": "feat(perf-trigger): add 0.3 & 0.8 option for gcc15 & xscc (#5664)",
-      "date": 1773085273
-    },
-    "22885208277": {
-      "hash": "cc6039c3b7f6a44fb370fafb681b272a71c6bd67",
-      "title": "feat: restrict perf trigger to \"perf\" label (#5665)",
-      "date": 1773083241
-    },
     "22845259230": {
       "hash": "826c16b2398c0c0767bf77fc6d3a174e41d31720",
       "title": "refactor(sc): refactoring  the max and min Threshold Calculation",
       "date": 1773017013
-    },
-    "22841061031": {
-      "hash": "0eba76159370ee61658832ac0088e59487679aa7",
-      "title": "feat(perf-trigger): add 0.3 & 0.8 coverage json for gcc15 & xscc (#5661)",
-      "date": 1773008499
     },
     "22841049239": {
       "hash": "e4ac797bb40a3ef8124d1223b112192a3093cb70",
