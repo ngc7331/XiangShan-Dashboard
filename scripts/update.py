@@ -100,11 +100,10 @@ def main():
                 run["id"],
                 commit["sha"],
                 commit["commit"]["message"].splitlines()[0],
-                # commit["commit"]["author"]["date"],
                 int(
                     time.mktime(
                         time.strptime(
-                            commit["commit"]["author"]["date"], "%Y-%m-%dT%H:%M:%SZ"
+                            commit["commit"]["committer"]["date"], "%Y-%m-%dT%H:%M:%SZ"
                         )
                     )
                 ),
