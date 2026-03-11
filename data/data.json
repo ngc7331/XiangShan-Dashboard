@@ -1,0 +1,75 @@
+{
+  "data": {
+    "22935039912": {
+      "hash": "f36fd235a3a976322445c5cd57f529f081642c05",
+      "title": "feat(sc): add imli table",
+      "date": 1773170262
+    },
+    "22932963910": {
+      "hash": "6fc8737d65783c82fadcd20a9124db1ace8296b5",
+      "title": "chore(datapath): remove useless connect",
+      "date": 1773095471
+    },
+    "22903433505": {
+      "hash": "de8f19c078df05b1812fb10f7cddc2153a675afe",
+      "title": "feat(nightly): switch to gcc15 and add diff from previous day (#5669)",
+      "date": 1773118448
+    },
+    "22886009111": {
+      "hash": "aee630f83ba22a816830606248d6adb494ab071b",
+      "title": "feat(perf-trigger): add 0.3 & 0.8 option for gcc15 & xscc (#5664)",
+      "date": 1773085273
+    },
+    "22885208277": {
+      "hash": "cc6039c3b7f6a44fb370fafb681b272a71c6bd67",
+      "title": "feat: restrict perf trigger to \"perf\" label (#5665)",
+      "date": 1773083241
+    },
+    "22845259230": {
+      "hash": "826c16b2398c0c0767bf77fc6d3a174e41d31720",
+      "title": "refactor(sc): refactoring  the max and min Threshold Calculation",
+      "date": 1772591657
+    },
+    "22841061031": {
+      "hash": "0eba76159370ee61658832ac0088e59487679aa7",
+      "title": "feat(perf-trigger): add 0.3 & 0.8 coverage json for gcc15 & xscc (#5661)",
+      "date": 1773008499
+    },
+    "22841049239": {
+      "hash": "e4ac797bb40a3ef8124d1223b112192a3093cb70",
+      "title": "ci(emu-performance): fix find_upstream & update names (#5655)",
+      "date": 1773008472
+    },
+    "22837448681": {
+      "hash": "80930b9adbd3103468d29f148a90a793a0f8b74e",
+      "title": "feat(config): change FrontendDebugConfig from TLConfig to CHIConfig (#5647)",
+      "date": 1772999114
+    },
+    "22836316895": {
+      "hash": "39e0e8eb0b9f3b593ba006185e1dbecfecd9e7a6",
+      "title": "chore(Rat): move RatWrapper to Rename to check Rename timing (#5637)",
+      "date": 1772995834
+    },
+    "22756233984": {
+      "hash": "68478f3072908f59ff47d4d991b958dfbd8de072",
+      "title": "fix(mbtb): fix addrField (cfi)Position width (#5638)",
+      "date": 1772758429
+    },
+    "22754873755": {
+      "hash": "b2f9513e8633d3aca6f04ac17c00f425646bb02b",
+      "title": "timing(MMU): avoid adder when generate gpaddr (#5644)",
+      "date": 1772755872
+    },
+    "22709102328": {
+      "hash": "ab5c6ce36326ff5a915808865f1fc52b5730cc94",
+      "title": "feat(backend): only need intRegion's og0cancel",
+      "date": 1772476136
+    },
+    "22701345891": {
+      "hash": "1ea934ece8becc61e522172d99ab45a0b8300703",
+      "title": "ci(emu): rewrite performance test (#5635)",
+      "date": 1772653709
+    }
+  },
+  "version": 1
+}
