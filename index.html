@@ -89,6 +89,40 @@
 			box-shadow: var(--shadow);
 		}
 
+		.link-row {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.link-row a {
+			color: var(--text);
+			text-decoration: none;
+			font-weight: 700;
+			padding: 2px 0;
+			transition: color 0.15s ease, border-color 0.15s ease;
+			border-bottom: 2px solid transparent;
+		}
+
+		.link-row a:hover {
+			color: var(--accent);
+			border-bottom-color: var(--accent);
+		}
+
+		.gh-icon {
+			display: inline-flex;
+			width: 16px;
+			height: 16px;
+			flex-shrink: 0;
+		}
+
+		.gh-icon svg {
+			display: block;
+			width: 100%;
+			height: 100%;
+			fill: var(--muted);
+		}
+
 		.controls label {
 			display: block;
 			font-size: 13px;
@@ -137,7 +171,8 @@
 
 		.testcase-list {
 			max-height: 40vh;
-			overflow: auto;
+			overflow-y: auto;
+			overflow-x: hidden;
 			border: 1px solid var(--border);
 			border-radius: 12px;
 			padding: 8px 10px;
@@ -150,14 +185,23 @@
 			gap: 8px;
 			padding: 6px 4px;
 			border-bottom: 1px dashed #eef1f6;
+			cursor: pointer;
+			border-radius: 8px;
+			transition: background 0.12s ease, border-color 0.12s ease;
 		}
 
 		.testcase-item:last-child {
 			border-bottom: none;
 		}
 
-		.testcase-item input {
-			accent-color: var(--accent);
+		.testcase-item.selected {
+			background: var(--accent-soft);
+			border-color: var(--accent);
+		}
+
+		.testcase-item:focus-visible {
+			outline: 2px solid var(--accent);
+			outline-offset: 2px;
 		}
 
 		.content {
@@ -235,13 +279,22 @@
 	</style>
 </head>
 <body>
-	<div id="app">
+		<div id="app">
 		<aside class="sidebar">
 			<div class="brand">
 				<div class="brand-mark"></div>
 				<div>
 					<h1>XiangShan Dashboard</h1>
-					<div class="muted">{{ t('subtitle') }}</div>
+						<div class="muted link-row">
+							<span class="gh-icon" aria-hidden="true">
+								<svg viewBox="0 0 16 16" role="img" focusable="false">
+									<path d="M8 0a8 8 0 0 0-2.53 15.6c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2 .37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8 8 0 0 0 8 0Z" />
+								</svg>
+							</span>
+							<a href="https://github.com/ngc7331/XiangShan-Dashboard" target="_blank">Dashboard</a>
+							<span>·</span>
+							<a href="https://github.com/OpenXiangShan/XiangShan" target="_blank">XiangShan</a>
+						</div>
 				</div>
 			</div>
 
@@ -277,9 +330,19 @@
 					<button class="btn" @click="selectPrefix('SPEC06FP')">{{ t('spec06fp') }}</button>
 				</div>
 				<div class="testcase-list">
-					<div class="testcase-item" v-for="name in availableTestcases" :key="name">
-						<input type="checkbox" :id="name" :value="name" v-model="selectedTestcases" @change="onSelectionChange" />
-						<label :for="name" style="font-size: 13px;">{{ name }}</label>
+					<div
+						class="testcase-item"
+						v-for="name in availableTestcases"
+						:key="name"
+						:class="{ selected: isSelected(name) }"
+						role="button"
+						:aria-pressed="isSelected(name)"
+						tabindex="0"
+						@click="toggleTestcase(name)"
+						@keydown.enter.prevent="toggleTestcase(name)"
+						@keydown.space.prevent="toggleTestcase(name)"
+					>
+						<span style="font-size: 13px;">{{ name }}</span>
 					</div>
 				</div>
 			</div>
@@ -309,7 +372,6 @@
 
 		const MESSAGES = {
 			en: {
-				subtitle: 'Run-to-run IPC tracking',
 				filtersTitle: 'Filters',
 				branch: 'Branch',
 				startDate: 'Start Date',
@@ -325,14 +387,13 @@
 				ipcChanges: 'IPC Changes',
 				runsLabel: 'Runs',
 				testcasesLabel: 'Testcases',
-				runId: 'run_id',
-				date: 'date',
+				runId: 'Run ID',
+				date: 'Commit date',
 				ipc: 'IPC',
-				runIdAxis: 'run_id',
+				runIdAxis: 'Run ID',
 				ipcAxis: 'IPC',
 			},
 			zh: {
-				subtitle: '逐次运行 IPC 追踪',
 				filtersTitle: '范围筛选',
 				branch: '分支',
 				startDate: '开始日期',
@@ -348,10 +409,10 @@
 				ipcChanges: 'IPC 变化',
 				runsLabel: '运行数',
 				testcasesLabel: '用例数',
-				runId: '运行编号',
-				date: '日期',
+				runId: 'Run ID',
+				date: 'Commit date',
 				ipc: 'IPC',
-				runIdAxis: '运行编号',
+				runIdAxis: 'Run ID',
 				ipcAxis: 'IPC',
 			},
 		};
@@ -581,6 +642,21 @@
 						filtered.push('GEOMEAN');
 					}
 					this.selectedTestcases = filtered;
+					this.onSelectionChange();
+				},
+
+				isSelected(name) {
+					return this.selectedTestcases.includes(name);
+				},
+
+				toggleTestcase(name) {
+					const set = new Set(this.selectedTestcases);
+					if (set.has(name)) {
+						set.delete(name);
+					} else {
+						set.add(name);
+					}
+					this.selectedTestcases = this.availableTestcases.filter(tc => set.has(tc));
 					this.onSelectionChange();
 				},
 
