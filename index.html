@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>XiangShan Dashboard</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+	<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+	<style>
+		:root {
+			--bg: #f7f9fd;
+			--panel: #ffffff;
+			--text: #1c1f2a;
+			--muted: #5b6070;
+			--accent: #3a7ff6;
+			--accent-soft: #e6efff;
+			--border: #e1e6ef;
+			--shadow: 0 12px 32px rgba(17, 31, 64, 0.08);
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			font-family: 'Manrope', 'Segoe UI', sans-serif;
+			background: radial-gradient(circle at 15% 20%, #f0f6ff 0, #f7f9fd 40%, #f7f9fd 100%);
+			color: var(--text);
+			min-height: 100vh;
+			display: flex;
+		}
+
+		#app {
+			display: grid;
+			grid-template-columns: 320px 1fr;
+			width: 100%;
+		}
+
+		.sidebar {
+			background: var(--panel);
+			border-right: 1px solid var(--border);
+			box-shadow: var(--shadow);
+			padding: 24px;
+			display: flex;
+			flex-direction: column;
+			gap: 24px;
+			position: sticky;
+			top: 0;
+			height: 100vh;
+		}
+
+		.brand {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.brand-mark {
+			width: 44px;
+			height: 44px;
+			border-radius: 14px;
+			background: linear-gradient(135deg, #4da1ff, #7cc0ff);
+			box-shadow: 0 10px 30px rgba(58, 127, 246, 0.35);
+		}
+
+		h1 {
+			font-size: 20px;
+			margin: 0;
+		}
+
+		.section-title {
+			font-size: 14px;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			color: var(--muted);
+			margin: 0 0 8px;
+		}
+
+		.card {
+			background: var(--panel);
+			border: 1px solid var(--border);
+			border-radius: 14px;
+			padding: 14px 16px;
+			box-shadow: var(--shadow);
+		}
+
+		.controls label {
+			display: block;
+			font-size: 13px;
+			color: var(--muted);
+			margin-bottom: 6px;
+			font-weight: 600;
+		}
+
+		.controls input[type="date"] {
+			width: 100%;
+			padding: 10px 12px;
+			border-radius: 10px;
+			border: 1px solid var(--border);
+			background: #fdfefe;
+			font-size: 14px;
+			color: var(--text);
+		}
+
+		.row {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 10px;
+			align-items: end;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			padding: 10px 12px;
+			border-radius: 10px;
+			border: 1px solid var(--border);
+			background: #f2f6ff;
+			color: var(--accent);
+			font-weight: 700;
+			cursor: pointer;
+			transition: transform 0.1s ease, box-shadow 0.2s ease;
+			gap: 6px;
+		}
+
+		.btn:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 8px 24px rgba(58, 127, 246, 0.18);
+		}
+
+		.testcase-list {
+			max-height: 40vh;
+			overflow: auto;
+			border: 1px solid var(--border);
+			border-radius: 12px;
+			padding: 8px 10px;
+			background: #fcfdff;
+		}
+
+		.testcase-item {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			padding: 6px 4px;
+			border-bottom: 1px dashed #eef1f6;
+		}
+
+		.testcase-item:last-child {
+			border-bottom: none;
+		}
+
+		.testcase-item input {
+			accent-color: var(--accent);
+		}
+
+		.content {
+			padding: 28px 32px 40px;
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+		}
+
+		.hero {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 18px 20px;
+			background: var(--panel);
+			border-radius: 16px;
+			border: 1px solid var(--border);
+			box-shadow: var(--shadow);
+		}
+
+		.hero h2 {
+			margin: 0;
+			font-size: 18px;
+		}
+
+		.muted {
+			color: var(--muted);
+			font-size: 13px;
+		}
+
+		.chart-shell {
+			background: var(--panel);
+			border-radius: 16px;
+			border: 1px solid var(--border);
+			box-shadow: var(--shadow);
+			padding: 12px;
+		}
+
+		.chart-wrap {
+			position: relative;
+			height: 100%;
+			width: 100%;
+		}
+
+		canvas {
+			display: block;
+			width: 100% !important;
+			height: 100% !important;
+		}
+
+		.badges {
+			display: flex;
+			gap: 10px;
+			flex-wrap: wrap;
+		}
+
+		.badge {
+			padding: 6px 10px;
+			background: var(--accent-soft);
+			color: var(--accent);
+			border-radius: 10px;
+			font-weight: 700;
+			font-size: 12px;
+		}
+
+		@media (max-width: 960px) {
+			#app {
+				grid-template-columns: 1fr;
+			}
+			.sidebar {
+				position: relative;
+				height: auto;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<aside class="sidebar">
+			<div class="brand">
+				<div class="brand-mark"></div>
+				<div>
+					<h1>XiangShan Dashboard</h1>
+					<div class="muted">Run-to-run IPC tracking</div>
+				</div>
+			</div>
+
+			<div class="card controls">
+				<div class="section-title">时间范围</div>
+				<div class="row">
+					<div>
+						<label>开始日期</label>
+						<input type="date" v-model="startDateStr" @change="onDateChange" />
+					</div>
+				</div>
+				<div class="row">
+					<div>
+						<label>结束日期</label>
+						<input type="date" v-model="endDateStr" @change="onDateChange" />
+					</div>
+				</div>
+				<div style="margin-top: 10px; display: flex; gap: 8px;">
+					<button class="btn" @click="setLastDays(7)">过去一周</button>
+					<button class="btn" @click="setLastDays(31)">过去一月</button>
+				</div>
+			</div>
+
+			<div class="card">
+				<div class="section-title">Testcases</div>
+				<div style="display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+					<button class="btn" @click="selectDefault">默认</button>
+					<button class="btn" @click="selectAll">全选</button>
+					<button class="btn" @click="clearSelection">清空</button>
+					<button class="btn" @click="selectPrefix('SPEC06INT')">SPEC06INT</button>
+					<button class="btn" @click="selectPrefix('SPEC06FP')">SPEC06FP</button>
+				</div>
+				<div class="testcase-list">
+					<div class="testcase-item" v-for="name in availableTestcases" :key="name">
+						<input type="checkbox" :id="name" :value="name" v-model="selectedTestcases" @change="onSelectionChange" />
+						<label :for="name" style="font-size: 13px;">{{ name }}</label>
+					</div>
+				</div>
+			</div>
+		</aside>
+
+		<main class="content">
+			<div class="hero">
+				<div>
+					<h2>IPC Changes</h2>
+				</div>
+				<div class="badges">
+					<div class="badge">Runs: {{ filteredRuns.length }}</div>
+					<div class="badge">Testcases: {{ selectedTestcases.length }}</div>
+				</div>
+			</div>
+
+			<div class="chart-shell">
+				<div class="chart-wrap">
+					<canvas id="chart"></canvas>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<script>
+		const { createApp } = Vue;
+
+		const dayMs = 24 * 60 * 60 * 1000;
+		const SELECT_PREFIXES = {
+			"SPEC06INT": [
+				"perlbench",
+				"bzip2",
+				"gcc",
+				"mcf",
+				"gobmk",
+				"hmmer",
+				"sjeng",
+				"libquantum",
+				"h264ref",
+				"omnetpp",
+				"astar",
+				"xalancbmk",
+			],
+			"SPEC06FP": [
+				"bwaves",
+				"gamess",
+				"milc",
+				"zeusmp",
+				"gromacs",
+				"cactusADM",
+				"leslie3d",
+				"namd",
+				"dealII",
+				"soplex",
+				"povray",
+				"calculix",
+				"GemsFDTD",
+				"tonto",
+				"lbm",
+				"wrf",
+				"sphinx3",
+				"specrand",
+			]
+		}
+
+		createApp({
+			data() {
+				return {
+					runsIndex: {},
+					runMeta: [],
+					runData: {},
+					filteredRuns: [],
+					availableTestcases: [],
+					selectedTestcases: [],
+					startDateStr: '',
+					endDateStr: '',
+					chart: null,
+					loading: false,
+					settingsKey: 'xs-dashboard-settings-v1',
+				};
+			},
+			computed: {
+				startDateVal() {
+					return this.startDateStr ? new Date(this.startDateStr + 'T00:00:00') : null;
+				},
+				endDateVal() {
+					return this.endDateStr ? new Date(this.endDateStr + 'T23:59:59') : null;
+				},
+			},
+			watch: {
+				startDateStr() {
+					if (this.startDateStr && this.endDateStr) this.persistSettings();
+				},
+				endDateStr() {
+					if (this.startDateStr && this.endDateStr) this.persistSettings();
+				},
+			},
+			mounted() {
+				this.loadSettings();
+				this.bootstrap();
+			},
+			methods: {
+				async bootstrap() {
+					this.loading = true;
+					try {
+						const res = await fetch('data/data.json');
+						const payload = await res.json();
+						this.runsIndex = payload.data || {};
+						this.runMeta = Object.entries(this.runsIndex).map(([runId, info]) => ({
+							runId,
+							hash: info.hash,
+							title: info.title,
+							dateMs: this.normalizeTimestamp(info.date),
+						})).sort((a, b) => Number(a.runId) - Number(b.runId));
+
+						this.applyDefaultDates();
+						await this.refreshRuns();
+					} catch (err) {
+						console.error('Failed to load index', err);
+					} finally {
+						this.loading = false;
+					}
+				},
+
+				normalizeTimestamp(ts) {
+					return ts > 1e12 ? ts : ts * 1000;
+				},
+
+				applyDefaultDates() {
+					if (!this.runMeta.length) return;
+					const latest = this.runMeta[this.runMeta.length - 1].dateMs;
+					if (!this.startDateStr || !this.endDateStr) {
+						const end = new Date(latest);
+						const start = new Date(latest - 6 * dayMs);
+						this.startDateStr = this.formatInputDate(start);
+						this.endDateStr = this.formatInputDate(end);
+					}
+				},
+
+				formatInputDate(date) {
+					return date.toISOString().slice(0, 10);
+				},
+
+				async refreshRuns() {
+					if (!this.startDateVal || !this.endDateVal) return;
+					const start = this.startDateVal.getTime();
+					const end = this.endDateVal.getTime();
+					this.filteredRuns = this.runMeta.filter(r => r.dateMs >= start && r.dateMs <= end);
+
+					await this.ensureRunData();
+					this.updateAvailableTestcases();
+					this.syncSelection();
+					this.renderChart();
+					this.persistSettings();
+				},
+
+				async ensureRunData() {
+					const needed = this.filteredRuns.filter(r => !this.runData[r.hash]);
+					await Promise.all(needed.map(run => this.fetchRunPayload(run)));
+				},
+
+				async fetchRunPayload(run) {
+					try {
+						const res = await fetch(`data/${run.hash}.json`);
+						const payload = await res.json();
+						this.runData[run.hash] = payload || {};
+					} catch (err) {
+						console.error('Failed to fetch run data', run.hash, err);
+						this.runData[run.hash] = {};
+					}
+				},
+
+				updateAvailableTestcases() {
+					const set = new Set();
+					for (const run of this.filteredRuns) {
+						const payload = this.runData[run.hash];
+						if (!payload) continue;
+						Object.keys(payload).forEach(name => set.add(name));
+					}
+					set.add('GEOMEAN');
+					this.availableTestcases = Array.from(set).sort();
+				},
+
+				syncSelection() {
+					if (!this.availableTestcases.length) {
+						this.selectedTestcases = [];
+						return;
+					}
+					const current = new Set(this.selectedTestcases);
+					const filtered = this.availableTestcases.filter(tc => current.has(tc));
+					if (filtered.length) {
+						this.selectedTestcases = filtered;
+					} else {
+						this.selectDefault();
+					}
+				},
+
+				selectDefault() {
+					const nonLegacy = this.availableTestcases.filter(tc => tc === 'GEOMEAN' || !tc.startsWith('legacy-'));
+					this.selectedTestcases = nonLegacy.length ? nonLegacy : [...this.availableTestcases];
+					this.onSelectionChange();
+				},
+
+				selectAll() {
+					this.selectedTestcases = [...this.availableTestcases];
+					this.onSelectionChange();
+				},
+
+				selectPrefix(prefix, includeGeomean = true) {
+					const prefixes = SELECT_PREFIXES[prefix] || [];
+					const filtered = this.availableTestcases.filter(tc => prefixes.some(pf => tc.startsWith(pf)));
+					if (includeGeomean) {
+						filtered.push('GEOMEAN');
+					}
+					this.selectedTestcases = filtered;
+					this.onSelectionChange();
+				},
+
+				clearSelection() {
+					this.selectedTestcases = [];
+					this.onSelectionChange();
+				},
+
+				onSelectionChange() {
+					this.persistSettings();
+					this.renderChart();
+				},
+
+				onDateChange() {
+					this.refreshRuns();
+				},
+
+				setLastDays(days) {
+					const end = new Date();
+					end.setHours(23, 59, 59, 999);
+					const start = new Date(end.getTime() - (days - 1) * dayMs);
+					this.startDateStr = this.formatInputDate(start);
+					this.endDateStr = this.formatInputDate(end);
+					this.refreshRuns();
+				},
+
+				renderChart() {
+					// Recreate chart each time to avoid stale state after dynamic range/selection changes.
+					if (this.chart) {
+						this.chart.destroy();
+						this.chart = null;
+					}
+
+					if (!this.filteredRuns.length || !this.selectedTestcases.length) return;
+
+					const labels = this.filteredRuns.map(r => r.runId);
+					const datasets = this.selectedTestcases.map((name, idx) => {
+						const color = this.colorForIndex(idx);
+						const isGeomean = name === 'GEOMEAN';
+						const pointStyle = this.pointStyleFor(name);
+						return {
+							label: name,
+							data: this.filteredRuns.map(run => this.resolveValue(run, name)),
+							borderColor: color,
+							backgroundColor: color,
+							tension: 0,
+							spanGaps: true,
+							pointRadius: isGeomean ? 6 : 3,
+							pointHoverRadius: isGeomean ? 10 : 5,
+							borderWidth: isGeomean ? 4 : 2,
+							pointStyle,
+						};
+					});
+
+					const tooltipFormatter = (context) => {
+						const run = this.filteredRuns[context.dataIndex];
+						if (!run) return { title: '', label: '', after: [] };
+						const dateStr = this.formatDisplayDate(run.dateMs);
+						return {
+							title: run.title || run.runId,
+							label: `${context.dataset.label}: IPC ${context.formattedValue}`,
+							after: [`run_id: ${run.runId}`, `date: ${dateStr}`],
+						};
+					};
+
+					const ctx = document.getElementById('chart');
+					this.chart = new Chart(ctx, {
+						type: 'line',
+						data: { labels, datasets },
+						options: {
+							responsive: true,
+							maintainAspectRatio: false,
+							animation: { duration: 0 },
+							interaction: { mode: 'nearest', intersect: false },
+							scales: {
+								x: {
+									title: { display: true, text: 'run_id' },
+									ticks: { maxRotation: 25, minRotation: 25 },
+								},
+								y: {
+									title: { display: true, text: 'IPC' },
+									beginAtZero: false,
+								},
+							},
+							plugins: {
+								legend: {
+									labels: { boxWidth: 12, color: '#1c1f2a' },
+								},
+								tooltip: {
+									callbacks: {
+										title: items => tooltipFormatter(items[0]).title,
+										label: item => tooltipFormatter(item).label,
+										afterLabel: item => tooltipFormatter(item).after,
+									},
+								},
+							},
+						},
+					});
+				},
+
+				colorForIndex(i) {
+					const hue = (i * 47) % 360;
+					return `hsl(${hue}, 72%, 52%)`;
+				},
+
+				pointStyleFor(name) {
+					if (name === 'GEOMEAN') return 'star';
+					if (SELECT_PREFIXES.SPEC06INT.some(prefix => name.startsWith(prefix))) return 'rect';
+					if (SELECT_PREFIXES.SPEC06FP.some(prefix => name.startsWith(prefix))) return 'triangle';
+					return 'circle';
+				},
+
+				resolveValue(run, name) {
+					if (name === 'GEOMEAN') return this.computeGeomean(run);
+					const payload = this.runData[run.hash];
+					const val = payload && payload[name] ? payload[name].ipc : null;
+					return val === undefined ? null : val;
+				},
+
+				computeGeomean(run) {
+					const payload = this.runData[run.hash];
+					if (!payload) return null;
+					const values = Object.values(payload)
+						.map(entry => entry && typeof entry.ipc === 'number' ? entry.ipc : null)
+						.filter(v => v && v > 0);
+					if (!values.length) return null;
+					const logSum = values.reduce((acc, v) => acc + Math.log(v), 0);
+					return Math.exp(logSum / values.length);
+				},
+
+				formatDisplayDate(ms) {
+					const d = new Date(ms);
+					return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+				},
+
+				persistSettings() {
+					const payload = {
+						startDateStr: this.startDateStr,
+						endDateStr: this.endDateStr,
+						selectedTestcases: this.selectedTestcases,
+					};
+					localStorage.setItem(this.settingsKey, JSON.stringify(payload));
+				},
+
+				loadSettings() {
+					try {
+						const saved = localStorage.getItem(this.settingsKey);
+						if (!saved) return;
+						const data = JSON.parse(saved);
+						this.startDateStr = data.startDateStr || '';
+						this.endDateStr = data.endDateStr || '';
+						this.selectedTestcases = data.selectedTestcases || [];
+					} catch (err) {
+						console.warn('Failed to load settings', err);
+					}
+				},
+
+			},
+		}).mount('#app');
+	</script>
+</body>
+</html>
