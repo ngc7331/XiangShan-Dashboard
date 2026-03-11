@@ -12,10 +12,12 @@ from modules.github import GitHub
 
 # Data directory structure:
 # data/
-#     abc123.json
-#     def456.json
+#     branch/
+#         abc123.json # commit hash
+#         def456.json
+#         ...
+#         data.json
 #     ...
-#     data.json
 
 OWNER = "OpenXiangShan"
 REPO = "XiangShan"
@@ -29,12 +31,6 @@ def main():
     )
     parser.add_argument("--token", help="GitHub personal access token")
     parser.add_argument(
-        "--path",
-        help="Path to data directory",
-        type=Path,
-        default=Path(__file__).parent.parent / "data",
-    )
-    parser.add_argument(
         "--logging-level",
         help="Logging level",
         default="INFO",
@@ -45,19 +41,26 @@ def main():
         type=int,
         default=3,
     )
+    parser.add_argument(
+        "--branch",
+        help="Branch to check for commits",
+        default="kunminghu-v3",
+    )
     args = parser.parse_args()
+
+    DATA_PATH = Path(__file__).parent.parent / "data" / args.branch
 
     logging.basicConfig(level=getattr(logging, args.logging_level))
 
     gh = GitHub(args.token)
 
-    data = DataJson.from_json(args.path / "data.json")
+    data = DataJson.from_json(DATA_PATH / "data.json")
 
     # get latest commit hash from OpenXiangShan/XiangShan
     found_existing = False
     for page in count(1):
         commits = gh.commits.list_commits(
-            "OpenXiangShan", "XiangShan", page=page, per_page=10
+            "OpenXiangShan", "XiangShan", sha=args.branch, page=page, per_page=10
         )
         if not commits:
             break
@@ -164,12 +167,12 @@ def main():
                     logging.warning("    -> unknown file type, ignore")
                     continue
 
-            report.to_json(args.path / f"{commit["sha"]}.json")
+            report.to_json(DATA_PATH / f"{commit["sha"]}.json")
 
         if found_existing or page >= args.page_limit:
             break
 
-    data.to_json(args.path / "data.json")
+    data.to_json(DATA_PATH / "data.json")
 
 
 if __name__ == "__main__":

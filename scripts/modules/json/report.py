@@ -29,6 +29,9 @@ class ReportJson:
     @staticmethod
     def from_json(path: Path) -> "ReportJson":
         """Load data from a JSON file"""
+        if not path.exists():
+            return ReportJson()
+
         with open(path, "r", encoding="utf-8") as f:
             raw_data = json.load(f)
         version = raw_data["version"]
@@ -45,6 +48,7 @@ class ReportJson:
 
     def to_json(self, path: Path) -> None:
         """Save data to a JSON file"""
+        path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             json.dump(
                 asdict(self)["_data"],

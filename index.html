@@ -95,9 +95,10 @@
 			color: var(--muted);
 			margin-bottom: 6px;
 			font-weight: 600;
+			white-space: nowrap;
 		}
 
-		.controls input[type="date"] {
+		.controls .control-input {
 			width: 100%;
 			padding: 10px 12px;
 			border-radius: 10px;
@@ -108,10 +109,10 @@
 		}
 
 		.row {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
+			margin-bottom: 10px;
+			display: flex;
 			gap: 10px;
-			align-items: end;
+			align-items: center;
 		}
 
 		.btn {
@@ -245,18 +246,20 @@
 			</div>
 
 			<div class="card controls">
-				<div class="section-title">时间范围</div>
+				<div class="section-title">范围筛选</div>
 				<div class="row">
-					<div>
-						<label>开始日期</label>
-						<input type="date" v-model="startDateStr" @change="onDateChange" />
-					</div>
+					<label>分支</label>
+					<select class="control-input" v-model="selectedBranch" @change="onBranchChange">
+						<option v-for="b in branches" :key="b" :value="b">{{ b }}</option>
+					</select>
 				</div>
 				<div class="row">
-					<div>
-						<label>结束日期</label>
-						<input type="date" v-model="endDateStr" @change="onDateChange" />
-					</div>
+					<label>开始日期</label>
+					<input class="control-input" type="date" v-model="startDateStr" @change="onDateChange" />
+				</div>
+				<div class="row">
+					<label>结束日期</label>
+					<input class="control-input" type="date" v-model="endDateStr" @change="onDateChange" />
 				</div>
 				<div style="margin-top: 10px; display: flex; gap: 8px;">
 					<button class="btn" @click="setLastDays(7)">过去一周</button>
@@ -345,6 +348,8 @@
 		createApp({
 			data() {
 				return {
+					branches: [],
+					selectedBranch: '',
 					runsIndex: {},
 					runMeta: [],
 					runData: {},
@@ -382,23 +387,39 @@
 				async bootstrap() {
 					this.loading = true;
 					try {
-						const res = await fetch('data/data.json');
-						const payload = await res.json();
-						this.runsIndex = payload.data || {};
-						this.runMeta = Object.entries(this.runsIndex).map(([runId, info]) => ({
-							runId,
-							hash: info.hash,
-							title: info.title,
-							dateMs: this.normalizeTimestamp(info.date),
-						})).sort((a, b) => Number(a.runId) - Number(b.runId));
-
-						this.applyDefaultDates();
-						await this.refreshRuns();
+						await this.loadBranches();
+						await this.loadBranchData();
 					} catch (err) {
-						console.error('Failed to load index', err);
+						console.error('Failed to bootstrap', err);
 					} finally {
 						this.loading = false;
 					}
+				},
+
+				async loadBranches() {
+					const res = await fetch('data/branch.json');
+					const payload = await res.json();
+					this.branches = Array.isArray(payload) ? payload : [];
+					if (!this.branches.length) throw new Error('No branches found');
+					if (!this.selectedBranch || !this.branches.includes(this.selectedBranch)) {
+						this.selectedBranch = this.branches[0];
+					}
+				},
+
+				async loadBranchData() {
+					if (!this.selectedBranch) return;
+					const res = await fetch(`data/${this.selectedBranch}/data.json`);
+					const payload = await res.json();
+					this.runsIndex = payload.data || {};
+					this.runMeta = Object.entries(this.runsIndex).map(([runId, info]) => ({
+						runId,
+						hash: info.hash,
+						title: info.title,
+						dateMs: this.normalizeTimestamp(info.date),
+					})).sort((a, b) => Number(a.runId) - Number(b.runId));
+
+					this.applyDefaultDates();
+					await this.refreshRuns();
 				},
 
 				normalizeTimestamp(ts) {
@@ -440,7 +461,7 @@
 
 				async fetchRunPayload(run) {
 					try {
-						const res = await fetch(`data/${run.hash}.json`);
+						const res = await fetch(`data/${this.selectedBranch}/${run.hash}.json`);
 						const payload = await res.json();
 						this.runData[run.hash] = payload || {};
 					} catch (err) {
@@ -493,6 +514,13 @@
 					}
 					this.selectedTestcases = filtered;
 					this.onSelectionChange();
+				},
+
+				onBranchChange() {
+					this.runData = {};
+					this.applyDefaultDates();
+					this.persistSettings();
+					this.loadBranchData();
 				},
 
 				clearSelection() {
@@ -632,6 +660,7 @@
 						startDateStr: this.startDateStr,
 						endDateStr: this.endDateStr,
 						selectedTestcases: this.selectedTestcases,
+						selectedBranch: this.selectedBranch,
 					};
 					localStorage.setItem(this.settingsKey, JSON.stringify(payload));
 				},
@@ -644,6 +673,7 @@
 						this.startDateStr = data.startDateStr || '';
 						this.endDateStr = data.endDateStr || '';
 						this.selectedTestcases = data.selectedTestcases || [];
+						this.selectedBranch = data.selectedBranch || '';
 					} catch (err) {
 						console.warn('Failed to load settings', err);
 					}

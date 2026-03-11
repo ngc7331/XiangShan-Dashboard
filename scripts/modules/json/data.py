@@ -24,6 +24,9 @@ class DataJson:
     @staticmethod
     def from_json(path: Path) -> "DataJson":
         """Load data from a JSON file"""
+        if not path.exists():
+            return DataJson(data={}, version=CURRENT_VERSION)
+
         with open(path, "r", encoding="utf-8") as f:
             raw_data = json.load(f)
         version = raw_data["version"]
@@ -43,6 +46,7 @@ class DataJson:
     def to_json(self, path: Path) -> None:
         """Save data to a JSON file"""
         self.sort()
+        path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             json.dump(
                 asdict(self),
