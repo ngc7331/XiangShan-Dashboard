@@ -99,19 +99,6 @@ def main():
                 logging.warning("  -> Workflow run failed, skip")
                 continue
 
-            data.append(
-                run["id"],
-                commit["sha"],
-                commit["commit"]["message"].splitlines()[0],
-                int(
-                    time.mktime(
-                        time.strptime(
-                            commit["commit"]["committer"]["date"], "%Y-%m-%dT%H:%M:%SZ"
-                        )
-                    )
-                ),
-            )
-
             # get artifacts for this workflow run
             artifacts = []
             for artifact_page in count(1):
@@ -168,6 +155,19 @@ def main():
                     continue
 
             report.to_json(DATA_PATH / f"{commit["sha"]}.json")
+
+            data.append(
+                run["id"],
+                commit["sha"],
+                commit["commit"]["message"].splitlines()[0],
+                int(
+                    time.mktime(
+                        time.strptime(
+                            commit["commit"]["committer"]["date"], "%Y-%m-%dT%H:%M:%SZ"
+                        )
+                    )
+                ),
+            )
 
         if found_existing or page >= args.page_limit:
             break
