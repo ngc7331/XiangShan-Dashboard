@@ -607,6 +607,8 @@
 						Object.keys(payload).forEach(name => set.add(name));
 					}
 					set.add('GEOMEAN');
+					set.add('GEOMEAN-SPEC06INT');
+					set.add('GEOMEAN-SPEC06FP');
 					this.availableTestcases = Array.from(set).sort();
 				},
 
@@ -625,7 +627,7 @@
 				},
 
 				selectDefault() {
-					const nonLegacy = this.availableTestcases.filter(tc => tc === 'GEOMEAN' || !tc.startsWith('legacy-'));
+					const nonLegacy = this.availableTestcases.filter(tc => !tc.startsWith('legacy-'));
 					this.selectedTestcases = nonLegacy.length ? nonLegacy : [...this.availableTestcases];
 					this.onSelectionChange();
 				},
@@ -635,12 +637,9 @@
 					this.onSelectionChange();
 				},
 
-				selectPrefix(prefix, includeGeomean = true) {
+				selectPrefix(prefix) {
 					const prefixes = SELECT_PREFIXES[prefix] || [];
-					const filtered = this.availableTestcases.filter(tc => prefixes.some(pf => tc.startsWith(pf)));
-					if (includeGeomean) {
-						filtered.push('GEOMEAN');
-					}
+					const filtered = this.availableTestcases.filter(tc => prefixes.some(pf => tc.startsWith(pf)) || tc === `GEOMEAN-${prefix}`);
 					this.selectedTestcases = filtered;
 					this.onSelectionChange();
 				},
@@ -702,7 +701,7 @@
 						const labels = this.filteredRuns.map(r => r.runId);
 						const datasets = this.selectedTestcases.map((name, idx) => {
 							const color = this.colorForIndex(idx);
-							const isGeomean = name === 'GEOMEAN';
+							const isGeomean = name.startsWith('GEOMEAN');
 							const pointStyle = this.pointStyleFor(name);
 							return {
 								label: name,
@@ -770,22 +769,29 @@
 				},
 
 				pointStyleFor(name) {
-					if (name === 'GEOMEAN') return 'star';
+					if (name.startsWith('GEOMEAN')) return 'star';
 					if (SELECT_PREFIXES.SPEC06INT.some(prefix => name.startsWith(prefix))) return 'rect';
 					if (SELECT_PREFIXES.SPEC06FP.some(prefix => name.startsWith(prefix))) return 'triangle';
 					return 'circle';
 				},
 
 				resolveValue(run, name) {
-					if (name === 'GEOMEAN') return this.computeGeomean(run);
+					if (name.startsWith('GEOMEAN')) return this.computeGeomean(run, name);
 					const payload = this.runData[run.hash];
 					const val = payload && payload[name] ? payload[name].ipc : null;
 					return val === undefined ? null : val;
 				},
 
-				computeGeomean(run) {
-					const payload = this.runData[run.hash];
+				computeGeomean(run, name) {
+					let payload = this.runData[run.hash];
 					if (!payload) return null;
+
+					if (name.endsWith('SPEC06INT')) {
+						payload = Object.fromEntries(Object.entries(payload).filter(([k]) => SELECT_PREFIXES.SPEC06INT.some(prefix => k.startsWith(prefix))));
+					} else if (name.endsWith('SPEC06FP')) {
+						payload = Object.fromEntries(Object.entries(payload).filter(([k]) => SELECT_PREFIXES.SPEC06FP.some(prefix => k.startsWith(prefix))));
+					}
+
 					const values = Object.values(payload)
 						.map(entry => entry && typeof entry.ipc === 'number' ? entry.ipc : null)
 						.filter(v => v && v > 0);
