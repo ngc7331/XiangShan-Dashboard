@@ -1,0 +1,23 @@
+{
+  "name": "xiangshan-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "chart.js": "^4.4.1",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.3",
+    "prettier": "^3.6.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.2.1",
+    "vue-tsc": "^2.2.0"
+  }
+}

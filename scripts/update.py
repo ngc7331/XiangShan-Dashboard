@@ -22,6 +22,7 @@ from modules.github import GitHub
 OWNER = "OpenXiangShan"
 REPO = "XiangShan"
 WORKFLOW = "EMU Performance Test"
+DATA_PATH = Path(__file__).parent.parent / "data"
 
 
 def main():
@@ -48,13 +49,13 @@ def main():
     )
     args = parser.parse_args()
 
-    DATA_PATH = Path(__file__).parent.parent / "data" / args.branch
+    data_path = DATA_PATH / "test" / args.branch
 
     logging.basicConfig(level=getattr(logging, args.logging_level))
 
     gh = GitHub(args.token)
 
-    data = DataJson.from_json(DATA_PATH / "data.json")
+    data = DataJson.from_json(data_path / "data.json")
 
     # get latest commit hash from OpenXiangShan/XiangShan
     found_existing = False
@@ -154,7 +155,7 @@ def main():
                     logging.warning("    -> unknown file type, ignore")
                     continue
 
-            report.to_json(DATA_PATH / f"{commit["sha"]}.json")
+            report.to_json(data_path / f"{commit["sha"]}.json")
 
             data.append(
                 run["id"],
@@ -172,7 +173,7 @@ def main():
         if found_existing or page >= args.page_limit:
             break
 
-    data.to_json(DATA_PATH / "data.json")
+    data.to_json(data_path / "data.json")
 
 
 if __name__ == "__main__":
