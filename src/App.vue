@@ -143,6 +143,7 @@ const runDataByHash = ref<Record<string, ReportPayload>>({});
 const availableBenchmarks = ref<string[]>([]);
 const selectedBenchmarks = ref<string[]>([]);
 const errorText = ref("");
+const isHydrating = ref(true);
 const isLoading = ref(false);
 const loadingPath = ref("");
 
@@ -300,11 +301,13 @@ function onBranchChange(nextBranch: string) {
 function onStartDateChange(value: string) {
   startDateStr.value = value;
   quickRangeDays.value = null;
+  persist();
 }
 
 function onEndDateChange(value: string) {
   endDateStr.value = value;
   quickRangeDays.value = null;
+  persist();
 }
 
 function setLastDays(days: number, shouldPersist = true) {
@@ -320,6 +323,7 @@ function setLastDays(days: number, shouldPersist = true) {
 }
 
 watch(selectedTabId, async () => {
+  if (isHydrating.value) return;
   startDateStr.value = "";
   endDateStr.value = "";
   selectedBenchmarks.value = [];
@@ -327,6 +331,7 @@ watch(selectedTabId, async () => {
 });
 
 watch([selectedBranch, startDateStr, endDateStr], async () => {
+  if (isHydrating.value) return;
   if (!selectedBranch.value || !startDateStr.value || !endDateStr.value) return;
 
   if (!allRuns.value.length || !allRuns.value.some((run) => run.hash)) {
@@ -337,6 +342,7 @@ watch([selectedBranch, startDateStr, endDateStr], async () => {
 });
 
 watch(selectedBranch, async () => {
+  if (isHydrating.value) return;
   if (!selectedBranch.value) return;
   allRuns.value = await loadRunIndex(activeTab.value, selectedBranch.value);
   if (quickRangeDays.value) {
@@ -351,13 +357,18 @@ watch(selectedBranch, async () => {
 });
 
 onMounted(async () => {
-  loadSettings();
-  selectedTabId.value = settings.selectedTabId || tabs[0].id;
-  selectedBranch.value = settings.selectedBranch || "";
-  startDateStr.value = settings.startDateStr || "";
-  endDateStr.value = settings.endDateStr || "";
-  quickRangeDays.value = settings.quickRangeDays ?? null;
-  selectedBenchmarks.value = settings.selectedBenchmarks || [];
-  await loadCurrentTabData();
+  isHydrating.value = true;
+  try {
+    loadSettings();
+    selectedTabId.value = settings.selectedTabId || tabs[0].id;
+    selectedBranch.value = settings.selectedBranch || "";
+    startDateStr.value = settings.startDateStr || "";
+    endDateStr.value = settings.endDateStr || "";
+    quickRangeDays.value = settings.quickRangeDays ?? null;
+    selectedBenchmarks.value = settings.selectedBenchmarks || [];
+    await loadCurrentTabData();
+  } finally {
+    isHydrating.value = false;
+  }
 });
 </script>
