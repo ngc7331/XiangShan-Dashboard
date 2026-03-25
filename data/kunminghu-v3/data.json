@@ -1,5 +1,10 @@
 {
   "data": {
+    "23477871088": {
+      "hash": "4cf4a6961dd2885a40e18c57d0dc3671573d7eb0",
+      "title": "fix(xspdb): fix docs typo",
+      "date": 1774336978
+    },
     "23430095995": {
       "hash": "a70400c8083350ec053fa8dfb8ee9703364358ac",
       "title": "fix(StoreQueue): wait for Uncache's idResp to dequeue NC store",
