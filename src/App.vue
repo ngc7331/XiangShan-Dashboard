@@ -190,7 +190,10 @@ async function refreshRuns() {
   if (!startDateStr.value || !endDateStr.value) return;
   setLoading();
   try {
-    const { startMs, endMs } = getDateRange(startDateStr.value, endDateStr.value);
+    const { startMs, endMs } = getDateRange(
+      startDateStr.value,
+      endDateStr.value,
+    );
     filteredRuns.value = allRuns.value.filter(
       (run) => run.dateMs >= startMs && run.dateMs <= endMs,
     );
@@ -239,7 +242,9 @@ async function loadCurrentTabData() {
       selectedBranch.value = branches.value[0] || "";
     }
 
-    setLoading(`${activeTab.value.datasetRoot}/${selectedBranch.value}/data.json`);
+    setLoading(
+      `${activeTab.value.datasetRoot}/${selectedBranch.value}/data.json`,
+    );
     allRuns.value = await loadRunIndex(activeTab.value, selectedBranch.value);
     if (quickRangeDays.value) {
       setLastDays(quickRangeDays.value, false);

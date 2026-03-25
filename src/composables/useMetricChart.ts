@@ -72,8 +72,12 @@ function applyLegendHighlight(chart: Chart, highlightedIndex: number | null) {
     const alpha = isActive ? 1 : 0.18;
     dataset.borderColor = withAlpha(baseColor, alpha);
     dataset.backgroundColor = withAlpha(baseColor, alpha);
-    dataset.borderWidth = isActive ? baseBorderWidth + 1 : Math.max(1, baseBorderWidth - 1);
-    dataset.pointRadius = isActive ? basePointRadius + 1 : Math.max(1, basePointRadius - 1);
+    dataset.borderWidth = isActive
+      ? baseBorderWidth + 1
+      : Math.max(1, baseBorderWidth - 1);
+    dataset.pointRadius = isActive
+      ? basePointRadius + 1
+      : Math.max(1, basePointRadius - 1);
     dataset.pointHoverRadius = isActive
       ? basePointHoverRadius + 1
       : Math.max(2, basePointHoverRadius - 2);
@@ -217,9 +221,12 @@ export function renderMetricChart(args: {
           onClick: (_event, legendItem, legend) => {
             const targetIndex = legendItem.datasetIndex;
             if (typeof targetIndex !== "number") return;
-            const c = legend.chart as Chart & { _highlightedDatasetIndex?: number | null };
+            const c = legend.chart as Chart & {
+              _highlightedDatasetIndex?: number | null;
+            };
             const current = c._highlightedDatasetIndex ?? null;
-            c._highlightedDatasetIndex = current === targetIndex ? null : targetIndex;
+            c._highlightedDatasetIndex =
+              current === targetIndex ? null : targetIndex;
             applyLegendHighlight(c, c._highlightedDatasetIndex);
           },
         },
