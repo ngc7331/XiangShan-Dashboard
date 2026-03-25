@@ -13,7 +13,7 @@ import {
 import type { DashboardTabConfig } from "../config/tabs";
 import type { NormalizedRun, ReportPayload } from "../types/data";
 import { formatDisplayDate } from "../services/dataService";
-import { SELECT_PREFIXES } from "./useBenchmarkSelection";
+import { isPrefixed, SELECT_PREFIXES } from "./useBenchmarkSelection";
 
 Chart.register(
   LineController,
@@ -32,11 +32,10 @@ function colorForIndex(i: number): string {
 }
 
 function pointStyleFor(name: string): "circle" | "triangle" | "star" | "rect" {
+  name = name.replace(/^\d+\./, ""); // remove numeric prefix
   if (name.startsWith("GEOMEAN")) return "star";
-  if (SELECT_PREFIXES.SPEC06INT.some((prefix) => name.startsWith(prefix)))
-    return "rect";
-  if (SELECT_PREFIXES.SPEC06FP.some((prefix) => name.startsWith(prefix)))
-    return "triangle";
+  if (isPrefixed(name, "SPEC06INT")) return "rect";
+  if (isPrefixed(name, "SPEC06FP")) return "triangle";
   return "circle";
 }
 
@@ -56,10 +55,10 @@ function computeGeomean(
 function computeScopedGeomean(
   payload: ReportPayload,
   metricKey: "ipc" | "score",
-  prefixes: readonly string[],
+  prefix: keyof typeof SELECT_PREFIXES,
 ): number | null {
   const scoped = Object.entries(payload).filter(([name]) =>
-    prefixes.some((prefix) => name.startsWith(prefix)),
+    isPrefixed(name, prefix),
   );
   if (!scoped.length) return null;
 
@@ -80,10 +79,10 @@ function resolveValue(
   if (!payload) return null;
   if (benchmark === "GEOMEAN") return computeGeomean(payload, metricKey);
   if (benchmark === "GEOMEAN-SPEC06INT") {
-    return computeScopedGeomean(payload, metricKey, SELECT_PREFIXES.SPEC06INT);
+    return computeScopedGeomean(payload, metricKey, "SPEC06INT");
   }
   if (benchmark === "GEOMEAN-SPEC06FP") {
-    return computeScopedGeomean(payload, metricKey, SELECT_PREFIXES.SPEC06FP);
+    return computeScopedGeomean(payload, metricKey, "SPEC06FP");
   }
   const value = payload[benchmark]?.[metricKey];
   return typeof value === "number" ? value : null;

@@ -40,15 +40,22 @@ export function selectDefault(benchmarks: string[]): string[] {
   return nonLegacy.length ? nonLegacy : [...benchmarks];
 }
 
+export function isPrefixed(
+  name: string,
+  prefix: keyof typeof SELECT_PREFIXES,
+): boolean {
+  return (
+    SELECT_PREFIXES[prefix].some((pf) =>
+      name.replace(/^\d+\./, "").startsWith(pf),
+    ) || name === `GEOMEAN-${prefix}`
+  );
+}
+
 export function selectPrefix(
   benchmarks: string[],
   prefix: keyof typeof SELECT_PREFIXES,
 ): string[] {
-  const prefixes = SELECT_PREFIXES[prefix];
-  return benchmarks.filter(
-    (tc) =>
-      prefixes.some((pf) => tc.startsWith(pf)) || tc === `GEOMEAN-${prefix}`,
-  );
+  return benchmarks.filter((tc) => isPrefixed(tc, prefix));
 }
 
 export function toggleSelection(

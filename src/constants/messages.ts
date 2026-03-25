@@ -21,7 +21,8 @@ export const MESSAGES: Record<Locale, Record<string, string>> = {
     runIdAxis: "Run ID",
     dateAxis: "Date",
     noData: "No data in selected range",
-    tabsIpc: "IPC by Commit",
+    tabsTest: "EMU Performance Test",
+    tabsNightly: "Nightly Regression",
   },
   zh: {
     filtersTitle: "范围筛选",
@@ -43,6 +44,7 @@ export const MESSAGES: Record<Locale, Record<string, string>> = {
     runIdAxis: "Run ID",
     dateAxis: "日期",
     noData: "当前筛选范围内无数据",
-    tabsIpc: "IPC by Commit",
+    tabsTest: "EMU Performance Test",
+    tabsNightly: "Nightly Regression",
   },
 };
