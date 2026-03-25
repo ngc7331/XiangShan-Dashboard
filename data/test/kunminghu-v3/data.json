@@ -1,0 +1,165 @@
+{
+  "data": {
+    "23477871088": {
+      "hash": "4cf4a6961dd2885a40e18c57d0dc3671573d7eb0",
+      "title": "fix(xspdb): fix docs typo",
+      "date": 1774336978
+    },
+    "23430095995": {
+      "hash": "a70400c8083350ec053fa8dfb8ee9703364358ac",
+      "title": "fix(StoreQueue): wait for Uncache's idResp to dequeue NC store",
+      "date": 1774257723
+    },
+    "23425551653": {
+      "hash": "8c053b130826a4396294a074ce11868fd71b5e9a",
+      "title": "chore(intr): remove useless reg (#5681)",
+      "date": 1774249657
+    },
+    "23425503992": {
+      "hash": "fd5985cea9fd7e99f18b2a45bb71c0a8886ea34e",
+      "title": "fix(IQ, entryBundle): remove datasources from `commonOutBundle` (#5704)",
+      "date": 1774249561
+    },
+    "23425279386": {
+      "hash": "0252eb9dc243c311094ad5eb2c9333b284200420",
+      "title": "perf(rob): fix `commitInstrBranch` & add `branch_jump` perfCounter (#5705)",
+      "date": 1774249088
+    },
+    "23418419523": {
+      "hash": "cfd6b14162bc195b1362b9dfc662c6325d9756da",
+      "title": "fix(LoadUnit): raise af for unalign access on MMIO region (#5700)",
+      "date": 1774231732
+    },
+    "23289668849": {
+      "hash": "bc2fbff8620b848ff14240c66daccb267586e443",
+      "title": "timing(IQ): move generation of regfile readEn to IQ entry",
+      "date": 1773914632
+    },
+    "23241376603": {
+      "hash": "6e144b5f3a92b0bbd02ea53667e9e1860c956b20",
+      "title": "ci(emu-basics): rewrite basics (#5667)",
+      "date": 1773831489
+    },
+    "23234054335": {
+      "hash": "f73c75cb947f2cd8993b95b9c85761f75e303749",
+      "title": "ci(emu-performace): use node servers only (#5696)",
+      "date": 1773819391
+    },
+    "23228776532": {
+      "hash": "4dc1547212b6b0e842b55377399d71eafa3456f8",
+      "title": "fix(ci): enable trace-underscore for CI MC Test Build (#5694)",
+      "date": 1773807236
+    },
+    "23226676170": {
+      "hash": "acaf92a0b4a9bcb15029f816c82dce0af88c6cad",
+      "title": "style(MemBlock): delete useless code && modify style of code",
+      "date": 1773801974
+    },
+    "23188760565": {
+      "hash": "43dadb3911f62539b4457bf757e4229257fa8be5",
+      "title": "fix(Makefile): remove legacy DEBUG_ARGS for fpga_diff (#5682)",
+      "date": 1773741796
+    },
+    "23188726440": {
+      "hash": "bc4bacba49a99518e9aa91a31138eb039c008d1a",
+      "title": "feat(SimTop): set SimMemBytes with --sim-mem-size (#5670)",
+      "date": 1773741744
+    },
+    "23154642497": {
+      "hash": "4c05eeae3f759a79dc606d009f9c3f79b692c834",
+      "title": "ci: update paths-filter action to version 4 (#5692)",
+      "date": 1773678840
+    },
+    "23126401624": {
+      "hash": "ccf178b3ed11411ac1f7343ce6b0e9b9aba6f749",
+      "title": "fix(vldMergeUnit): fix the data output of v0 in vldMergeUnit (#5675)",
+      "date": 1773630894
+    },
+    "23126098557": {
+      "hash": "a85f8066182228e547a06f32e78e4c3c65c0b41e",
+      "title": "fix(mbtb): train counter in all align banks (#5602)",
+      "date": 1773630114
+    },
+    "23126066994": {
+      "hash": "ac13dfb3f30378badc72053e721b4421df9f3538",
+      "title": "refactor(mbtb): eliminate mbtb trace warning (#5543)",
+      "date": 1773630029
+    },
+    "23126048474": {
+      "hash": "4e29a19d5f9c0805f91ee5fabb1877d8c74280bd",
+      "title": "fix(tage): fix tage select allocate way logic (#5677)",
+      "date": 1773629981
+    },
+    "22990685352": {
+      "hash": "95636a04a7bcd7f7c67c76ebfb7c8a5da6b19869",
+      "title": "refactor(pmu): update source and blame logic (#5639)",
+      "date": 1773299466
+    },
+    "22989754727": {
+      "hash": "7034a37a6df7d1408ed6847bef4f57c50d84b099",
+      "title": "submodule: bump CoupledL2 and Utility (#5529)",
+      "date": 1773297412
+    },
+    "22989115936": {
+      "hash": "c118be21ee7254d8e9275ee12f0dbd6d6db0ffd8",
+      "title": "ci(emu-performance): split upload step (#5672)",
+      "date": 1773295971
+    },
+    "22989097667": {
+      "hash": "feb75d4c6252e501b40ee30ad5a741d576632d80",
+      "title": "ci(emu): try kill orphan emu before checkout (#5673)",
+      "date": 1773295931
+    },
+    "22935039912": {
+      "hash": "f36fd235a3a976322445c5cd57f529f081642c05",
+      "title": "feat(sc): add imli table",
+      "date": 1773170262
+    },
+    "22932963910": {
+      "hash": "6fc8737d65783c82fadcd20a9124db1ace8296b5",
+      "title": "chore(datapath): remove useless connect",
+      "date": 1773165403
+    },
+    "22845259230": {
+      "hash": "826c16b2398c0c0767bf77fc6d3a174e41d31720",
+      "title": "refactor(sc): refactoring  the max and min Threshold Calculation",
+      "date": 1773017013
+    },
+    "22841049239": {
+      "hash": "e4ac797bb40a3ef8124d1223b112192a3093cb70",
+      "title": "ci(emu-performance): fix find_upstream & update names (#5655)",
+      "date": 1773008472
+    },
+    "22837448681": {
+      "hash": "80930b9adbd3103468d29f148a90a793a0f8b74e",
+      "title": "feat(config): change FrontendDebugConfig from TLConfig to CHIConfig (#5647)",
+      "date": 1772999114
+    },
+    "22836316895": {
+      "hash": "39e0e8eb0b9f3b593ba006185e1dbecfecd9e7a6",
+      "title": "chore(Rat): move RatWrapper to Rename to check Rename timing (#5637)",
+      "date": 1772995834
+    },
+    "22756233984": {
+      "hash": "68478f3072908f59ff47d4d991b958dfbd8de072",
+      "title": "fix(mbtb): fix addrField (cfi)Position width (#5638)",
+      "date": 1772758429
+    },
+    "22754873755": {
+      "hash": "b2f9513e8633d3aca6f04ac17c00f425646bb02b",
+      "title": "timing(MMU): avoid adder when generate gpaddr (#5644)",
+      "date": 1772755872
+    },
+    "22709102328": {
+      "hash": "ab5c6ce36326ff5a915808865f1fc52b5730cc94",
+      "title": "feat(backend): only need intRegion's og0cancel",
+      "date": 1772670461
+    },
+    "22701345891": {
+      "hash": "1ea934ece8becc61e522172d99ab45a0b8300703",
+      "title": "ci(emu): rewrite performance test (#5635)",
+      "date": 1772653709
+    }
+  },
+  "version": 1
+}
