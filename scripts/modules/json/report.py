@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field, asdict
 import json
 from pathlib import Path
+import re
 from zipfile import ZipFile
 
 # report.json: { testcase: { "ipc": ipc } }
@@ -17,7 +18,8 @@ from zipfile import ZipFile
 class ReportJsonEntry:
     """Describe a single entry in report.json"""
 
-    ipc: float
+    ipc: float | None = None
+    score: float | None = None
 
 
 @dataclass
@@ -49,14 +51,24 @@ class ReportJson:
     def to_json(self, path: Path) -> None:
         """Save data to a JSON file"""
         path.parent.mkdir(parents=True, exist_ok=True)
+        serialized = {
+            testcase: {
+                key: value
+                for key, value in asdict(entry).items()
+                if value is not None
+            }
+            for testcase, entry in self._data.items()
+        }
         with open(path, "w", encoding="utf-8") as f:
             json.dump(
-                asdict(self)["_data"],
+                serialized,
                 f,
                 indent=2,
                 separators=(",", ": "),
             )
 
+class ReportTestJson(ReportJson):
+    """Describe the report.json structure for Performance Test workflow"""
     def append(self, testcase: str, ipc: float) -> None:
         """Append a single testcase to report"""
         self._data[testcase] = ReportJsonEntry(ipc=ipc)
@@ -70,3 +82,31 @@ class ReportJson:
             with artifact_zip.open(name) as f:
                 ipc = float(f.read().decode("utf-8").strip())
             self.append(testcase, ipc)
+
+class ReportNightlyJson(ReportJson):
+    """Describe the report.json structure for Nightly Regression Workflow"""
+    def append(self, testcase: str, score: float) -> None:
+        """Append a single testcase to report"""
+        self._data[testcase] = ReportJsonEntry(score=score)
+
+    def append_score_txt(self, txt: str) -> None:
+        """Append multiple testcase from a score.txt file"""
+        for line in txt.splitlines():
+            # match "id.name time ref_time score coverage"
+            m = re.match(
+                r"^\s*(\d+\.\w+)\s+[\d\.NaN]+\s+[\d\.NaN]+\s+([\d\.NaN]+)\s+[\d\.NaN]+",
+                line,
+            )
+            if m:
+                testcase = m.group(1)
+                score = float(m.group(2))
+                self.append(testcase, score)
+
+    def append_artifact_zip(self, artifact_zip: ZipFile) -> None:
+        """Append multiple testcase from a artifact zip file"""
+        for name in artifact_zip.namelist():
+            if name != "score.txt":
+                continue
+            with artifact_zip.open(name) as f:
+                txt = f.read().decode("utf-8").strip()
+                self.append_score_txt(txt)

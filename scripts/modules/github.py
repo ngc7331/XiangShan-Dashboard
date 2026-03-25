@@ -48,7 +48,7 @@ class Actions(ApiGroup):
                 "head_sha": head_sha,
             },
         )
-    
+
     def list_workflow_run_artifacts(
         self,
         owner: str,
@@ -118,6 +118,17 @@ class Commits(ApiGroup):
                 "per_page": per_page,
                 "page": page,
             },
+        )
+
+    def get_commit(
+        self,
+        owner: str,
+        repo: str,
+        ref: str,
+    ) -> dict:
+        """Get a single commit."""
+        return self.api.get(
+            f"repos/{owner}/{repo}/commits/{ref}",
         )
 
 
