@@ -31,6 +31,57 @@ function colorForIndex(i: number): string {
   return `hsl(${hue}, 72%, 52%)`;
 }
 
+function withAlpha(color: string, alpha: number): string {
+  const hslMatch = color.match(/^hsl\(([^)]+)\)$/);
+  if (hslMatch) {
+    return `hsla(${hslMatch[1]}, ${alpha})`;
+  }
+  const hslaMatch = color.match(/^hsla\(([^,]+),([^,]+),([^,]+),[^)]+\)$/);
+  if (hslaMatch) {
+    return `hsla(${hslaMatch[1]},${hslaMatch[2]},${hslaMatch[3]},${alpha})`;
+  }
+  return color;
+}
+
+type HighlightDataset = ChartDataset<"line"> & {
+  _baseColor?: string;
+  _baseBorderWidth?: number;
+  _basePointRadius?: number;
+  _basePointHoverRadius?: number;
+};
+
+function applyLegendHighlight(chart: Chart, highlightedIndex: number | null) {
+  const datasets = chart.data.datasets as HighlightDataset[];
+  datasets.forEach((dataset, idx) => {
+    const baseColor = dataset._baseColor ?? String(dataset.borderColor);
+    const baseBorderWidth = dataset._baseBorderWidth ?? 2;
+    const basePointRadius = dataset._basePointRadius ?? 3;
+    const basePointHoverRadius = dataset._basePointHoverRadius ?? 5;
+
+    if (highlightedIndex === null) {
+      dataset.borderColor = baseColor;
+      dataset.backgroundColor = baseColor;
+      dataset.borderWidth = baseBorderWidth;
+      dataset.pointRadius = basePointRadius;
+      dataset.pointHoverRadius = basePointHoverRadius;
+      dataset.hidden = false;
+      return;
+    }
+
+    const isActive = idx === highlightedIndex;
+    const alpha = isActive ? 1 : 0.18;
+    dataset.borderColor = withAlpha(baseColor, alpha);
+    dataset.backgroundColor = withAlpha(baseColor, alpha);
+    dataset.borderWidth = isActive ? baseBorderWidth + 1 : Math.max(1, baseBorderWidth - 1);
+    dataset.pointRadius = isActive ? basePointRadius + 1 : Math.max(1, basePointRadius - 1);
+    dataset.pointHoverRadius = isActive
+      ? basePointHoverRadius + 1
+      : Math.max(2, basePointHoverRadius - 2);
+    dataset.hidden = false;
+  });
+  chart.update();
+}
+
 function pointStyleFor(name: string): "circle" | "triangle" | "star" | "rect" {
   name = name.replace(/^\d+\./, ""); // remove numeric prefix
   if (name.startsWith("GEOMEAN")) return "star";
@@ -111,6 +162,7 @@ export function renderMetricChart(args: {
   const labels = runs.map((run) =>
     tab.axisMode === "date" ? formatDisplayDate(run.dateMs) : run.runId,
   );
+  const isSinglePoint = labels.length === 1;
   const metricLabel = tab.metricKey === "ipc" ? "IPC" : "Score";
   const datasets: ChartDataset<"line">[] = selectedBenchmarks.map(
     (name, idx) => {
@@ -129,6 +181,10 @@ export function renderMetricChart(args: {
         pointHoverRadius: isGeomean ? 9 : 5,
         borderWidth: isGeomean ? 4 : 2,
         pointStyle: pointStyleFor(name),
+        _baseColor: color,
+        _baseBorderWidth: isGeomean ? 4 : 2,
+        _basePointRadius: isGeomean ? 6 : 3,
+        _basePointHoverRadius: isGeomean ? 9 : 5,
       };
     },
   );
@@ -143,6 +199,7 @@ export function renderMetricChart(args: {
       interaction: { mode: "nearest", intersect: false },
       scales: {
         x: {
+          offset: isSinglePoint,
           title: {
             display: true,
             text: tab.axisMode === "date" ? t("dateAxis") : t("runIdAxis"),
@@ -157,6 +214,14 @@ export function renderMetricChart(args: {
       plugins: {
         legend: {
           labels: { boxWidth: 12, color: "#1c1f2a" },
+          onClick: (_event, legendItem, legend) => {
+            const targetIndex = legendItem.datasetIndex;
+            if (typeof targetIndex !== "number") return;
+            const c = legend.chart as Chart & { _highlightedDatasetIndex?: number | null };
+            const current = c._highlightedDatasetIndex ?? null;
+            c._highlightedDatasetIndex = current === targetIndex ? null : targetIndex;
+            applyLegendHighlight(c, c._highlightedDatasetIndex);
+          },
         },
         tooltip: {
           callbacks: {
