@@ -106,7 +106,6 @@ import {
   toggleSelection,
 } from "./composables/useBenchmarkSelection";
 import {
-  applyDefaultDateRange,
   formatInputDate,
   getDateRange,
   loadBranchList,
@@ -116,6 +115,7 @@ import {
 import type { NormalizedRun, ReportPayload } from "./types/data";
 
 const dayMs = 24 * 60 * 60 * 1000;
+const defaultQuickRangeDays = 7;
 const tabs = DASHBOARD_TABS;
 
 const { t } = useLocale();
@@ -244,9 +244,7 @@ async function loadCurrentTabData() {
     if (quickRangeDays.value) {
       setLastDays(quickRangeDays.value, false);
     } else if (!startDateStr.value || !endDateStr.value) {
-      const range = applyDefaultDateRange(allRuns.value);
-      startDateStr.value = range.start;
-      endDateStr.value = range.end;
+      setLastDays(defaultQuickRangeDays, false);
     }
 
     await refreshRuns();
@@ -348,9 +346,7 @@ watch(selectedBranch, async () => {
   if (quickRangeDays.value) {
     setLastDays(quickRangeDays.value, false);
   } else {
-    const range = applyDefaultDateRange(allRuns.value);
-    startDateStr.value = range.start;
-    endDateStr.value = range.end;
+    setLastDays(defaultQuickRangeDays, false);
   }
   runDataByHash.value = {};
   await refreshRuns();

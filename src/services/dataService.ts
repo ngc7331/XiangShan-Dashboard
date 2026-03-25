@@ -84,24 +84,6 @@ export function formatInputDate(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-export function applyDefaultDateRange(runs: NormalizedRun[]): {
-  start: string;
-  end: string;
-} {
-  const latest = runs[runs.length - 1]?.dateMs;
-  if (!latest) {
-    const today = new Date();
-    return { start: formatInputDate(today), end: formatInputDate(today) };
-  }
-
-  const end = new Date(latest);
-  const start = new Date(latest - 6 * dayMs);
-  return {
-    start: formatInputDate(start),
-    end: formatInputDate(end),
-  };
-}
-
 export function getDateRange(
   startDate: string,
   endDate: string,
