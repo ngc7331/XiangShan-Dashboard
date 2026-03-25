@@ -89,5 +89,8 @@ onBeforeUnmount(() => {
   justify-content: center;
   color: #5b6070;
   font-weight: 600;
+  text-align: center;
+  word-break: break-all;
+  padding: 0 16px;
 }
 </style>

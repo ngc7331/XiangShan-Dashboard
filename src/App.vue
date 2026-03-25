@@ -84,7 +84,7 @@
         :runs="filteredRuns"
         :selected-benchmarks="selectedBenchmarks"
         :run-data-by-hash="runDataByHash"
-        :no-data-text="errorText || t('noData')"
+        :no-data-text="chartEmptyText"
         :t="t"
       />
     </main>
@@ -143,6 +143,27 @@ const runDataByHash = ref<Record<string, ReportPayload>>({});
 const availableBenchmarks = ref<string[]>([]);
 const selectedBenchmarks = ref<string[]>([]);
 const errorText = ref("");
+const isLoading = ref(false);
+const loadingPath = ref("");
+
+const chartEmptyText = computed(() => {
+  if (isLoading.value) {
+    return loadingPath.value
+      ? `${t("loading")}: ${loadingPath.value}`
+      : t("loading");
+  }
+  return errorText.value || t("noData");
+});
+
+function setLoading(path = "") {
+  isLoading.value = true;
+  loadingPath.value = path;
+}
+
+function finishLoading() {
+  isLoading.value = false;
+  loadingPath.value = "";
+}
 
 function persist() {
   settings.selectedTabId = selectedTabId.value;
@@ -166,37 +187,44 @@ function syncSelection() {
 
 async function refreshRuns() {
   if (!startDateStr.value || !endDateStr.value) return;
-
-  const { startMs, endMs } = getDateRange(startDateStr.value, endDateStr.value);
-  filteredRuns.value = allRuns.value.filter(
-    (run) => run.dateMs >= startMs && run.dateMs <= endMs,
-  );
-
-  const needed = filteredRuns.value.filter(
-    (run) => !runDataByHash.value[run.hash],
-  );
-  for (const run of needed) {
-    runDataByHash.value[run.hash] = await loadReport(
-      activeTab.value,
-      selectedBranch.value,
-      run.hash,
+  setLoading();
+  try {
+    const { startMs, endMs } = getDateRange(startDateStr.value, endDateStr.value);
+    filteredRuns.value = allRuns.value.filter(
+      (run) => run.dateMs >= startMs && run.dateMs <= endMs,
     );
+
+    const needed = filteredRuns.value.filter(
+      (run) => !runDataByHash.value[run.hash],
+    );
+    for (const run of needed) {
+      setLoading(
+        `${activeTab.value.datasetRoot}/${selectedBranch.value}/${run.hash}.json`,
+      );
+      runDataByHash.value[run.hash] = await loadReport(
+        activeTab.value,
+        selectedBranch.value,
+        run.hash,
+      );
+    }
+
+    const set = new Set<string>();
+    for (const run of filteredRuns.value) {
+      const payload = runDataByHash.value[run.hash];
+      if (!payload) continue;
+      Object.keys(payload).forEach((name) => set.add(name));
+    }
+
+    set.add("GEOMEAN");
+    set.add("GEOMEAN-SPEC06INT");
+    set.add("GEOMEAN-SPEC06FP");
+
+    availableBenchmarks.value = Array.from(set).sort();
+    syncSelection();
+    persist();
+  } finally {
+    finishLoading();
   }
-
-  const set = new Set<string>();
-  for (const run of filteredRuns.value) {
-    const payload = runDataByHash.value[run.hash];
-    if (!payload) continue;
-    Object.keys(payload).forEach((name) => set.add(name));
-  }
-
-  set.add("GEOMEAN");
-  set.add("GEOMEAN-SPEC06INT");
-  set.add("GEOMEAN-SPEC06FP");
-
-  availableBenchmarks.value = Array.from(set).sort();
-  syncSelection();
-  persist();
 }
 
 async function loadCurrentTabData() {
@@ -204,11 +232,13 @@ async function loadCurrentTabData() {
   runDataByHash.value = {};
 
   try {
+    setLoading(`${activeTab.value.datasetRoot}/branch.json`);
     branches.value = await loadBranchList(activeTab.value);
     if (!branches.value.includes(selectedBranch.value)) {
       selectedBranch.value = branches.value[0] || "";
     }
 
+    setLoading(`${activeTab.value.datasetRoot}/${selectedBranch.value}/data.json`);
     allRuns.value = await loadRunIndex(activeTab.value, selectedBranch.value);
     if (quickRangeDays.value) {
       setLastDays(quickRangeDays.value, false);
@@ -225,6 +255,8 @@ async function loadCurrentTabData() {
     filteredRuns.value = [];
     availableBenchmarks.value = [];
     selectedBenchmarks.value = [];
+  } finally {
+    finishLoading();
   }
 }
 
