@@ -150,10 +150,19 @@ export function renderMetricChart(args: {
   runs: NormalizedRun[];
   selectedBenchmarks: string[];
   runDataByHash: Record<string, ReportPayload>;
+  geomeanMissing: Record<number, Record<string, string[]>>;
   t: (key: string) => string;
 }): Chart | null {
-  const { canvas, chart, tab, runs, selectedBenchmarks, runDataByHash, t } =
-    args;
+  const {
+    canvas,
+    chart,
+    tab,
+    runs,
+    selectedBenchmarks,
+    runDataByHash,
+    geomeanMissing,
+    t,
+  } = args;
 
   if (chart) {
     chart.destroy();
@@ -168,6 +177,7 @@ export function renderMetricChart(args: {
   );
   const isSinglePoint = labels.length === 1;
   const metricLabel = tab.metricKey === "ipc" ? "IPC" : "Score";
+
   const datasets: ChartDataset<"line">[] = selectedBenchmarks.map(
     (name, idx) => {
       const color = colorForIndex(idx);
@@ -238,10 +248,20 @@ export function renderMetricChart(args: {
             afterLabel: (item) => {
               const run = runs[item.dataIndex];
               if (!run) return [];
-              return [
+              const lines = [
                 `${t("runId")}: ${run.runId}`,
                 `${t("date")}: ${formatDisplayDate(run.dateMs)}`,
               ];
+
+              const geomeanName = item.dataset?.label;
+              const missing =
+                geomeanMissing?.[item.dataIndex]?.[geomeanName ?? ""];
+              if (Array.isArray(missing) && missing.length) {
+                lines.push(
+                  t("geomeanMissingWarning").replace("{0}", missing.join(", ")),
+                );
+              }
+              return lines;
             },
           },
         },

@@ -85,6 +85,7 @@
         :selected-benchmarks="selectedBenchmarks"
         :run-data-by-hash="runDataByHash"
         :no-data-text="chartEmptyText"
+        :geomean-missing="geomeanMissing"
         :t="t"
       />
     </main>
@@ -104,6 +105,7 @@ import {
   selectDefault,
   selectPrefix,
   toggleSelection,
+  isPrefixed,
 } from "./composables/useBenchmarkSelection";
 import {
   formatInputDate,
@@ -146,6 +148,8 @@ const errorText = ref("");
 const isHydrating = ref(true);
 const isLoading = ref(false);
 const loadingPath = ref("");
+
+const geomeanMissing = ref<Record<number, Record<string, string[]>>>({});
 
 const chartEmptyText = computed(() => {
   if (isLoading.value) {
@@ -224,6 +228,40 @@ async function refreshRuns() {
     set.add("GEOMEAN-SPEC06FP");
 
     availableBenchmarks.value = Array.from(set).sort();
+
+    // Calculate geomeanMissing after availableBenchmarks is set
+    const geomean: Record<number, Record<string, string[]>> = {};
+    filteredRuns.value.forEach((run, runIdx) => {
+      const payload = runDataByHash.value[run.hash];
+      ["GEOMEAN", "GEOMEAN-SPEC06INT", "GEOMEAN-SPEC06FP"].forEach((name) => {
+        let scopeTestcases = availableBenchmarks.value.filter(
+          (n) => !n.startsWith("GEOMEAN"),
+        );
+        if (name === "GEOMEAN-SPEC06INT") {
+          scopeTestcases = scopeTestcases.filter((n) =>
+            isPrefixed(n, "SPEC06INT"),
+          );
+        } else if (name === "GEOMEAN-SPEC06FP") {
+          scopeTestcases = scopeTestcases.filter((n) =>
+            isPrefixed(n, "SPEC06FP"),
+          );
+        }
+        const missing = scopeTestcases.filter((tc) => {
+          if (!payload) return true;
+          if (!Object.prototype.hasOwnProperty.call(payload, tc)) return true;
+          const entry = payload?.[tc];
+          const metricValue = entry?.[activeTab.value.metricKey];
+          if (typeof metricValue !== "number" || metricValue <= 0) return true;
+          return false;
+        });
+        if (missing.length) {
+          if (!geomean[runIdx]) geomean[runIdx] = {};
+          geomean[runIdx][name] = missing;
+        }
+      });
+    });
+    geomeanMissing.value = geomean;
+
     syncSelection();
     persist();
   } finally {

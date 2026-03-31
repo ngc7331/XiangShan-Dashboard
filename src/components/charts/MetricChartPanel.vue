@@ -22,6 +22,7 @@ const props = defineProps<{
   selectedBenchmarks: string[];
   runDataByHash: Record<string, ReportPayload>;
   noDataText: string;
+  geomeanMissing: Record<number, Record<string, string[]>>;
   t: (key: string) => string;
 }>();
 
@@ -40,6 +41,7 @@ function redraw() {
     runs: props.runs,
     selectedBenchmarks: props.selectedBenchmarks,
     runDataByHash: props.runDataByHash,
+    geomeanMissing: props.geomeanMissing,
     t: props.t,
   });
 }
@@ -51,6 +53,7 @@ watch(
     props.runs,
     props.selectedBenchmarks,
     props.runDataByHash,
+    props.geomeanMissing,
   ],
   redraw,
   { deep: true },

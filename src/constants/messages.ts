@@ -24,6 +24,8 @@ export const MESSAGES: Record<Locale, Record<string, string>> = {
     noData: "No data in selected range",
     tabsTest: "EMU Performance Test",
     tabsNightly: "Nightly Regression",
+    geomeanMissingWarning:
+      "⚠️ Some testcases are missing for GEOMEAN ({0}), result may be biased.",
   },
   zh: {
     filtersTitle: "范围筛选",
@@ -48,5 +50,7 @@ export const MESSAGES: Record<Locale, Record<string, string>> = {
     noData: "当前筛选范围内无数据",
     tabsTest: "EMU Performance Test",
     tabsNightly: "Nightly Regression",
+    geomeanMissingWarning:
+      "⚠️ GEOMEAN 缺失部分 testcase（{0}），结果可能有偏差。",
   },
 };
