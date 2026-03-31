@@ -1,5 +1,15 @@
 {
   "data": {
+    "23735520999": {
+      "hash": "8bec7f346f4bf4f791a604a0aec6ed58cb2d4f17",
+      "title": "fix(trigger): Prioritize debug-mode trigger actions",
+      "date": 1774859649
+    },
+    "23734903458": {
+      "hash": "2d42d92d9d23a302d4809dbee294d0545574a9b7",
+      "title": "fix(debug): Hold dpc on critical-error debug reentry (#5730)",
+      "date": 1774858721
+    },
     "23477871088": {
       "hash": "4cf4a6961dd2885a40e18c57d0dc3671573d7eb0",
       "title": "fix(xspdb): fix docs typo",
