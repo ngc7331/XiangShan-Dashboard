@@ -1,5 +1,25 @@
 {
   "data": {
+    "23782149168": {
+      "hash": "89261767d3f8d6d358c9b9411d833f0e09607496",
+      "title": "timing(StoreQueue): optimize timing path of StoreQueue (#5698)",
+      "date": 1774906389
+    },
+    "23738125899": {
+      "hash": "27812a988bdc2ae80b12281071683b3a8f9738ec",
+      "title": "ci(emu): migrate to new label system & version bump (#5703)",
+      "date": 1774834710
+    },
+    "23737366085": {
+      "hash": "e3b045a1cad6d681ef63e19a955a029f76ef9bfb",
+      "title": "fix(frontend,perf): bump utility & use XSPerfSeqAccumulate (#5740)",
+      "date": 1774833616
+    },
+    "23735758654": {
+      "hash": "b421acb412966cace9bd15216cef90b1763e5bd9",
+      "title": "fix(Configs): add IntRegCacheSize to 24 to support 6 alu (#5613)",
+      "date": 1774831207
+    },
     "23735520999": {
       "hash": "8bec7f346f4bf4f791a604a0aec6ed58cb2d4f17",
       "title": "fix(trigger): Prioritize debug-mode trigger actions",
