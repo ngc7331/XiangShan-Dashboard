@@ -36,7 +36,7 @@ def get_artifacts(
     return artifacts
 
 
-def update_test(gh: GitHub, args: argparse.Namespace) -> None:
+def update_test_gh(gh: GitHub, args: argparse.Namespace) -> None:
     """Update data for the Performance Test workflow"""
     workflow = "EMU Performance Test"
     data_path = DATA_PATH / "test" / args.branch
@@ -152,7 +152,77 @@ def update_test(gh: GitHub, args: argparse.Namespace) -> None:
     data.to_json(data_path / "data.json")
 
 
-def update_nightly(gh: GitHub, args: argparse.Namespace) -> None:
+def update_test_local(gh: GitHub, args: argparse.Namespace) -> None:
+    """Update data for the Performance Test workflow from local files"""
+    workflow = "EMU Performance Test"
+    data_path = DATA_PATH / "test" / args.branch
+
+    data = DataJson.from_json(data_path / "data.json")
+
+    local_path: Path = args.local
+    commit_sha = input("Please input the commit hash for this data: ")
+
+    commit = gh.commits.get_commit(OWNER, REPO, commit_sha)
+
+    runs = gh.actions.list_workflow_runs(
+        OWNER,
+        REPO,
+        event="push",
+        status="completed",
+        head_sha=commit_sha,
+    )["workflow_runs"]
+
+    runs = list(filter(lambda x: x["name"] == workflow, runs))
+
+    if not runs:
+        logging.info("No success workflow run found for this commit, try manually inputting the workflow run id")
+        run_id = input("Please input the workflow run id for this data, enter to abort: ")
+        if not run_id:
+            logging.info("No workflow run id provided, abort")
+            return
+        run_id = int(run_id)
+    else:
+        if len(runs) > 1:
+            logging.warning(
+                "Multiple workflow runs found (%s), using the first one",
+                str(map(lambda x: x["id"], runs)),
+            )
+        run_id = runs[0]["id"]
+
+    report = ReportTestJson()
+
+    for file in local_path.iterdir():
+        if file.is_file() and file.name.startswith("ipc-"):
+            logging.info("  -> Processing %s ...", file.name)
+            testcase = file.name[len("ipc-") :]
+            with open(file, "r", encoding="utf-8") as f:
+                ipc = float(f.read().strip())
+                report.append(testcase, ipc)
+
+    report.to_json(data_path / f"{commit_sha}.json")
+    data.append(
+        run_id,
+        commit_sha,
+        commit["commit"]["message"].splitlines()[0],
+        int(
+            time.mktime(
+                time.strptime(
+                    commit["commit"]["committer"]["date"], "%Y-%m-%dT%H:%M:%SZ"
+                )
+            )
+        ),
+    )
+    data.to_json(data_path / "data.json")
+
+def update_test(gh: GitHub, args: argparse.Namespace) -> None:
+    """Update data for the Performance Test workflow"""
+    if args.local:
+        update_test_local(gh, args)
+    else:
+        update_test_gh(gh, args)
+
+
+def update_nightly_gh(gh: GitHub, args: argparse.Namespace) -> None:
     """Update data for the Nightly Regression workflow"""
     workflow = "Nightly Regression"
     data_path = DATA_PATH / "nightly" / args.branch
@@ -254,12 +324,27 @@ def update_nightly(gh: GitHub, args: argparse.Namespace) -> None:
     data.to_json(data_path / "data.json")
 
 
+def update_nightly_local(gh: GitHub, args: argparse.Namespace) -> None:
+    """Update data for the Nightly Regression workflow from local files"""
+    raise NotImplementedError(
+        "Local update for nightly workflow is not implemented yet"
+    )
+
+
+def update_nightly(gh: GitHub, args: argparse.Namespace) -> None:
+    """Update data for the Nightly Regression workflow"""
+    if args.local:
+        update_nightly_local(gh, args)
+    else:
+        update_nightly_gh(gh, args)
+
+
 def main():
     """Main function"""
     parser = argparse.ArgumentParser(
         description="Update data from OpenXiangShan/XiangShan"
     )
-    parser.add_argument("--token", help="GitHub personal access token")
+    parser.add_argument("--token", help="GitHub personal access token", required=True)
     parser.add_argument(
         "--logging-level",
         help="Logging level",
@@ -276,14 +361,40 @@ def main():
         help="Branch to check for commits",
         default="kunminghu-v3",
     )
+    parser.add_argument(
+        "--target",
+        help="Target workflow to update [test/nightly]",
+        nargs="+",
+        choices=["test", "nightly"],
+        default=["test", "nightly"],
+    )
+    parser.add_argument(
+        "--local",
+        help="Path to local data dir, if specified, will update data from local files",
+        type=Path,
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=getattr(logging, args.logging_level))
 
     gh = GitHub(args.token)
 
-    update_test(gh, args)
-    update_nightly(gh, args)
+    if args.local:
+        logging.info("Updating data from local files in %s", args.local)
+        if len(args.target) != 1:
+            raise ValueError(
+                "When --local is specified, only one target can be updated"
+            )
+        if not args.local.is_dir():
+            raise ValueError(f"Invalid local data dir: {args.local}")
+    else:
+        logging.info("Updating data from GitHub Artifacts")
+
+    if "test" in args.target:
+        update_test(gh, args)
+
+    if "nightly" in args.target:
+        update_nightly(gh, args)
 
 
 if __name__ == "__main__":
