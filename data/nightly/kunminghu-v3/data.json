@@ -1,5 +1,10 @@
 {
   "data": {
+    "23806687739": {
+      "hash": "64422f305929e8c173fe7c05f917ed1374a1eb4c",
+      "title": "chore(xiangshan.py): cache numa_info",
+      "date": 1774943330
+    },
     "23754161417": {
       "hash": "e1f729be0342684c34f54676c78996862f9c7247",
       "title": "ci(nightly): do not create link if current exists (#5731)",
