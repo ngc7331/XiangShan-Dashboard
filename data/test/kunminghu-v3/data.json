@@ -1,5 +1,25 @@
 {
   "data": {
+    "23844494923": {
+      "hash": "44e03594ff77d0db91daf42d9bb4642476e1f23f",
+      "title": "fix(storeQueue): fix bug of `pbmt` & `hsv_*` access device region (#5751)",
+      "date": 1775039882
+    },
+    "23836457391": {
+      "hash": "370baa57d48b8cf164d031c8a23abb8ed60e4ee1",
+      "title": "fix(bpu): fix the statistical error in counter train_stall (#5734)",
+      "date": 1775027205
+    },
+    "23836312991": {
+      "hash": "0eecf930e4ef6b2d52944f0288c523d6a5c5f26e",
+      "title": "feat(sc): use a more precise sumAboveThre (#5716)",
+      "date": 1775026945
+    },
+    "23833390729": {
+      "hash": "99c1d34a64b8639e2e247c2003ea217961c3ec04",
+      "title": "fix(storeQueue): fix deqPtr move early (#5748)",
+      "date": 1775021038
+    },
     "23786425850": {
       "hash": "64422f305929e8c173fe7c05f917ed1374a1eb4c",
       "title": "chore(xiangshan.py): cache numa_info",
