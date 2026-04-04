@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import type { Chart } from "chart.js";
 import type { DashboardTabConfig } from "../../config/tabs";
 import type { NormalizedRun, ReportPayload } from "../../types/data";
@@ -28,12 +28,27 @@ const props = defineProps<{
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 let chart: Chart | null = null;
+let renderGeneration = 0;
 
-const hasData = ref(false);
+const hasData = computed(
+  () => props.runs.length > 0 && props.selectedBenchmarks.length > 0,
+);
 
-function redraw() {
-  hasData.value = props.runs.length > 0 && props.selectedBenchmarks.length > 0;
-  if (!canvasRef.value) return;
+async function redraw() {
+  const currentGeneration = ++renderGeneration;
+
+  if (!hasData.value) {
+    if (chart) {
+      chart.destroy();
+      chart = null;
+    }
+    return;
+  }
+
+  await nextTick();
+  if (currentGeneration !== renderGeneration) return;
+  if (!hasData.value || !canvasRef.value) return;
+
   chart = renderMetricChart({
     canvas: canvasRef.value,
     chart,
@@ -60,7 +75,9 @@ watch(
 );
 
 onBeforeUnmount(() => {
+  renderGeneration += 1;
   if (chart) chart.destroy();
+  chart = null;
 });
 </script>
 
