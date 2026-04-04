@@ -1,0 +1,15 @@
+{
+  "data": {
+    "23934363238": {
+      "hash": "33995fbb9fe12cd13450bd8c58ef586311ae8b99",
+      "title": "fix(utils): fix one hot check condition (#5726)",
+      "date": 1775097076
+    },
+    "23631797661": {
+      "hash": "87d03b2cc066980ce7133f4ccbe3030bdf0e6236",
+      "title": "misc(CODEOWNERS): modify CODEOWNERS for frontend (#5717)",
+      "date": 1774331412
+    }
+  },
+  "version": 1
+}
