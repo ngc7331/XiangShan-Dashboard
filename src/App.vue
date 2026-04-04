@@ -47,11 +47,11 @@
         :selected-branch="selectedBranch"
         :start-date-str="startDateStr"
         :end-date-str="endDateStr"
-        :active-quick-days="quickRangeDays"
+        :active-quick-preset="quickRangePreset"
         @branch-change="onBranchChange"
         @start-date-change="onStartDateChange"
         @end-date-change="onEndDateChange"
-        @set-last-days="setLastDays"
+        @set-quick-preset="setQuickPreset"
       />
 
       <BenchmarkSelector
@@ -101,6 +101,7 @@ import MetricChartPanel from "./components/charts/MetricChartPanel.vue";
 import { DASHBOARD_TABS } from "./config/tabs";
 import { useLocale } from "./composables/useLocale";
 import { useDashboardSettings } from "./composables/useDashboardSettings";
+import type { QuickRangePreset } from "./composables/useDashboardSettings";
 import {
   selectDefault,
   selectPrefix,
@@ -117,7 +118,7 @@ import {
 import type { NormalizedRun, ReportPayload } from "./types/data";
 
 const dayMs = 24 * 60 * 60 * 1000;
-const defaultQuickRangeDays = 7;
+const defaultQuickRangePreset: QuickRangePreset = "last7days";
 const tabs = DASHBOARD_TABS;
 
 const { t } = useLocale();
@@ -136,7 +137,9 @@ const branches = ref<string[]>([]);
 const selectedBranch = ref(settings.selectedBranch || "");
 const startDateStr = ref(settings.startDateStr || "");
 const endDateStr = ref(settings.endDateStr || "");
-const quickRangeDays = ref<number | null>(settings.quickRangeDays ?? null);
+const quickRangePreset = ref<QuickRangePreset | null>(
+  settings.quickRangePreset ?? null,
+);
 
 const allRuns = ref<NormalizedRun[]>([]);
 const filteredRuns = ref<NormalizedRun[]>([]);
@@ -175,7 +178,7 @@ function persist() {
   settings.selectedBranch = selectedBranch.value;
   settings.startDateStr = startDateStr.value;
   settings.endDateStr = endDateStr.value;
-  settings.quickRangeDays = quickRangeDays.value;
+  settings.quickRangePreset = quickRangePreset.value;
   settings.selectedBenchmarks = selectedBenchmarks.value;
   saveSettings();
 }
@@ -191,16 +194,26 @@ function syncSelection() {
 }
 
 async function refreshRuns() {
-  if (!startDateStr.value || !endDateStr.value) return;
+  if (
+    quickRangePreset.value !== "latest10" &&
+    (!startDateStr.value || !endDateStr.value)
+  ) {
+    return;
+  }
+
   setLoading();
   try {
-    const { startMs, endMs } = getDateRange(
-      startDateStr.value,
-      endDateStr.value,
-    );
-    filteredRuns.value = allRuns.value.filter(
-      (run) => run.dateMs >= startMs && run.dateMs <= endMs,
-    );
+    if (quickRangePreset.value === "latest10") {
+      filteredRuns.value = allRuns.value.slice(-10);
+    } else {
+      const { startMs, endMs } = getDateRange(
+        startDateStr.value,
+        endDateStr.value,
+      );
+      filteredRuns.value = allRuns.value.filter(
+        (run) => run.dateMs >= startMs && run.dateMs <= endMs,
+      );
+    }
 
     const needed = filteredRuns.value.filter(
       (run) => !runDataByHash.value[run.hash],
@@ -284,10 +297,12 @@ async function loadCurrentTabData() {
       `${activeTab.value.datasetRoot}/${selectedBranch.value}/data.json`,
     );
     allRuns.value = await loadRunIndex(activeTab.value, selectedBranch.value);
-    if (quickRangeDays.value) {
-      setLastDays(quickRangeDays.value, false);
+    if (quickRangePreset.value === "last7days") {
+      setQuickPreset("last7days", false);
+    } else if (quickRangePreset.value === "last31days") {
+      setQuickPreset("last31days", false);
     } else if (!startDateStr.value || !endDateStr.value) {
-      setLastDays(defaultQuickRangeDays, false);
+      setQuickPreset(defaultQuickRangePreset, false);
     }
 
     await refreshRuns();
@@ -341,23 +356,31 @@ function onBranchChange(nextBranch: string) {
 
 function onStartDateChange(value: string) {
   startDateStr.value = value;
-  quickRangeDays.value = null;
+  quickRangePreset.value = null;
   persist();
 }
 
 function onEndDateChange(value: string) {
   endDateStr.value = value;
-  quickRangeDays.value = null;
+  quickRangePreset.value = null;
   persist();
 }
 
-function setLastDays(days: number, shouldPersist = true) {
+function setQuickPreset(preset: QuickRangePreset, shouldPersist = true) {
+  quickRangePreset.value = preset;
+  if (preset === "latest10") {
+    if (shouldPersist) {
+      persist();
+    }
+    return;
+  }
+
+  const days = preset === "last31days" ? 31 : 7;
   const end = new Date();
   end.setHours(23, 59, 59, 999);
   const start = new Date(end.getTime() - (days - 1) * dayMs);
   startDateStr.value = formatInputDate(start);
   endDateStr.value = formatInputDate(end);
-  quickRangeDays.value = days;
   if (shouldPersist) {
     persist();
   }
@@ -373,7 +396,13 @@ watch(selectedTabId, async () => {
 
 watch([selectedBranch, startDateStr, endDateStr], async () => {
   if (isHydrating.value) return;
-  if (!selectedBranch.value || !startDateStr.value || !endDateStr.value) return;
+  if (!selectedBranch.value) return;
+  if (
+    quickRangePreset.value !== "latest10" &&
+    (!startDateStr.value || !endDateStr.value)
+  ) {
+    return;
+  }
 
   if (!allRuns.value.length || !allRuns.value.some((run) => run.hash)) {
     return;
@@ -382,14 +411,26 @@ watch([selectedBranch, startDateStr, endDateStr], async () => {
   await refreshRuns();
 });
 
+watch(quickRangePreset, async (preset) => {
+  if (isHydrating.value) return;
+  if (!preset) return;
+  if (!selectedBranch.value) return;
+  if (!allRuns.value.length || !allRuns.value.some((run) => run.hash)) {
+    return;
+  }
+  await refreshRuns();
+});
+
 watch(selectedBranch, async () => {
   if (isHydrating.value) return;
   if (!selectedBranch.value) return;
   allRuns.value = await loadRunIndex(activeTab.value, selectedBranch.value);
-  if (quickRangeDays.value) {
-    setLastDays(quickRangeDays.value, false);
-  } else {
-    setLastDays(defaultQuickRangeDays, false);
+  if (quickRangePreset.value === "last7days") {
+    setQuickPreset("last7days", false);
+  } else if (quickRangePreset.value === "last31days") {
+    setQuickPreset("last31days", false);
+  } else if (!quickRangePreset.value) {
+    setQuickPreset(defaultQuickRangePreset, false);
   }
   runDataByHash.value = {};
   await refreshRuns();
@@ -403,7 +444,7 @@ onMounted(async () => {
     selectedBranch.value = settings.selectedBranch || "";
     startDateStr.value = settings.startDateStr || "";
     endDateStr.value = settings.endDateStr || "";
-    quickRangeDays.value = settings.quickRangeDays ?? null;
+    quickRangePreset.value = settings.quickRangePreset ?? null;
     selectedBenchmarks.value = settings.selectedBenchmarks || [];
     await loadCurrentTabData();
   } finally {

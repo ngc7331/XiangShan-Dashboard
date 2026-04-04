@@ -19,6 +19,7 @@
       <label>{{ t("startDate") }}</label>
       <input
         class="control-input"
+        :class="{ 'input-inactive': activeQuickPreset === 'latest10' }"
         type="date"
         :value="startDateStr"
         @change="
@@ -30,6 +31,7 @@
       <label>{{ t("endDate") }}</label>
       <input
         class="control-input"
+        :class="{ 'input-inactive': activeQuickPreset === 'latest10' }"
         type="date"
         :value="endDateStr"
         @change="
@@ -40,39 +42,49 @@
     <div class="btn-row">
       <button
         class="btn"
-        :class="{ active: activeQuickDays === 7 }"
+        :class="{ active: activeQuickPreset === 'last7days' }"
         type="button"
-        @click="$emit('setLastDays', 7)"
+        @click="$emit('setQuickPreset', 'last7days')"
       >
         {{ t("lastWeek") }}
       </button>
       <button
         class="btn"
-        :class="{ active: activeQuickDays === 31 }"
+        :class="{ active: activeQuickPreset === 'last31days' }"
         type="button"
-        @click="$emit('setLastDays', 31)"
+        @click="$emit('setQuickPreset', 'last31days')"
       >
         {{ t("lastMonth") }}
+      </button>
+      <button
+        class="btn"
+        :class="{ active: activeQuickPreset === 'latest10' }"
+        type="button"
+        @click="$emit('setQuickPreset', 'latest10')"
+      >
+        {{ t("lastTenRuns") }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { QuickRangePreset } from "../../composables/useDashboardSettings";
+
 defineProps<{
   t: (key: string) => string;
   branches: string[];
   selectedBranch: string;
   startDateStr: string;
   endDateStr: string;
-  activeQuickDays: number | null;
+  activeQuickPreset: QuickRangePreset | null;
 }>();
 
 defineEmits<{
   (e: "branchChange", value: string): void;
   (e: "startDateChange", value: string): void;
   (e: "endDateChange", value: string): void;
-  (e: "setLastDays", days: number): void;
+  (e: "setQuickPreset", preset: QuickRangePreset): void;
 }>();
 </script>
 
@@ -144,4 +156,10 @@ defineEmits<{
   border-color: #3a7ff6;
   color: #ffffff;
 }
+
+.input-inactive {
+  opacity: 0.55;
+  border-style: dashed;
+}
+
 </style>

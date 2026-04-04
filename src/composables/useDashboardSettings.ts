@@ -1,10 +1,12 @@
 import { reactive } from "vue";
 
+export type QuickRangePreset = "last7days" | "last31days" | "latest10";
+
 export interface DashboardSettings {
   selectedBranch: string;
   startDateStr: string;
   endDateStr: string;
-  quickRangeDays: number | null;
+  quickRangePreset: QuickRangePreset | null;
   selectedBenchmarks: string[];
   selectedTabId: string;
 }
@@ -16,7 +18,7 @@ export function useDashboardSettings() {
     selectedBranch: "",
     startDateStr: "",
     endDateStr: "",
-    quickRangeDays: null,
+    quickRangePreset: null,
     selectedBenchmarks: [],
     selectedTabId: "ipc-commit",
   });
@@ -29,8 +31,22 @@ export function useDashboardSettings() {
       state.selectedBranch = data.selectedBranch || "";
       state.startDateStr = data.startDateStr || "";
       state.endDateStr = data.endDateStr || "";
-      state.quickRangeDays =
-        typeof data.quickRangeDays === "number" ? data.quickRangeDays : null;
+      if (
+        data.quickRangePreset === "last7days" ||
+        data.quickRangePreset === "last31days" ||
+        data.quickRangePreset === "latest10"
+      ) {
+        state.quickRangePreset = data.quickRangePreset;
+      } else {
+        const legacyData = data as Partial<{ quickRangeDays: number }>;
+        if (legacyData.quickRangeDays === 7) {
+          state.quickRangePreset = "last7days";
+        } else if (legacyData.quickRangeDays === 31) {
+          state.quickRangePreset = "last31days";
+        } else {
+          state.quickRangePreset = null;
+        }
+      }
       state.selectedBenchmarks = Array.isArray(data.selectedBenchmarks)
         ? data.selectedBenchmarks
         : [];
