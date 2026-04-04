@@ -83,8 +83,8 @@ class ReportTestJson(ReportJson):
                 ipc = float(f.read().decode("utf-8").strip())
             self.append(testcase, ipc)
 
-class ReportNightlyJson(ReportJson):
-    """Describe the report.json structure for Nightly Regression Workflow"""
+class ReportRegressionJson(ReportJson):
+    """Describe the report.json structure for Regression Workflow"""
     def append(self, testcase: str, score: float) -> None:
         """Append a single testcase to report"""
         self._data[testcase] = ReportJsonEntry(score=score)

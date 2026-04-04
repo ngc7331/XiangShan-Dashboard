@@ -5,10 +5,10 @@ from itertools import count
 import logging
 from pathlib import Path
 import time
-from typing import Callable
+from typing import Callable, Literal
 from zipfile import ZipFile
 
-from modules.json import DataJson, ReportTestJson, ReportNightlyJson
+from modules.json import DataJson, ReportTestJson, ReportRegressionJson
 from modules.github import GitHub
 
 OWNER = "OpenXiangShan"
@@ -222,10 +222,19 @@ def update_test(gh: GitHub, args: argparse.Namespace) -> None:
         update_test_gh(gh, args)
 
 
-def update_nightly_gh(gh: GitHub, args: argparse.Namespace) -> None:
-    """Update data for the Nightly Regression workflow"""
-    workflow = "Nightly Regression"
-    data_path = DATA_PATH / "nightly" / args.branch
+def update_regression_gh(gh: GitHub, args: argparse.Namespace, target: Literal["nightly", "weekly"]) -> None:
+    """Update data for the Regression workflow"""
+    match target:
+        case "nightly":
+            workflow = "Nightly Regression"
+        case "weekly":
+            workflow = "Performance Regression V3"
+            if args.branch != "kunminghu-v3":
+                raise ValueError("Weekly regression workflow is only run on kunminghu-v3 branch, but current branch is %s", args.branch)
+        case _:
+            raise ValueError("Invalid target (%s) for regression update", target)
+
+    data_path = DATA_PATH / target / args.branch
 
     data = DataJson.from_json(data_path / "data.json")
 
@@ -247,11 +256,6 @@ def update_nightly_gh(gh: GitHub, args: argparse.Namespace) -> None:
         for run in runs:
             logging.info("Checking workflow run %s", run["id"])
 
-            if data.exists(run["head_sha"]):
-                logging.info("  -> Already exists in dataset, finish")
-                found_existing = True
-                break
-
             if run["name"] != workflow:
                 logging.info("  -> Workflow name mismatch, skip")
                 continue
@@ -259,6 +263,11 @@ def update_nightly_gh(gh: GitHub, args: argparse.Namespace) -> None:
             if run["conclusion"] != "success":
                 logging.warning("  -> Workflow run failed, skip")
                 continue
+
+            if data.exists(run["head_sha"]):
+                logging.info("  -> Already exists in dataset, finish")
+                found_existing = True
+                break
 
             commit = gh.commits.get_commit(OWNER, REPO, run["head_sha"])
 
@@ -272,7 +281,7 @@ def update_nightly_gh(gh: GitHub, args: argparse.Namespace) -> None:
 
             logging.info("  -> Found %d artifacts", len(artifacts))
 
-            report = ReportNightlyJson()
+            report = ReportRegressionJson()
 
             for artifact in artifacts:
                 logging.info("  -> Download %s ...", artifact["name"])
@@ -324,19 +333,19 @@ def update_nightly_gh(gh: GitHub, args: argparse.Namespace) -> None:
     data.to_json(data_path / "data.json")
 
 
-def update_nightly_local(gh: GitHub, args: argparse.Namespace) -> None:
-    """Update data for the Nightly Regression workflow from local files"""
+def update_regression_local(gh: GitHub, args: argparse.Namespace, target: Literal["nightly", "weekly"]) -> None:
+    """Update data for the Regression workflow from local files"""
     raise NotImplementedError(
-        "Local update for nightly workflow is not implemented yet"
+        "Local update for regression workflow is not implemented yet"
     )
 
 
-def update_nightly(gh: GitHub, args: argparse.Namespace) -> None:
-    """Update data for the Nightly Regression workflow"""
+def update_regression(gh: GitHub, args: argparse.Namespace, target: Literal["nightly", "weekly"]) -> None:
+    """Update data for the Regression workflow"""
     if args.local:
-        update_nightly_local(gh, args)
+        update_regression_local(gh, args, target)
     else:
-        update_nightly_gh(gh, args)
+        update_regression_gh(gh, args, target)
 
 
 def main():
@@ -363,10 +372,10 @@ def main():
     )
     parser.add_argument(
         "--target",
-        help="Target workflow to update [test/nightly]",
+        help="Target workflow to update [test/nightly/weekly]",
         nargs="+",
-        choices=["test", "nightly"],
-        default=["test", "nightly"],
+        choices=["test", "nightly", "weekly"],
+        default=["test", "nightly", "weekly"],
     )
     parser.add_argument(
         "--local",
@@ -394,7 +403,10 @@ def main():
         update_test(gh, args)
 
     if "nightly" in args.target:
-        update_nightly(gh, args)
+        update_regression(gh, args, "nightly")
+
+    if "weekly" in args.target:
+        update_regression(gh, args, "weekly")
 
 
 if __name__ == "__main__":

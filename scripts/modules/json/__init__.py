@@ -1,4 +1,4 @@
 from .data import DataJsonEntry
 from .data import DataJson
 from .report import ReportJsonEntry
-from .report import ReportTestJson, ReportNightlyJson
+from .report import ReportTestJson, ReportRegressionJson
