@@ -3,7 +3,7 @@ import type { MetricKey } from "../types/data";
 export type AxisMode = "run-id" | "date";
 
 export interface DashboardTabConfig {
-  id: "ipc-commit" | "score-nightly";
+  id: "ipc-commit" | "score-nightly" | "score-weekly";
   titleKey: string;
   datasetRoot: string;
   metricKey: MetricKey;
@@ -24,6 +24,14 @@ export const DASHBOARD_TABS: DashboardTabConfig[] = [
     id: "score-nightly",
     titleKey: "tabsNightly",
     datasetRoot: "data/nightly",
+    metricKey: "score",
+    axisMode: "date",
+    supportsSpecButtons: true,
+  },
+  {
+    id: "score-weekly",
+    titleKey: "tabsWeekly",
+    datasetRoot: "data/weekly",
     metricKey: "score",
     axisMode: "date",
     supportsSpecButtons: true,
