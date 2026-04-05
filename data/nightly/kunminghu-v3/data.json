@@ -1,5 +1,10 @@
 {
   "data": {
+    "23982166921": {
+      "hash": "fb0b7e3ea72c1882af20956686346f33374d81cd",
+      "title": "Bump ready-to-run ref in Xiangshan",
+      "date": 1775207135
+    },
     "23909300798": {
       "hash": "33995fbb9fe12cd13450bd8c58ef586311ae8b99",
       "title": "fix(utils): fix one hot check condition (#5726)",
