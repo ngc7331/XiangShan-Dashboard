@@ -1,5 +1,25 @@
 {
   "data": {
+    "24231102831": {
+      "hash": "5623d8c5195c738c0f8a09dbca59db8b192e8eb2",
+      "title": "timing(bpu): use sram.resetDone instead of r.req.ready (#5735)",
+      "date": 1775804908
+    },
+    "24223858560": {
+      "hash": "1f4b947e319a42f040b73db60c18dc1e01fdbb29",
+      "title": "fix(LoadUnit): fix unalignedHead replay stuck (#5783)",
+      "date": 1775789422
+    },
+    "24223745598": {
+      "hash": "b5fe774998fd7501dfd8a041554c6da34e7e9f3d",
+      "title": "refactor(StoreQueue, storeEvent): refactor bundle of storeEvent (#5763)",
+      "date": 1775789142
+    },
+    "24223537714": {
+      "hash": "cda2207ff103a4a4f557340377d50b1e448690f0",
+      "title": "fix(Top): modify `halt` to `wfi` (#4512)",
+      "date": 1775788646
+    },
     "24184513642": {
       "hash": "75bf3fb72ab0194e2983f418d0f5abb75c543eed",
       "title": "fix(Rename): fix psrcVl bypass to use pdestVl (#5743)",
