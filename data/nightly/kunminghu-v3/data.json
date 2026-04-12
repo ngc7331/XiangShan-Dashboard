@@ -1,5 +1,10 @@
 {
   "data": {
+    "24285916525": {
+      "hash": "5623d8c5195c738c0f8a09dbca59db8b192e8eb2",
+      "title": "timing(bpu): use sram.resetDone instead of r.req.ready (#5735)",
+      "date": 1775804908
+    },
     "24200295522": {
       "hash": "75bf3fb72ab0194e2983f418d0f5abb75c543eed",
       "title": "fix(Rename): fix psrcVl bypass to use pdestVl (#5743)",
