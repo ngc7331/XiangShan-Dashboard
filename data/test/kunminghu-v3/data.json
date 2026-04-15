@@ -1,5 +1,15 @@
 {
   "data": {
+    "24390629185": {
+      "hash": "1e64239649566a1217ea26efad20ace05771cb11",
+      "title": "feat(sc): fix the bug in the bw table and open the bw table (#5796)",
+      "date": 1776157622
+    },
+    "24383438686": {
+      "hash": "03a88d3ac12ed3f9b22040fa5fe6a3ecca956ddf",
+      "title": "fix(StoreQueue): fix storeDataReadyPtr/storeAddrReadyPtr when redirect",
+      "date": 1776146176
+    },
     "24324050331": {
       "hash": "0b6988149d9165f48d5e7e608df52b007766e834",
       "title": "fix(uras): correct S1-level RAS stack top address during override (#5680)",
