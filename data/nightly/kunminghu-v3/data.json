@@ -1,5 +1,10 @@
 {
   "data": {
+    "24520733032": {
+      "hash": "903b531f0a09b5b20159b79f3fd90c02c0a5cfd4",
+      "title": "feat(DCache, CoupledL2): add PC field for L2 NextLine prefetcher (#5793)",
+      "date": 1776333023
+    },
     "24464415291": {
       "hash": "1e9baaf8039ca75789fe3081b9a70dbbad9de703",
       "title": "fix(topdown): fix backend other core and topdown script",
