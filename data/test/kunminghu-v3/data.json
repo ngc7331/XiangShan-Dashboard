@@ -1,5 +1,10 @@
 {
   "data": {
+    "24709544569": {
+      "hash": "001f69e97d07b252e716dd4dda6091eb2345f2b1",
+      "title": "ci(emu): disable lightSSS for gsim jobs (#5822)",
+      "date": 1776756103
+    },
     "24645983841": {
       "hash": "556be598120db8e86b3a3e9f7fe6346e0e2127d4",
       "title": "fix(StoreQueue): fix OverlapMask for cross16B forward (#5814)",
