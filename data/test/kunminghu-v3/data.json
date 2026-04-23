@@ -1,5 +1,20 @@
 {
   "data": {
+    "24764835875": {
+      "hash": "7a3e976da3c3a13fa612cea352b4a18750a50ce8",
+      "title": "power(tage): separate tage write ctr and write useful (#5782)",
+      "date": 1776841122
+    },
+    "24764655383": {
+      "hash": "bb6399d3f66e79c42822615504c69e2f8a981c03",
+      "title": "timing(bpu): fix bpu s3 timing (#5797)",
+      "date": 1776840818
+    },
+    "24757195046": {
+      "hash": "b6ee14a3d5a231722c6c7829851f2e848beeba51",
+      "title": "area(sc): SC train data changed from meta to re-read (#5819)",
+      "date": 1776825261
+    },
     "24709544569": {
       "hash": "001f69e97d07b252e716dd4dda6091eb2345f2b1",
       "title": "ci(emu): disable lightSSS for gsim jobs (#5822)",
