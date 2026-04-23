@@ -1,5 +1,15 @@
 {
   "data": {
+    "24788509186": {
+      "hash": "7a3e976da3c3a13fa612cea352b4a18750a50ce8",
+      "title": "power(tage): separate tage write ctr and write useful (#5782)",
+      "date": 1776841122
+    },
+    "24732598723": {
+      "hash": "001f69e97d07b252e716dd4dda6091eb2345f2b1",
+      "title": "ci(emu): disable lightSSS for gsim jobs (#5822)",
+      "date": 1776756103
+    },
     "24608220923": {
       "hash": "00ab5f07350dbb36fa2cac9a1aabc1c48178a010",
       "title": "feat(csr): add CSR CSV export and inline field docs (#5820)",
