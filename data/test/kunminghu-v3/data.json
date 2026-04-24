@@ -1,5 +1,25 @@
 {
   "data": {
+    "24830339668": {
+      "hash": "dfa282df84da13867cfa2ec27d3faddcb65af9b6",
+      "title": "timing(sc): move the computation of totalSum and sumAboveThre to s1 (#5843)",
+      "date": 1776940253
+    },
+    "24830276867": {
+      "hash": "c78f1ce8dbb78cc131f82a850405f86f3c3d8731",
+      "title": "timing(ftq): add an additional cycle in redirect",
+      "date": 1776940163
+    },
+    "24819968483": {
+      "hash": "d06d68e79f7bd98e7b24aaf64dff26ff4b10f7b7",
+      "title": "fix(StoreUnit): add accessType to StoreUnit and fix bugs",
+      "date": 1776924809
+    },
+    "24812567745": {
+      "hash": "6f49d19e2bc580494f9142822d91db389909aa07",
+      "title": "fix(csr): fix indirect csr RegOut (#5833)",
+      "date": 1776909596
+    },
     "24764835875": {
       "hash": "7a3e976da3c3a13fa612cea352b4a18750a50ce8",
       "title": "power(tage): separate tage write ctr and write useful (#5782)",
