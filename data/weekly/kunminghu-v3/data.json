@@ -1,5 +1,10 @@
 {
   "data": {
+    "24873331705": {
+      "hash": "82d2669b231178175f34a56923f33743771d0787",
+      "title": "chore: update issue template (#5853)",
+      "date": 1776942343
+    },
     "24548740155": {
       "hash": "903b531f0a09b5b20159b79f3fd90c02c0a5cfd4",
       "title": "feat(DCache, CoupledL2): add PC field for L2 NextLine prefetcher (#5793)",
