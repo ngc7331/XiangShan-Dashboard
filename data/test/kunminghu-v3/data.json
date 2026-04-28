@@ -1,5 +1,20 @@
 {
   "data": {
+    "24983897735": {
+      "hash": "7f1a8e7dceb02eb2fba1c280f489051fd3b94f05",
+      "title": "fix(Bitmap): cfs indexed with wrong truncated PPN in L2TLB (#5858)",
+      "date": 1777277490
+    },
+    "24981281393": {
+      "hash": "187b74c9519773035527552f1600ecd3c6e1ecec",
+      "title": "feat(dispatch): add switch to disable dispatch balance opt (#5815)",
+      "date": 1777273521
+    },
+    "24980952047": {
+      "hash": "ba32a80e3dfb2b52c1bd6c7e5d68164cf1dd3c81",
+      "title": "submodule(difftest): bump difftest for kmh-v3 (#5826)",
+      "date": 1777272992
+    },
     "24880135624": {
       "hash": "b8ff9a271d5c6794083ded7c1954e29e670e8986",
       "title": "refactor(frontend): drop unused wrbypass (#5821)",
