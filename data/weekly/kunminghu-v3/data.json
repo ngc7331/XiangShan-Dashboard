@@ -1,5 +1,10 @@
 {
   "data": {
+    "25203552668": {
+      "hash": "4bfb226bfaaaf2114a97a1cd3e439c660296f52b",
+      "title": "area(tage): use SRAM to store usefulCtr (#5852)",
+      "date": 1777536343
+    },
     "24873331705": {
       "hash": "82d2669b231178175f34a56923f33743771d0787",
       "title": "chore: update issue template (#5853)",
