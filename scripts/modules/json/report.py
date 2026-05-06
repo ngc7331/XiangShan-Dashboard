@@ -105,7 +105,7 @@ class ReportRegressionJson(ReportJson):
     def append_artifact_zip(self, artifact_zip: ZipFile) -> None:
         """Append multiple testcase from a artifact zip file"""
         for name in artifact_zip.namelist():
-            if name != "score.txt":
+            if not (name.startswith("score") and name.endswith(".txt")):
                 continue
             with artifact_zip.open(name) as f:
                 txt = f.read().decode("utf-8").strip()

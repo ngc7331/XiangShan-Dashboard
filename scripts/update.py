@@ -299,7 +299,12 @@ def update_regression_gh(gh: GitHub, args: argparse.Namespace, target: Literal["
                 elif isinstance(artifact_body, ZipFile):
                     logging.debug("    -> is a zipfile")
                     extra = list(
-                        filter(lambda x: not x == "score.txt", artifact_body.namelist())
+                        filter(
+                            lambda x: not (
+                                x.startswith("score") and x.endswith(".txt")
+                            ),
+                            artifact_body.namelist(),
+                        )
                     )
                     if extra:
                         logging.warning(
