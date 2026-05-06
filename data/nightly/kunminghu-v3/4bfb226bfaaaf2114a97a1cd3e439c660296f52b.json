@@ -1,89 +1,89 @@
 {
   "400.perlbench": {
-    "score": 16.144
+    "score": 19.418
   },
   "401.bzip2": {
-    "score": 9.148
+    "score": 10.151
   },
   "403.gcc": {
-    "score": 18.381
+    "score": 19.017
   },
   "429.mcf": {
-    "score": 20.331
+    "score": 16.6
   },
   "445.gobmk": {
-    "score": 12.987
+    "score": 13.222
   },
   "456.hmmer": {
-    "score": 18.128
+    "score": 18.124
   },
   "458.sjeng": {
-    "score": 12.957
+    "score": 13.065
   },
   "462.libquantum": {
-    "score": 45.58
+    "score": 46.419
   },
   "464.h264ref": {
-    "score": 21.148
+    "score": 23.12
   },
   "471.omnetpp": {
-    "score": 13.783
+    "score": 13.721
   },
   "473.astar": {
-    "score": 10.146
+    "score": 16.594
   },
   "483.xalancbmk": {
-    "score": 25.253
+    "score": 23.979
   },
   "410.bwaves": {
-    "score": 28.437
+    "score": 28.949
   },
   "416.gamess": {
-    "score": 19.019
+    "score": 18.953
   },
   "433.milc": {
-    "score": 21.58
+    "score": 31.886
   },
   "434.zeusmp": {
-    "score": 23.795
+    "score": 24.059
   },
   "435.gromacs": {
-    "score": 12.405
+    "score": 12.637
   },
   "436.cactusADM": {
-    "score": 25.339
+    "score": 25.479
   },
   "437.leslie3d": {
-    "score": 18.763
+    "score": 20.925
   },
   "444.namd": {
-    "score": 14.396
+    "score": 14.645
   },
   "447.dealII": {
-    "score": 21.41
+    "score": 15.665
   },
   "450.soplex": {
-    "score": 17.376
+    "score": 17.324
   },
   "453.povray": {
-    "score": 24.448
+    "score": 23.758
   },
   "454.Calculix": {
-    "score": 14.602
+    "score": 18.615
   },
   "459.GemsFDTD": {
-    "score": 21.183
+    "score": 28.243
   },
   "465.tonto": {
-    "score": 17.523
+    "score": 17.083
   },
   "470.lbm": {
-    "score": 41.92
+    "score": 42.935
   },
   "481.wrf": {
-    "score": 18.314
+    "score": 15.842
   },
   "482.sphinx3": {
-    "score": 19.794
+    "score": 19.633
   }
 }
