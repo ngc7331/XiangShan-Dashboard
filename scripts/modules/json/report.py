@@ -53,9 +53,7 @@ class ReportJson:
         path.parent.mkdir(parents=True, exist_ok=True)
         serialized = {
             testcase: {
-                key: value
-                for key, value in asdict(entry).items()
-                if value is not None
+                key: value for key, value in asdict(entry).items() if value is not None
             }
             for testcase, entry in self._data.items()
         }
@@ -67,8 +65,10 @@ class ReportJson:
                 separators=(",", ": "),
             )
 
+
 class ReportTestJson(ReportJson):
     """Describe the report.json structure for Performance Test workflow"""
+
     def append(self, testcase: str, ipc: float) -> None:
         """Append a single testcase to report"""
         self._data[testcase] = ReportJsonEntry(ipc=ipc)
@@ -83,8 +83,10 @@ class ReportTestJson(ReportJson):
                 ipc = float(f.read().decode("utf-8").strip())
             self.append(testcase, ipc)
 
+
 class ReportRegressionJson(ReportJson):
     """Describe the report.json structure for Regression Workflow"""
+
     def append(self, testcase: str, score: float) -> None:
         """Append a single testcase to report"""
         self._data[testcase] = ReportJsonEntry(score=score)

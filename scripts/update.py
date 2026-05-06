@@ -175,8 +175,12 @@ def update_test_local(gh: GitHub, args: argparse.Namespace) -> None:
     runs = list(filter(lambda x: x["name"] == workflow, runs))
 
     if not runs:
-        logging.info("No success workflow run found for this commit, try manually inputting the workflow run id")
-        run_id = input("Please input the workflow run id for this data, enter to abort: ")
+        logging.info(
+            "No success workflow run found for this commit, try manually inputting the workflow run id"
+        )
+        run_id = input(
+            "Please input the workflow run id for this data, enter to abort: "
+        )
         if not run_id:
             logging.info("No workflow run id provided, abort")
             return
@@ -214,6 +218,7 @@ def update_test_local(gh: GitHub, args: argparse.Namespace) -> None:
     )
     data.to_json(data_path / "data.json")
 
+
 def update_test(gh: GitHub, args: argparse.Namespace) -> None:
     """Update data for the Performance Test workflow"""
     if args.local:
@@ -222,7 +227,9 @@ def update_test(gh: GitHub, args: argparse.Namespace) -> None:
         update_test_gh(gh, args)
 
 
-def update_regression_gh(gh: GitHub, args: argparse.Namespace, target: Literal["nightly", "weekly"]) -> None:
+def update_regression_gh(
+    gh: GitHub, args: argparse.Namespace, target: Literal["nightly", "weekly"]
+) -> None:
     """Update data for the Regression workflow"""
     match target:
         case "nightly":
@@ -230,7 +237,10 @@ def update_regression_gh(gh: GitHub, args: argparse.Namespace, target: Literal["
         case "weekly":
             workflow = "Performance Regression V3"
             if args.branch != "kunminghu-v3":
-                raise ValueError("Weekly regression workflow is only run on kunminghu-v3 branch, but current branch is %s", args.branch)
+                raise ValueError(
+                    "Weekly regression workflow is only run on kunminghu-v3 branch, but current branch is %s",
+                    args.branch,
+                )
         case _:
             raise ValueError("Invalid target (%s) for regression update", target)
 
@@ -338,14 +348,18 @@ def update_regression_gh(gh: GitHub, args: argparse.Namespace, target: Literal["
     data.to_json(data_path / "data.json")
 
 
-def update_regression_local(gh: GitHub, args: argparse.Namespace, target: Literal["nightly", "weekly"]) -> None:
+def update_regression_local(
+    gh: GitHub, args: argparse.Namespace, target: Literal["nightly", "weekly"]
+) -> None:
     """Update data for the Regression workflow from local files"""
     raise NotImplementedError(
         "Local update for regression workflow is not implemented yet"
     )
 
 
-def update_regression(gh: GitHub, args: argparse.Namespace, target: Literal["nightly", "weekly"]) -> None:
+def update_regression(
+    gh: GitHub, args: argparse.Namespace, target: Literal["nightly", "weekly"]
+) -> None:
     """Update data for the Regression workflow"""
     if args.local:
         update_regression_local(gh, args, target)
