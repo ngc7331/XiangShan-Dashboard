@@ -1,5 +1,15 @@
 {
   "data": {
+    "25421947417": {
+      "hash": "fdc671fc2d2f7d3e3d76f07a7c53cc4fe0e8857b",
+      "title": "fix(ifu): do not defer exception signal until instruction reassembly is complete (#5874)",
+      "date": 1778052101
+    },
+    "25414135922": {
+      "hash": "cfe100e29b55b01346c64e1205fc10a393f94ff4",
+      "title": "feat(ICache): 2-prefetch (#5775)",
+      "date": 1778036499
+    },
     "25154522340": {
       "hash": "4bfb226bfaaaf2114a97a1cd3e439c660296f52b",
       "title": "area(tage): use SRAM to store usefulCtr (#5852)",
