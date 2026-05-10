@@ -1,5 +1,20 @@
 {
   "data": {
+    "25597771866": {
+      "hash": "b0b33c5872ac6e9797c6e3be7c1e6ed55fb6c894",
+      "title": "feat(utils): add correlation analysis for rolling perf counters (#5906)",
+      "date": 1778319143
+    },
+    "25594866576": {
+      "hash": "f611efb2c9b122cab78241f229c3ccf7ad408771",
+      "title": "submodule(ready-to-run):bump ready-to-run to support smcdeleg/ssccfg",
+      "date": 1778310261
+    },
+    "25594318212": {
+      "hash": "06c711d17a065a4616b0131f4542715a18239798",
+      "title": "ci: enable manual trigger release jobs (#5912)",
+      "date": 1778308664
+    },
     "25544039967": {
       "hash": "0f72de270203701e4793cbfe4c20f3c9f398c4c8",
       "title": "fix(mbtb): remove unused NumAlignBanks param (#5891)",

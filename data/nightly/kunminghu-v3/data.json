@@ -1,5 +1,10 @@
 {
   "data": {
+    "25565699840": {
+      "hash": "0f72de270203701e4793cbfe4c20f3c9f398c4c8",
+      "title": "fix(mbtb): remove unused NumAlignBanks param (#5891)",
+      "date": 1778226762
+    },
     "25508002011": {
       "hash": "f65a4e6c3f211406fb3509252dcaee30dac86dbd",
       "title": "timing(bpu): hoist MBTB attribute checks to S2 for timing (#5842)",
