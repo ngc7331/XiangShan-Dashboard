@@ -97,27 +97,14 @@ function pointStyleFor(name: string): "circle" | "triangle" | "star" | "rect" {
 function computeGeomean(
   payload: ReportPayload,
   metricKey: "ipc" | "score",
+  prefix?: keyof typeof SELECT_PREFIXES,
 ): number | null {
-  const values = Object.values(payload)
-    .map((entry) => entry?.[metricKey] ?? null)
-    .filter((v): v is number => typeof v === "number" && v > 0);
-
-  if (!values.length) return null;
-  const logSum = values.reduce((acc, v) => acc + Math.log(v), 0);
-  return Math.exp(logSum / values.length);
-}
-
-function computeScopedGeomean(
-  payload: ReportPayload,
-  metricKey: "ipc" | "score",
-  prefix: keyof typeof SELECT_PREFIXES,
-): number | null {
-  const scoped = Object.entries(payload).filter(([name]) =>
-    isPrefixed(name, prefix),
+  const filtered = Object.entries(payload).filter(([name]) =>
+    prefix ? isPrefixed(name, prefix) : !name.startsWith("legacy")
   );
-  if (!scoped.length) return null;
+  if (!filtered.length) return null;
 
-  const values = scoped
+  const values = filtered
     .map(([, entry]) => entry?.[metricKey] ?? null)
     .filter((v): v is number => typeof v === "number" && v > 0);
 
@@ -134,10 +121,10 @@ function resolveValue(
   if (!payload) return null;
   if (benchmark === "GEOMEAN") return computeGeomean(payload, metricKey);
   if (benchmark === "GEOMEAN-SPEC06INT") {
-    return computeScopedGeomean(payload, metricKey, "SPEC06INT");
+    return computeGeomean(payload, metricKey, "SPEC06INT");
   }
   if (benchmark === "GEOMEAN-SPEC06FP") {
-    return computeScopedGeomean(payload, metricKey, "SPEC06FP");
+    return computeGeomean(payload, metricKey, "SPEC06FP");
   }
   const value = payload[benchmark]?.[metricKey];
   return typeof value === "number" ? value : null;

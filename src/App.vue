@@ -248,7 +248,7 @@ async function refreshRuns() {
       const payload = runDataByHash.value[run.hash];
       ["GEOMEAN", "GEOMEAN-SPEC06INT", "GEOMEAN-SPEC06FP"].forEach((name) => {
         let scopeTestcases = availableBenchmarks.value.filter(
-          (n) => !n.startsWith("GEOMEAN"),
+          (n) => !n.startsWith("GEOMEAN") && !n.startsWith("legacy"),
         );
         if (name === "GEOMEAN-SPEC06INT") {
           scopeTestcases = scopeTestcases.filter((n) =>
