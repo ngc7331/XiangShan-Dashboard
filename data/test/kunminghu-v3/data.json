@@ -1,5 +1,10 @@
 {
   "data": {
+    "25719382886": {
+      "hash": "8604d87ff5e7c2f41b4a82361e37c734e7d11be6",
+      "title": "fix(ci): checkout target branch for manually triggered release jobs (#5936)",
+      "date": 1778569973
+    },
     "25662081665": {
       "hash": "4fc4c7cfab7aa8249a488e597628481582660741",
       "title": "timing(mbtb): fix t1 timing (#5897)",
