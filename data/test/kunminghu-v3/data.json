@@ -10,6 +10,11 @@
       "title": "fix(ci): checkout target branch for manually triggered release jobs (#5936)",
       "date": 1778569973
     },
+    "25709540067": {
+      "hash": "689ee6be18a7483206754c53e2d7a327ed53eaa6",
+      "title": "refactor, submodule: update CoupledL2 to XSCache  (#5938)",
+      "date": 1778524020
+    },
     "25662081665": {
       "hash": "4fc4c7cfab7aa8249a488e597628481582660741",
       "title": "timing(mbtb): fix t1 timing (#5897)",
