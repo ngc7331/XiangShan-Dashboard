@@ -1,5 +1,10 @@
 {
   "data": {
+    "25811918184": {
+      "hash": "ed346cdc8ca174210c48df96620b8887329f8e92",
+      "title": "timing(sc): fix sc t1 training timing (#5923)",
+      "date": 1778669608
+    },
     "25747481545": {
       "hash": "8604d87ff5e7c2f41b4a82361e37c734e7d11be6",
       "title": "fix(ci): checkout target branch for manually triggered release jobs (#5936)",
