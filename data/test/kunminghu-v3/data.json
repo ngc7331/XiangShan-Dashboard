@@ -1,9 +1,29 @@
 {
   "data": {
+    "26012109541": {
+      "hash": "09ad18a9d731b787aa36c2c2871dd2f9ecd45bfa",
+      "title": "submodule: bump XSCache and Utility (#5968)",
+      "date": 1779075375
+    },
+    "25986264134": {
+      "hash": "6498a52a00d92eafc9b6beba7b66b39d1e414b20",
+      "title": "feat(device): implement UART ns16550a simulation model (#5979)",
+      "date": 1779007653
+    },
+    "25896024693": {
+      "hash": "5123974942833f8d63672f0c132ec9787e8a650a",
+      "title": "fix(backend, ctrlblock): export empty state to ftq when backend drains (#5787)",
+      "date": 1778810127
+    },
     "25852828409": {
       "hash": "af4cdce9b20579d12a4c6c724a412b81333d1bf4",
       "title": "fix(StoreQueue): fix entry of invalid in unalignQueue (#5913)",
       "date": 1778751200
+    },
+    "25794589368": {
+      "hash": "ed346cdc8ca174210c48df96620b8887329f8e92",
+      "title": "timing(sc): fix sc t1 training timing (#5923)",
+      "date": 1778669608
     },
     "25776220029": {
       "hash": "70348f452e08920284c062366280520e3e874c8b",
@@ -18,7 +38,7 @@
     "25709540067": {
       "hash": "689ee6be18a7483206754c53e2d7a327ed53eaa6",
       "title": "refactor, submodule: update CoupledL2 to XSCache  (#5938)",
-      "date": 1778524020
+      "date": 1778552820
     },
     "25662081665": {
       "hash": "4fc4c7cfab7aa8249a488e597628481582660741",
@@ -278,22 +298,22 @@
     "23782149168": {
       "hash": "89261767d3f8d6d358c9b9411d833f0e09607496",
       "title": "timing(StoreQueue): optimize timing path of StoreQueue (#5698)",
-      "date": 1774906389
+      "date": 1774935189
     },
     "23738125899": {
       "hash": "27812a988bdc2ae80b12281071683b3a8f9738ec",
       "title": "ci(emu): migrate to new label system & version bump (#5703)",
-      "date": 1774834710
+      "date": 1774863510
     },
     "23737366085": {
       "hash": "e3b045a1cad6d681ef63e19a955a029f76ef9bfb",
       "title": "fix(frontend,perf): bump utility & use XSPerfSeqAccumulate (#5740)",
-      "date": 1774833616
+      "date": 1774862416
     },
     "23735758654": {
       "hash": "b421acb412966cace9bd15216cef90b1763e5bd9",
       "title": "fix(Configs): add IntRegCacheSize to 24 to support 6 alu (#5613)",
-      "date": 1774831207
+      "date": 1774860007
     },
     "23735520999": {
       "hash": "8bec7f346f4bf4f791a604a0aec6ed58cb2d4f17",
@@ -418,52 +438,52 @@
     "22935039912": {
       "hash": "f36fd235a3a976322445c5cd57f529f081642c05",
       "title": "feat(sc): add imli table",
-      "date": 1773170262
+      "date": 1773199062
     },
     "22932963910": {
       "hash": "6fc8737d65783c82fadcd20a9124db1ace8296b5",
       "title": "chore(datapath): remove useless connect",
-      "date": 1773165403
+      "date": 1773194203
     },
     "22845259230": {
       "hash": "826c16b2398c0c0767bf77fc6d3a174e41d31720",
       "title": "refactor(sc): refactoring  the max and min Threshold Calculation",
-      "date": 1773017013
+      "date": 1773045813
     },
     "22841049239": {
       "hash": "e4ac797bb40a3ef8124d1223b112192a3093cb70",
       "title": "ci(emu-performance): fix find_upstream & update names (#5655)",
-      "date": 1773008472
+      "date": 1773037272
     },
     "22837448681": {
       "hash": "80930b9adbd3103468d29f148a90a793a0f8b74e",
       "title": "feat(config): change FrontendDebugConfig from TLConfig to CHIConfig (#5647)",
-      "date": 1772999114
+      "date": 1773027914
     },
     "22836316895": {
       "hash": "39e0e8eb0b9f3b593ba006185e1dbecfecd9e7a6",
       "title": "chore(Rat): move RatWrapper to Rename to check Rename timing (#5637)",
-      "date": 1772995834
+      "date": 1773024634
     },
     "22756233984": {
       "hash": "68478f3072908f59ff47d4d991b958dfbd8de072",
       "title": "fix(mbtb): fix addrField (cfi)Position width (#5638)",
-      "date": 1772758429
+      "date": 1772787229
     },
     "22754873755": {
       "hash": "b2f9513e8633d3aca6f04ac17c00f425646bb02b",
       "title": "timing(MMU): avoid adder when generate gpaddr (#5644)",
-      "date": 1772755872
+      "date": 1772784672
     },
     "22709102328": {
       "hash": "ab5c6ce36326ff5a915808865f1fc52b5730cc94",
       "title": "feat(backend): only need intRegion's og0cancel",
-      "date": 1772670461
+      "date": 1772699261
     },
     "22701345891": {
       "hash": "1ea934ece8becc61e522172d99ab45a0b8300703",
       "title": "ci(emu): rewrite performance test (#5635)",
-      "date": 1772653709
+      "date": 1772682509
     }
   },
   "version": 1
