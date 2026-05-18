@@ -1,9 +1,29 @@
 {
   "data": {
+    "26012109541": {
+      "hash": "09ad18a9d731b787aa36c2c2871dd2f9ecd45bfa",
+      "title": "submodule: bump XSCache and Utility (#5968)",
+      "date": 1779046575
+    },
+    "25986264134": {
+      "hash": "6498a52a00d92eafc9b6beba7b66b39d1e414b20",
+      "title": "feat(device): implement UART ns16550a simulation model (#5979)",
+      "date": 1778978853
+    },
+    "25896024693": {
+      "hash": "5123974942833f8d63672f0c132ec9787e8a650a",
+      "title": "fix(backend, ctrlblock): export empty state to ftq when backend drains (#5787)",
+      "date": 1778781327
+    },
     "25852828409": {
       "hash": "af4cdce9b20579d12a4c6c724a412b81333d1bf4",
       "title": "fix(StoreQueue): fix entry of invalid in unalignQueue (#5913)",
       "date": 1778751200
+    },
+    "25794589368": {
+      "hash": "ed346cdc8ca174210c48df96620b8887329f8e92",
+      "title": "timing(sc): fix sc t1 training timing (#5923)",
+      "date": 1778640808
     },
     "25776220029": {
       "hash": "70348f452e08920284c062366280520e3e874c8b",
