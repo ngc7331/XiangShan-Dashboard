@@ -1,6 +1,7 @@
 """Update data from OpenXiangShan/XiangShan"""
 
 import argparse
+import calendar
 from itertools import count
 import logging
 from pathlib import Path
@@ -138,7 +139,7 @@ def update_test_gh(gh: GitHub, args: argparse.Namespace) -> None:
                 commit["sha"],
                 commit["commit"]["message"].splitlines()[0],
                 int(
-                    time.mktime(
+                    calendar.timegm(
                         time.strptime(
                             commit["commit"]["committer"]["date"], "%Y-%m-%dT%H:%M:%SZ"
                         )
@@ -209,7 +210,7 @@ def update_test_local(gh: GitHub, args: argparse.Namespace) -> None:
         commit_sha,
         commit["commit"]["message"].splitlines()[0],
         int(
-            time.mktime(
+            calendar.timegm(
                 time.strptime(
                     commit["commit"]["committer"]["date"], "%Y-%m-%dT%H:%M:%SZ"
                 )
@@ -334,7 +335,7 @@ def update_regression_gh(
                 run["head_sha"],
                 commit["commit"]["message"].splitlines()[0],
                 int(
-                    time.mktime(
+                    calendar.timegm(
                         time.strptime(
                             commit["commit"]["committer"]["date"], "%Y-%m-%dT%H:%M:%SZ"
                         )
