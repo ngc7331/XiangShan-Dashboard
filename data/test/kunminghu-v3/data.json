@@ -1,5 +1,20 @@
 {
   "data": {
+    "26027502860": {
+      "hash": "3931c5112c528299a23c256bdd77fb90813afa6e",
+      "title": "feat(Config): set L2Cache size to 2MB (#5969)",
+      "date": 1779099541
+    },
+    "26018888140": {
+      "hash": "d8dabb0a0142cd26839d38a24ff6d23ee4e7fcc2",
+      "title": "fix(debug, csr): fix csr to support debug spec 1.0 (#5952)",
+      "date": 1779088199
+    },
+    "26012339547": {
+      "hash": "06d9a1bdbfd771b542f1572cd65e001e36b013cf",
+      "title": "chore: fix java19+ `new Locale` deprecation warning (#5967)",
+      "date": 1779075892
+    },
     "26012109541": {
       "hash": "09ad18a9d731b787aa36c2c2871dd2f9ecd45bfa",
       "title": "submodule: bump XSCache and Utility (#5968)",
