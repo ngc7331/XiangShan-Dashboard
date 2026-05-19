@@ -1,5 +1,15 @@
 {
   "data": {
+    "26046813189": {
+      "hash": "3931c5112c528299a23c256bdd77fb90813afa6e",
+      "title": "feat(Config): set L2Cache size to 2MB (#5969)",
+      "date": 1779099541
+    },
+    "25995532243": {
+      "hash": "6498a52a00d92eafc9b6beba7b66b39d1e414b20",
+      "title": "feat(device): implement UART ns16550a simulation model (#5979)",
+      "date": 1779007653
+    },
     "25928406129": {
       "hash": "5123974942833f8d63672f0c132ec9787e8a650a",
       "title": "fix(backend, ctrlblock): export empty state to ftq when backend drains (#5787)",
