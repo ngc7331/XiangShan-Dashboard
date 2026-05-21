@@ -1,5 +1,15 @@
 {
   "data": {
+    "26150400307": {
+      "hash": "91e449d5ca1c0e904620465484ca752ba5659e60",
+      "title": "feat(DCacheWrapper): add perfcnt for l2 hint accuracy (#5993)",
+      "date": 1779265136
+    },
+    "26150245126": {
+      "hash": "fcec869dc0ff9fadebc7720b027671f2a72759ac",
+      "title": "fix(bpu/replacer): fix replacerState write setIdx typo",
+      "date": 1779264938
+    },
     "26148526978": {
       "hash": "5ef500b3cf6dbee7ffc4f1ff9900837e497aeeac",
       "title": "style(ittage): simplify table parameter helpers (#5924)",
@@ -14,6 +24,26 @@
       "hash": "09598c247199e6eebdbf028e7b3092d8bf299c8d",
       "title": "fix(ICache): explicitly set `s1_itlbPbmt`'s init width (#5962)",
       "date": 1779262335
+    },
+    "26146734432": {
+      "hash": "24896f86d84d1465ecb315d88882f9bcfcfd0677",
+      "title": "timing(ifu): replace priority encoder + shift with parallel prefix tree (#5937)",
+      "date": 1779260292
+    },
+    "26141055266": {
+      "hash": "09d715b21d77a76354a8a088002f2191c37a4bc7",
+      "title": "fix(Ifu,InstrUncache): do not mark incomplete if is RVC or has exception (#5959)",
+      "date": 1779250816
+    },
+    "26138825047": {
+      "hash": "d9736a7ef8e0467349d30e6caa08e90d4e5e5149",
+      "title": "timing(sc): move the sumAboveThreshold computation logic into stage s2 (#5911)",
+      "date": 1779246557
+    },
+    "26138227923": {
+      "hash": "4fbd71a78c3c60e36e8a2fb7bf0db27a281b0dfe",
+      "title": "perf(MainPipe): on refill, read DataArray only on Dirty-Replace (#5956)",
+      "date": 1779245408
     },
     "26087651569": {
       "hash": "a4712159773e25bda5332be8d8dc61c9e5fb4968",
