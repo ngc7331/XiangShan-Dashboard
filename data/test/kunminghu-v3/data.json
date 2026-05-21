@@ -1,5 +1,35 @@
 {
   "data": {
+    "26148526978": {
+      "hash": "5ef500b3cf6dbee7ffc4f1ff9900837e497aeeac",
+      "title": "style(ittage): simplify table parameter helpers (#5924)",
+      "date": 1779262740
+    },
+    "26148450034": {
+      "hash": "74eb88f242391d068d7cb49ad1a8e9b12f3a4c47",
+      "title": "timing(tage): fix tage train timing (#5890)",
+      "date": 1779262639
+    },
+    "26148219165": {
+      "hash": "09598c247199e6eebdbf028e7b3092d8bf299c8d",
+      "title": "fix(ICache): explicitly set `s1_itlbPbmt`'s init width (#5962)",
+      "date": 1779262335
+    },
+    "26087651569": {
+      "hash": "a4712159773e25bda5332be8d8dc61c9e5fb4968",
+      "title": "timing(Phr): fix s1 phr timing (#5892)",
+      "date": 1779181814
+    },
+    "26085172621": {
+      "hash": "a95e5996953108c03402a5003db6b24986ed51fe",
+      "title": "timing(CommonHR): fix redirect CommonHR timing (#5975)",
+      "date": 1779178761
+    },
+    "26072763254": {
+      "hash": "064f8462a6bfc13994099e2eb70c63fa5f63b85b",
+      "title": "feat(ftq): drop resolve when no mispredict (#5759)",
+      "date": 1779158252
+    },
     "26027502860": {
       "hash": "3931c5112c528299a23c256bdd77fb90813afa6e",
       "title": "feat(Config): set L2Cache size to 2MB (#5969)",
