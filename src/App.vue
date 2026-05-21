@@ -63,6 +63,7 @@
         @select-all="onSelectAll"
         @clear-selection="onClearSelection"
         @select-spec="onSelectSpec"
+        @select-geomean="onSelectGeomean"
         @toggle-benchmark="onToggleBenchmark"
       />
     </aside>
@@ -334,6 +335,13 @@ function onClearSelection() {
 
 function onSelectSpec(prefix: "SPEC06INT" | "SPEC06FP") {
   selectedBenchmarks.value = selectPrefix(availableBenchmarks.value, prefix);
+  persist();
+}
+
+function onSelectGeomean() {
+  selectedBenchmarks.value = availableBenchmarks.value.filter((name) =>
+    name.startsWith("GEOMEAN"),
+  );
   persist();
 }
 

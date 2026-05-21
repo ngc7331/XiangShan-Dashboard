@@ -10,7 +10,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
 import type { Chart } from "chart.js";
 import type { DashboardTabConfig } from "../../config/tabs";
 import type { NormalizedRun, ReportPayload } from "../../types/data";

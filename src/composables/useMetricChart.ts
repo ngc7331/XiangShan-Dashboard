@@ -100,7 +100,7 @@ function computeGeomean(
   prefix?: keyof typeof SELECT_PREFIXES,
 ): number | null {
   const filtered = Object.entries(payload).filter(([name]) =>
-    prefix ? isPrefixed(name, prefix) : !name.startsWith("legacy")
+    prefix ? isPrefixed(name, prefix) : !name.startsWith("legacy"),
   );
   if (!filtered.length) return null;
 

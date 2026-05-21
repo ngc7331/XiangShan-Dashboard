@@ -27,6 +27,9 @@
       >
         {{ t("spec06fp") }}
       </button>
+      <button class="btn" type="button" @click="$emit('selectGeomean')">
+        {{ t("geomean") }}
+      </button>
     </div>
     <div class="list">
       <div
@@ -60,6 +63,7 @@ defineEmits<{
   (e: "selectAll"): void;
   (e: "clearSelection"): void;
   (e: "selectSpec", value: "SPEC06INT" | "SPEC06FP"): void;
+  (e: "selectGeomean"): void;
   (e: "toggleBenchmark", name: string): void;
 }>();
 </script>

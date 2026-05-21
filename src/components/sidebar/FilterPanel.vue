@@ -161,5 +161,4 @@ defineEmits<{
   opacity: 0.55;
   border-style: dashed;
 }
-
 </style>
