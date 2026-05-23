@@ -1,5 +1,10 @@
 {
   "data": {
+    "26270266898": {
+      "hash": "dcc1d26893afe367b73ec69e5e30faef2be7d505",
+      "title": "chore: add pfLateHitType and Berti monitor (#5964)",
+      "date": 1779372875
+    },
     "25901955295": {
       "hash": "5123974942833f8d63672f0c132ec9787e8a650a",
       "title": "fix(backend, ctrlblock): export empty state to ftq when backend drains (#5787)",

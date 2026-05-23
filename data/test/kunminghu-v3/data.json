@@ -1,5 +1,20 @@
 {
   "data": {
+    "26276170675": {
+      "hash": "4b7f0725128f5adc2be03f4df96f76f8d081c75d",
+      "title": "fix(ifu): fix instruction concatenation error during cross-channel fetch (#5985)",
+      "date": 1779437168
+    },
+    "26231566112": {
+      "hash": "dcc1d26893afe367b73ec69e5e30faef2be7d505",
+      "title": "chore: add pfLateHitType and Berti monitor (#5964)",
+      "date": 1779372875
+    },
+    "26219156703": {
+      "hash": "39d212e37878b0582818dd12d0992b1c54346ca1",
+      "title": "perf(l1pf): add prefetch request handshake to l2 (#5989)",
+      "date": 1779357620
+    },
     "26150400307": {
       "hash": "91e449d5ca1c0e904620465484ca752ba5659e60",
       "title": "feat(DCacheWrapper): add perfcnt for l2 hint accuracy (#5993)",
