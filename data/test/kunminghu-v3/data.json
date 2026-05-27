@@ -5,6 +5,21 @@
       "title": "fix(StoreQueue): fix bug of fullOverlap when store is cross16B (#6003)",
       "date": 1779764142
     },
+    "26395648684": {
+      "hash": "37df69816dc83ebc993785170d1ba00d8f71c801",
+      "title": "refactor(backend): delete stale code in ExceptSparseVec",
+      "date": 1779704593
+    },
+    "26394892692": {
+      "hash": "d58a89d9ff2f74959d4aa8ed288cdd28e9d5160c",
+      "title": "refactor(prefetch): replace LsPrefetchTrainBundle with TrainReqBundle (#5980)",
+      "date": 1779703408
+    },
+    "26394725198": {
+      "hash": "1a02d82a5316f1b827b8d83c3ae09d344f31bc20",
+      "title": "perf(Stride): add decr mode and big stride support (#5914)",
+      "date": 1779703153
+    },
     "26394258609": {
       "hash": "46fdc552b75ed0ba81f625b8a63f6f62b7bb05c2",
       "title": "refactor: remove TileLink version of XiangShan (#5992)",
