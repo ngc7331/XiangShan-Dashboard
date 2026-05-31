@@ -1,5 +1,10 @@
 {
   "data": {
+    "26688230152": {
+      "hash": "f09207872dac6a694f2142e7220092a2d9c188e4",
+      "title": "chore: use dependabot to track actions updates (#6011)",
+      "date": 1780039636
+    },
     "26462251742": {
       "hash": "f464649442c85122dbb6d71bd77fd0b5e9bec040",
       "title": "fix(StoreQueue): fix bug of fullOverlap when store is cross16B (#6003)",
