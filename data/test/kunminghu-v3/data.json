@@ -1,5 +1,10 @@
 {
   "data": {
+    "26624237606": {
+      "hash": "f09207872dac6a694f2142e7220092a2d9c188e4",
+      "title": "chore: use dependabot to track actions updates (#6011)",
+      "date": 1780039636
+    },
     "26551739022": {
       "hash": "b30d9d321f06274ff88cf3db27c6b6b9f5eef40a",
       "title": "ci(emu): better log archive (#6033)",
