@@ -5,10 +5,15 @@
       "title": "fix(AXI4Memory): re-written AXI interface of AXI4Memory (#6045)",
       "date": 1780366880
     },
-    "26688230152": {
+    "26650233474": {
       "hash": "f09207872dac6a694f2142e7220092a2d9c188e4",
       "title": "chore: use dependabot to track actions updates (#6011)",
       "date": 1780039636
+    },
+    "26525226846": {
+      "hash": "7016efa0465169eac61af1425bc17782363a708c",
+      "title": "timing(IBuffer): fix IBuffer instruction enqueue timing and exception signal timing (#5946)",
+      "date": 1779871194
     },
     "26462251742": {
       "hash": "f464649442c85122dbb6d71bd77fd0b5e9bec040",
