@@ -1,5 +1,10 @@
 {
   "data": {
+    "26965356441": {
+      "hash": "11c980d9593aaf9b2afea4cde0624d1416dbaa52",
+      "title": "misc: update CODEOWNERS of frontend (#6054)",
+      "date": 1780566795
+    },
     "26835387467": {
       "hash": "4c742fa44b76fe372f70c74aad2ca826be0de155",
       "title": "fix(AXI4Memory): re-written AXI interface of AXI4Memory (#6045)",
