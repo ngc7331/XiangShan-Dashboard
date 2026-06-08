@@ -1,5 +1,10 @@
 {
   "data": {
+    "26997736256": {
+      "hash": "9443d04bd410311c485f22688e0bc219f4610747",
+      "title": "submodule(ready-to-run): bump ready-to-run to support tdata3",
+      "date": 1780628635
+    },
     "26620174316": {
       "hash": "b30d9d321f06274ff88cf3db27c6b6b9f5eef40a",
       "title": "ci(emu): better log archive (#6033)",
