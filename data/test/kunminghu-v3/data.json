@@ -1,5 +1,10 @@
 {
   "data": {
+    "27082108663": {
+      "hash": "96f3a4d4b02dbc84f954d29a35fbabb3809667ab",
+      "title": "feat(mpt): add mpt v0.4 support for Xiangshan (#5915)",
+      "date": 1780804795
+    },
     "26992683711": {
       "hash": "db9e6b8851143d84dedc663e7b99119e05047654",
       "title": "fix(ubtb): check if s0 hits t1 victim (#6009)",
