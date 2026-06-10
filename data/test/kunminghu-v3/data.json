@@ -1,5 +1,10 @@
 {
   "data": {
+    "27250166765": {
+      "hash": "729792d039b98d6c74d7ea6d9b95767f3f2bdf3c",
+      "title": "fix(vstopi): fix vstopi Candidate3 enable conditation (#6030)",
+      "date": 1781060455
+    },
     "27206765369": {
       "hash": "c93322e4f4745abdd306cb0e750308f3a53f660a",
       "title": "ci(emu): dump wave to PERF_HOME in basics/performace (#6041)",
@@ -9,6 +14,11 @@
       "hash": "96f3a4d4b02dbc84f954d29a35fbabb3809667ab",
       "title": "feat(mpt): add mpt v0.4 support for Xiangshan (#5915)",
       "date": 1780804795
+    },
+    "26992771697": {
+      "hash": "9443d04bd410311c485f22688e0bc219f4610747",
+      "title": "submodule(ready-to-run): bump ready-to-run to support tdata3",
+      "date": 1780628635
     },
     "26992683711": {
       "hash": "db9e6b8851143d84dedc663e7b99119e05047654",
