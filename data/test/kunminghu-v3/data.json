@@ -1,5 +1,10 @@
 {
   "data": {
+    "27206765369": {
+      "hash": "c93322e4f4745abdd306cb0e750308f3a53f660a",
+      "title": "ci(emu): dump wave to PERF_HOME in basics/performace (#6041)",
+      "date": 1781008834
+    },
     "27082108663": {
       "hash": "96f3a4d4b02dbc84f954d29a35fbabb3809667ab",
       "title": "feat(mpt): add mpt v0.4 support for Xiangshan (#5915)",
