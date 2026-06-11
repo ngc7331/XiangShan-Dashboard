@@ -1,5 +1,10 @@
 {
   "data": {
+    "27265947670": {
+      "hash": "5174231e44bd8614b275a64533604f28615ad3cc",
+      "title": "submodule: bump XSCache (#6072)",
+      "date": 1781082724
+    },
     "27250166765": {
       "hash": "729792d039b98d6c74d7ea6d9b95767f3f2bdf3c",
       "title": "fix(vstopi): fix vstopi Candidate3 enable conditation (#6030)",
