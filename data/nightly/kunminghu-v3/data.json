@@ -1,5 +1,10 @@
 {
   "data": {
+    "27291249843": {
+      "hash": "5174231e44bd8614b275a64533604f28615ad3cc",
+      "title": "submodule: bump XSCache (#6072)",
+      "date": 1781082724
+    },
     "27153103177": {
       "hash": "96f3a4d4b02dbc84f954d29a35fbabb3809667ab",
       "title": "feat(mpt): add mpt v0.4 support for Xiangshan (#5915)",
