@@ -1,5 +1,15 @@
 {
   "data": {
+    "27328996526": {
+      "hash": "e61a492ad8df6488b219b1fc56ac2f60fac44773",
+      "title": "feat(mbtb): parameterize EnableTargetFix (#6007)",
+      "date": 1781160211
+    },
+    "27328928510": {
+      "hash": "6e693568a37358a4133bb8f13dce51edb449c048",
+      "title": "refactor(bpu/replacer): unify ReplacerState porting (#6008)",
+      "date": 1781160121
+    },
     "27265947670": {
       "hash": "5174231e44bd8614b275a64533604f28615ad3cc",
       "title": "submodule: bump XSCache (#6072)",
