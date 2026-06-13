@@ -1,5 +1,10 @@
 {
   "data": {
+    "27397173296": {
+      "hash": "be3c06aa4750dcd9681c85ee8b42748734d93960",
+      "title": "perf(LSQ): enlarge default LSQ capacity (#6089)",
+      "date": 1781232864
+    },
     "26997736256": {
       "hash": "9443d04bd410311c485f22688e0bc219f4610747",
       "title": "submodule(ready-to-run): bump ready-to-run to support tdata3",
