@@ -1,5 +1,10 @@
 {
   "data": {
+    "27471768016": {
+      "hash": "be3c06aa4750dcd9681c85ee8b42748734d93960",
+      "title": "perf(LSQ): enlarge default LSQ capacity (#6089)",
+      "date": 1781232864
+    },
     "27291249843": {
       "hash": "5174231e44bd8614b275a64533604f28615ad3cc",
       "title": "submodule: bump XSCache (#6072)",
