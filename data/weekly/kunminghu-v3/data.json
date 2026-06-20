@@ -1,5 +1,10 @@
 {
   "data": {
+    "27808232814": {
+      "hash": "8c4daa743fbea8da85747e51ebb053f0e5de5953",
+      "title": "timing(ibuffer): optimize ibuffer bypass logic to improve timing (#6047)",
+      "date": 1781774138
+    },
     "27397173296": {
       "hash": "be3c06aa4750dcd9681c85ee8b42748734d93960",
       "title": "perf(LSQ): enlarge default LSQ capacity (#6089)",
