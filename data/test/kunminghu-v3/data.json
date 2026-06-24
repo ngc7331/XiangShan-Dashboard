@@ -1,5 +1,10 @@
 {
   "data": {
+    "27999991129": {
+      "hash": "96c3f568f943a096ffd3d712dc6f462ac4b1ba33",
+      "title": "perf(Sbuffer): set in.req.ready to true if req can be merged (#6117)",
+      "date": 1782185101
+    },
     "27927664847": {
       "hash": "6ae5922ed27cf6528f7e016d7db28ef4648436c5",
       "title": "ci: bump actions/checkout from 6 to 7 in the github-actions group (#6114)",
