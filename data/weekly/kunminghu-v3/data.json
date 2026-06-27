@@ -1,5 +1,10 @@
 {
   "data": {
+    "28219406785": {
+      "hash": "96c3f568f943a096ffd3d712dc6f462ac4b1ba33",
+      "title": "perf(Sbuffer): set in.req.ready to true if req can be merged (#6117)",
+      "date": 1782185101
+    },
     "27808232814": {
       "hash": "8c4daa743fbea8da85747e51ebb053f0e5de5953",
       "title": "timing(ibuffer): optimize ibuffer bypass logic to improve timing (#6047)",
