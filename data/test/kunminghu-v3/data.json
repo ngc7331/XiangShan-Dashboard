@@ -1,5 +1,15 @@
 {
   "data": {
+    "28313770427": {
+      "hash": "88d1c50ae38e441595f98e0f704b24ef958f1791",
+      "title": "refactor(pf): setting the prefetcher config only in Parameters.scala (#5382)",
+      "date": 1782627983
+    },
+    "28309402622": {
+      "hash": "89c5e1885004d6636ded1577c35b5659faf6f671",
+      "title": "perf(pf): optimize l1 prefetcher training and for training (#5544)",
+      "date": 1782615382
+    },
     "27999991129": {
       "hash": "96c3f568f943a096ffd3d712dc6f462ac4b1ba33",
       "title": "perf(Sbuffer): set in.req.ready to true if req can be merged (#6117)",
