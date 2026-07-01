@@ -1,5 +1,10 @@
 {
   "data": {
+    "28427226635": {
+      "hash": "567d1da56d968a6dde8fbfe829896bc9b9ca2605",
+      "title": "feat(DCache): support 32x2B banked data array (#6118)",
+      "date": 1782803854
+    },
     "28355355594": {
       "hash": "0aff3b4899fa89fb3e7d48ee5ff336047d47b1ff",
       "title": "fix(Ifu): Pbmt.IO should wait for last commit (#6144)",
