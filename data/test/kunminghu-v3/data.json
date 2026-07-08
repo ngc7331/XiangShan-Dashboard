@@ -1,5 +1,10 @@
 {
   "data": {
+    "28845554930": {
+      "hash": "2fa9c2db43dc56912f5173f083e981e9195aff27",
+      "title": "chore: add chiseldb and rollingdb support to perf trigger and xiangshan.py",
+      "date": 1783404652
+    },
     "28772634686": {
       "hash": "0128420959aed41d26c04dcb5dffb7e6ff9d8c05",
       "title": "ci(emu): migrate to new checkpoints (#6186)",
