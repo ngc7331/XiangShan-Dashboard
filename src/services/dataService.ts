@@ -58,6 +58,7 @@ export async function loadRunIndex(
       hash: entry.hash,
       title: entry.title,
       dateMs: entry.date > 1e12 ? entry.date : entry.date * 1000,
+      note: entry.note,
     }))
     .sort((a, b) => Number(a.runId) - Number(b.runId));
 }

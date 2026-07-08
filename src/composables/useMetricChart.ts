@@ -236,9 +236,14 @@ export function renderMetricChart(args: {
               const run = runs[item.dataIndex];
               if (!run) return [];
               const lines = [
+                `${t("commit")}: ${run.hash}`,
                 `${t("runId")}: ${run.runId}`,
                 `${t("date")}: ${formatDisplayDate(run.dateMs)}`,
               ];
+
+              if (run.note) {
+                lines.push(`${t("note")}: ${run.note}`);
+              }
 
               const geomeanName = item.dataset?.label;
               const missing =

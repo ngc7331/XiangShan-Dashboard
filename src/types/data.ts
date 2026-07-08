@@ -4,6 +4,7 @@ export interface RunIndexEntry {
   hash: string;
   title: string;
   date: number;
+  note: string | undefined;
 }
 
 export interface RunIndex {
@@ -18,6 +19,7 @@ export interface NormalizedRun {
   hash: string;
   title: string;
   dateMs: number;
+  note: string | undefined;
 }
 
 export function isMetricKey(key: string): key is MetricKey {
