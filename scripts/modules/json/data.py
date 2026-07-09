@@ -4,6 +4,7 @@ from dataclasses import dataclass, asdict
 import json
 from pathlib import Path
 
+
 @dataclass
 class DataJsonEntry:
     """Describe a single entry in data.json"""
@@ -11,8 +12,11 @@ class DataJsonEntry:
     hash: str
     title: str = ""
     date: int = 0
+    note: str | None = None
+
 
 CURRENT_VERSION = 1
+
 
 @dataclass
 class DataJson:
@@ -36,8 +40,7 @@ class DataJson:
                 return DataJson(
                     version=version,
                     data={
-                        int(k): DataJsonEntry(**v)
-                        for k, v in raw_data["data"].items()
+                        int(k): DataJsonEntry(**v) for k, v in raw_data["data"].items()
                     },
                 )
             case _:
@@ -49,7 +52,9 @@ class DataJson:
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             json.dump(
-                asdict(self),
+                asdict(
+                    self, dict_factory=lambda x: {k: v for k, v in x if v is not None}
+                ),
                 f,
                 indent=2,
                 separators=(",", ": "),
@@ -59,10 +64,16 @@ class DataJson:
         """Check if a commit hash exists in the dataset"""
         return commit in map(lambda entry: entry.hash, self.data.values())
 
-    def append(self, run_id: int, commit: str, title: str, date: int) -> None:
+    def append(
+        self, run_id: int, commit: str, title: str, date: int, note: str | None = None
+    ) -> None:
         """Append a single workflow run to dataset"""
-        self.data[run_id] = DataJsonEntry(hash=commit, title=title, date=date)
+        self.data[run_id] = DataJsonEntry(
+            hash=commit, title=title, date=date, note=note
+        )
 
     def sort(self) -> None:
         """Sort data by run_id descending"""
-        self.data = dict(sorted(self.data.items(), key=lambda item: item[0], reverse=True))
+        self.data = dict(
+            sorted(self.data.items(), key=lambda item: item[0], reverse=True)
+        )
