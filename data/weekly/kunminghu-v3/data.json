@@ -1,5 +1,10 @@
 {
   "data": {
+    "29556572977": {
+      "hash": "538ef487c903e14ff8d2f1b139e95724629ec08b",
+      "title": "ci(perf): upload score.txt in template (#6245)",
+      "date": 1784182599
+    },
     "29071339329": {
       "hash": "0e5469ce17236e21d61e60795c3dd2dbf381067e",
       "title": "feat(Ftq): add rolling counter (#6193)",

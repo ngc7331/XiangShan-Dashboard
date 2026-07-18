@@ -1,5 +1,10 @@
 {
   "data": {
+    "29572073454": {
+      "hash": "b90dbba40d16d54f2814870ff8b4d8809a41e680",
+      "title": "submodule(ready-to-run): bump nemu ref in ready-to-run",
+      "date": 1784282524
+    },
     "29465703110": {
       "hash": "7bf51a8805543878a74f817dd731efde40c30fd2",
       "title": "fix(storeQueue): fix write zero to sbuffer of cbo.zero (#6228)",
