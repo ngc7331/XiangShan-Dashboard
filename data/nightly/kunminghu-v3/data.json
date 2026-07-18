@@ -1,5 +1,10 @@
 {
   "data": {
+    "29513739840": {
+      "hash": "538ef487c903e14ff8d2f1b139e95724629ec08b",
+      "title": "ci(perf): upload score.txt in template (#6245)",
+      "date": 1784182599
+    },
     "29430903303": {
       "hash": "c30b2f523d6cc5c4639af15acbc354f16c9be480",
       "title": "submoudle(ready-to-run):bump nemu ref in ready-to-run",
