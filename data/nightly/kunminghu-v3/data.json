@@ -1,5 +1,10 @@
 {
   "data": {
+    "29650831855": {
+      "hash": "b90dbba40d16d54f2814870ff8b4d8809a41e680",
+      "title": "submodule(ready-to-run): bump nemu ref in ready-to-run",
+      "date": 1784282524
+    },
     "29513739840": {
       "hash": "538ef487c903e14ff8d2f1b139e95724629ec08b",
       "title": "ci(perf): upload score.txt in template (#6245)",
