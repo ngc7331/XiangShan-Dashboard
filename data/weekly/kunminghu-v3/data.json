@@ -1,5 +1,10 @@
 {
   "data": {
+    "30068645473": {
+      "hash": "0454478c247c7137301276b85173ed5a99f786bf",
+      "title": "refactor(Frontend): replace takenCfiOffset with endPosition (#6253)",
+      "date": 1784862007
+    },
     "29556572977": {
       "hash": "538ef487c903e14ff8d2f1b139e95724629ec08b",
       "title": "ci(perf): upload score.txt in template (#6245)",
