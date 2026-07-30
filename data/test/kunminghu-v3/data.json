@@ -1,5 +1,15 @@
 {
   "data": {
+    "30441035704": {
+      "hash": "c1bf7dc2e5fb98212ff8c3714bf1241bf699f6f2",
+      "title": "perf(mdp): refine strict StoreSet prediction (#6286)",
+      "date": 1785318418
+    },
+    "30427454747": {
+      "hash": "445d278195d7567ec11763cc04b64511437e8bb6",
+      "title": "feat(atomic): add support for extension Zabha (#6248)",
+      "date": 1785305583
+    },
     "30076073785": {
       "hash": "4cf8b8d4ae343e01dfb54e5ae8febdaeaa9992ae",
       "title": "fix(L1PF, LSQ): reject stale TLB updates and nonphysical store wakeups (#6275)",
