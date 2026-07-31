@@ -1,5 +1,10 @@
 {
   "data": {
+    "30506004896": {
+      "hash": "a975701442ba4602bd81969f6d291a6ddadcb4e0",
+      "title": "chore: bump chisel and submodules (#6297)",
+      "date": 1785375240
+    },
     "30441035704": {
       "hash": "c1bf7dc2e5fb98212ff8c3714bf1241bf699f6f2",
       "title": "perf(mdp): refine strict StoreSet prediction (#6286)",
