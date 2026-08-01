@@ -1,5 +1,15 @@
 {
   "data": {
+    "30646168249": {
+      "hash": "4ce2f88ae780f0766372aa2fbc7d00cfaf33a4e7",
+      "title": "feat(loadUnit): add support of arbiter of RRBankConflict (#6242)",
+      "date": 1785479185
+    },
+    "30559871639": {
+      "hash": "a975701442ba4602bd81969f6d291a6ddadcb4e0",
+      "title": "chore: bump chisel and submodules (#6297)",
+      "date": 1785375240
+    },
     "30468942367": {
       "hash": "c1bf7dc2e5fb98212ff8c3714bf1241bf699f6f2",
       "title": "perf(mdp): refine strict StoreSet prediction (#6286)",
