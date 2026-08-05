@@ -1,5 +1,10 @@
 {
   "data": {
+    "30606307371": {
+      "hash": "a975701442ba4602bd81969f6d291a6ddadcb4e0",
+      "title": "chore: bump chisel and submodules (#6297)",
+      "date": 1785375240
+    },
     "30068645473": {
       "hash": "0454478c247c7137301276b85173ed5a99f786bf",
       "title": "refactor(Frontend): replace takenCfiOffset with endPosition (#6253)",
