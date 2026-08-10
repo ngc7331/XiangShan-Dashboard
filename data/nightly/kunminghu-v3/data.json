@@ -1,5 +1,10 @@
 {
   "data": {
+    "31321934527": {
+      "hash": "97e650416321452e45efcabac0f5c91213c842f3",
+      "title": "fix(ifu): fix s1_instrCount calculation when an exception occurs (#6301)",
+      "date": 1786173519
+    },
     "31194754693": {
       "hash": "766b9f264144a7e263f766e5ee76e638d078053d",
       "title": "fix(WriteBuffer): read-write conflict on the same entry caused an error (#6315)",
