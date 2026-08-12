@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="panel-card benchmark-card">
     <div class="section-title">{{ t("testcasesTitle") }}</div>
     <div class="actions">
       <button class="btn" type="button" @click="$emit('selectDefault')">
@@ -69,21 +69,9 @@ defineEmits<{
 </script>
 
 <style scoped>
-.card {
-  background: #ffffff;
-  border: 1px solid #e1e6ef;
-  border-radius: 14px;
-  padding: 14px 16px;
-  box-shadow: 0 12px 32px rgba(17, 31, 64, 0.08);
-}
-
-.section-title {
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #5b6070;
-  margin: 0 0 8px;
+.benchmark-card {
+  display: flex;
+  flex-direction: column;
 }
 
 .actions {

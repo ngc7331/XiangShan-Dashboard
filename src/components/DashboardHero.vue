@@ -9,27 +9,31 @@
         type="button"
         @click="$emit('tabChange', tab.id)"
       >
-        {{ tabTitle(tab.titleKey, tab.subset) }}
+        {{ tabTitle(tab) }}
       </button>
     </div>
-    <div class="badges">
-      <div class="badge">{{ runsLabel }}: {{ runCount }}</div>
-      <div class="badge">{{ benchmarksLabel }}: {{ benchmarkCount }}</div>
+    <div v-if="showBadges || showBenchmarkBadge" class="badges">
+      <div v-if="showBadges" class="badge">{{ runsLabel }}: {{ runCount }}</div>
+      <div v-if="showBadges || showBenchmarkBadge" class="badge">
+        {{ benchmarksLabel }}: {{ benchmarkCount }}
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { DashboardTabConfig } from "../config/tabs";
+import type { TabConfig } from "../config/tabs";
 
 defineProps<{
-  tabs: DashboardTabConfig[];
+  tabs: TabConfig[];
   selectedTabId: string;
-  tabTitle: (key: string, subset?: string) => string;
+  tabTitle: (tab: TabConfig) => string;
   runsLabel: string;
   benchmarksLabel: string;
   runCount: number;
   benchmarkCount: number;
+  showBadges?: boolean;
+  showBenchmarkBadge?: boolean;
 }>();
 
 defineEmits<{

@@ -1,10 +1,20 @@
 import type { MetricKey } from "../types/data";
 
 export type AxisMode = "run-id" | "date";
+export type ComparisonSourceType = "nightly" | "weekly-gcc15" | "weekly-xscc";
 
-export interface DashboardTabConfig {
-  id: "ipc-commit" | "score-nightly" | "score-weekly-gcc15" | "score-weekly-xscc";
+interface TabConfigBase {
+  id: string;
   titleKey: string;
+}
+
+export interface ChartConfig extends TabConfigBase {
+  kind: "chart";
+  id:
+    | "ipc-commit"
+    | "score-nightly"
+    | "score-weekly-gcc15"
+    | "score-weekly-xscc";
   datasetRoot: string;
   subset?: string;
   metricKey: MetricKey;
@@ -12,8 +22,16 @@ export interface DashboardTabConfig {
   supportsSpecButtons: boolean;
 }
 
-export const DASHBOARD_TABS: DashboardTabConfig[] = [
+export interface ComparisonConfig extends TabConfigBase {
+  kind: "comparison";
+  id: "performance-compare";
+}
+
+export type TabConfig = ChartConfig | ComparisonConfig;
+
+export const DASHBOARD_TABS: TabConfig[] = [
   {
+    kind: "chart",
     id: "ipc-commit",
     titleKey: "tabsTest",
     datasetRoot: "data/test",
@@ -22,6 +40,7 @@ export const DASHBOARD_TABS: DashboardTabConfig[] = [
     supportsSpecButtons: true,
   },
   {
+    kind: "chart",
     id: "score-nightly",
     titleKey: "tabsNightly",
     datasetRoot: "data/nightly",
@@ -30,6 +49,7 @@ export const DASHBOARD_TABS: DashboardTabConfig[] = [
     supportsSpecButtons: true,
   },
   {
+    kind: "chart",
     id: "score-weekly-gcc15",
     titleKey: "tabsWeekly",
     datasetRoot: "data/weekly",
@@ -39,6 +59,7 @@ export const DASHBOARD_TABS: DashboardTabConfig[] = [
     supportsSpecButtons: true,
   },
   {
+    kind: "chart",
     id: "score-weekly-xscc",
     titleKey: "tabsWeekly",
     datasetRoot: "data/weekly",
@@ -46,5 +67,10 @@ export const DASHBOARD_TABS: DashboardTabConfig[] = [
     metricKey: "score",
     axisMode: "date",
     supportsSpecButtons: true,
+  },
+  {
+    kind: "comparison",
+    id: "performance-compare",
+    titleKey: "tabsCompare",
   },
 ];

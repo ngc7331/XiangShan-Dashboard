@@ -12,6 +12,14 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   font-family: "Manrope", "Segoe UI", sans-serif;
@@ -26,29 +34,36 @@ body {
   display: flex;
 }
 
-#app {
-  width: 100%;
-  min-height: 100vh;
-}
-
 #app-root {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  width: 100%;
-  min-height: 100vh;
-}
-
-.sidebar {
-  background: var(--panel);
-  border-right: 1px solid var(--border);
-  box-shadow: var(--shadow);
-  padding: 24px;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.topbar {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 24px;
   position: sticky;
   top: 0;
-  height: 100vh;
+  z-index: 10;
+}
+
+.topbar .hero {
+  flex: 1;
+  min-width: 0;
+  box-shadow: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
 }
 
 .brand {
@@ -75,12 +90,160 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  min-height: 100vh;
+  flex: 1;
+  height: auto;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .content > :last-child {
   flex: 1;
   min-height: 0;
+}
+
+.tab-workspace {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) 1fr;
+  gap: 20px;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
+.panel-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.panel-sidebar .field-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.panel-sidebar .field-row label {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.panel-sidebar .field-row .control-input {
+  min-width: 0;
+}
+
+.panel-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+  flex: 0 0 auto;
+}
+
+.panel-card .section-title {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+.panel-sidebar label {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 6px;
+  white-space: nowrap;
+}
+
+.panel-sidebar .control-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fdfefe;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.panel-sidebar .source-block {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.panel-sidebar .source-heading {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.panel-sidebar .run-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.panel-sidebar .run-row .control-input {
+  min-width: 0;
+}
+
+.panel-sidebar .paste-row {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.panel-sidebar .paste-btn {
+  border: 1px solid #b8cdfb;
+  border-radius: 8px;
+  background: #eef4ff;
+  color: var(--accent);
+  padding: 9px 10px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.panel-sidebar .list {
+  max-height: none;
+}
+
+.benchmark-card {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.benchmark-card .list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.comparison-workspace {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) 1fr;
+  gap: 20px;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
+.comparison-workspace > .panel-sidebar,
+.comparison-workspace > .comparison-layout {
+  min-height: 0;
+  height: 100%;
+}
+
+.comparison-workspace > .panel-sidebar {
+  overflow-y: hidden;
 }
 
 .muted {
@@ -132,12 +295,13 @@ h1 {
 }
 
 @media (max-width: 960px) {
-  #app-root {
-    grid-template-columns: 1fr;
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 16px 20px;
   }
 
-  .sidebar {
-    position: relative;
-    height: auto;
+  .tab-workspace {
+    grid-template-columns: 1fr;
   }
 }

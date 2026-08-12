@@ -10,7 +10,7 @@ import {
   Legend,
   type ChartDataset,
 } from "chart.js";
-import type { DashboardTabConfig } from "../config/tabs";
+import type { ChartConfig } from "../config/tabs";
 import type { NormalizedRun, ReportPayload } from "../types/data";
 import { formatDisplayDate } from "../services/dataService";
 import { isPrefixed, SELECT_PREFIXES } from "./useBenchmarkSelection";
@@ -133,7 +133,7 @@ function resolveValue(
 export function renderMetricChart(args: {
   canvas: HTMLCanvasElement;
   chart: Chart | null;
-  tab: DashboardTabConfig;
+  tab: ChartConfig;
   runs: NormalizedRun[];
   selectedBenchmarks: string[];
   runDataByHash: Record<string, ReportPayload>;

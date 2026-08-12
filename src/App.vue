@@ -1,6 +1,6 @@
 <template>
   <div id="app-root">
-    <aside class="sidebar">
+    <header class="topbar">
       <div class="brand">
         <div class="brand-mark" />
         <div>
@@ -40,55 +40,81 @@
           </div>
         </div>
       </div>
-
-      <FilterPanel
-        :t="t"
-        :branches="branches"
-        :selected-branch="selectedBranch"
-        :start-date-str="startDateStr"
-        :end-date-str="endDateStr"
-        :active-quick-preset="quickRangePreset"
-        @branch-change="onBranchChange"
-        @start-date-change="onStartDateChange"
-        @end-date-change="onEndDateChange"
-        @set-quick-preset="setQuickPreset"
-      />
-
-      <BenchmarkSelector
-        :t="t"
-        :benchmarks="availableBenchmarks"
-        :selected="selectedBenchmarks"
-        :show-spec-buttons="activeTab.supportsSpecButtons"
-        @select-default="onSelectDefault"
-        @select-all="onSelectAll"
-        @clear-selection="onClearSelection"
-        @select-spec="onSelectSpec"
-        @select-geomean="onSelectGeomean"
-        @toggle-benchmark="onToggleBenchmark"
-      />
-    </aside>
-
-    <main class="content">
       <DashboardHero
         :tabs="tabs"
         :selected-tab-id="selectedTabId"
-        :tab-title="function(key, subset) { return subset ? t(key).replace('{0}', subset) : t(key); }"
+        :tab-title="displayTabTitle"
         :runs-label="t('runsLabel')"
         :benchmarks-label="t('testcasesLabel')"
         :run-count="filteredRuns.length"
-        :benchmark-count="selectedBenchmarks.length"
+        :benchmark-count="
+          activeTab.kind === 'comparison'
+            ? comparisonBenchmarkCount
+            : selectedBenchmarks.length
+        "
+        :show-badges="activeTab.kind === 'chart'"
+        :show-benchmark-badge="activeTab.kind === 'comparison'"
         @tab-change="onTabChange"
       />
+    </header>
 
-      <MetricChartPanel
-        :tab="activeTab"
-        :runs="filteredRuns"
-        :selected-benchmarks="selectedBenchmarks"
-        :run-data-by-hash="runDataByHash"
-        :no-data-text="chartEmptyText"
-        :geomean-missing="geomeanMissing"
-        :t="t"
-      />
+    <main class="content">
+      <div v-if="activeTab.kind === 'chart'" class="tab-workspace">
+        <aside class="panel-sidebar">
+          <RangeSelector
+            :t="t"
+            :branches="branches"
+            :selected-branch="selectedBranch"
+            :start-date-str="startDateStr"
+            :end-date-str="endDateStr"
+            :active-quick-preset="quickRangePreset"
+            @branch-change="onBranchChange"
+            @start-date-change="onStartDateChange"
+            @end-date-change="onEndDateChange"
+            @set-quick-preset="setQuickPreset"
+          />
+          <BenchmarkSelector
+            :t="t"
+            :benchmarks="availableBenchmarks"
+            :selected="selectedBenchmarks"
+            :show-spec-buttons="activeChartTab.supportsSpecButtons"
+            @select-default="onSelectDefault"
+            @select-all="onSelectAll"
+            @clear-selection="onClearSelection"
+            @select-spec="onSelectSpec"
+            @select-geomean="onSelectGeomean"
+            @toggle-benchmark="onToggleBenchmark"
+          />
+        </aside>
+        <MetricChartPanel
+          :tab="activeChartTab"
+          :runs="filteredRuns"
+          :selected-benchmarks="selectedBenchmarks"
+          :run-data-by-hash="runDataByHash"
+          :no-data-text="chartEmptyText"
+          :geomean-missing="geomeanMissing"
+          :t="t"
+        />
+      </div>
+      <div v-else class="comparison-workspace">
+        <aside class="panel-sidebar comparison-sidebar">
+          <ComparisonTypeSelector
+            :t="t"
+            :comparison-type="comparisonType"
+            @change="onComparisonTypeChange"
+          />
+          <ComparisonSourceSelector
+            v-for="source in comparisonSources"
+            :key="source.id"
+            :t="t"
+            :source="source"
+            :on-paste="pasteComparisonSource"
+            @branch-change="onComparisonBranchChange(source.id, $event)"
+            @run-change="onComparisonRunChange(source.id, $event)"
+          />
+        </aside>
+        <ComparisonPanel :t="t" :sources="comparisonSources" />
+      </div>
     </main>
   </div>
 </template>
@@ -96,10 +122,17 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import DashboardHero from "./components/DashboardHero.vue";
-import FilterPanel from "./components/sidebar/FilterPanel.vue";
-import BenchmarkSelector from "./components/sidebar/BenchmarkSelector.vue";
-import MetricChartPanel from "./components/charts/MetricChartPanel.vue";
-import { DASHBOARD_TABS } from "./config/tabs";
+import RangeSelector from "./components/sidebars/RangeSelector.vue";
+import BenchmarkSelector from "./components/sidebars/BenchmarkSelector.vue";
+import ComparisonTypeSelector from "./components/sidebars/ComparisonTypeSelector.vue";
+import ComparisonSourceSelector from "./components/sidebars/ComparisonSourceSelector.vue";
+import MetricChartPanel from "./components/panels/MetricChartPanel.vue";
+import ComparisonPanel from "./components/panels/ComparisonPanel.vue";
+import {
+  DASHBOARD_TABS,
+  type ChartConfig,
+  type ComparisonSourceType,
+} from "./config/tabs";
 import { useLocale } from "./composables/useLocale";
 import { useDashboardSettings } from "./composables/useDashboardSettings";
 import type { QuickRangePreset } from "./composables/useDashboardSettings";
@@ -117,10 +150,15 @@ import {
   loadRunIndex,
 } from "./services/dataService";
 import type { NormalizedRun, ReportPayload } from "./types/data";
-
+import type { ComparisonSource } from "./types/comparison";
 const dayMs = 24 * 60 * 60 * 1000;
 const defaultQuickRangePreset: QuickRangePreset = "last7days";
 const tabs = DASHBOARD_TABS;
+const comparisonTabs: Record<ComparisonSourceType, ChartConfig> = {
+  nightly: tabs[1] as ChartConfig,
+  "weekly-gcc15": tabs[2] as ChartConfig,
+  "weekly-xscc": tabs[3] as ChartConfig,
+};
 
 const { t } = useLocale();
 const {
@@ -133,6 +171,18 @@ const selectedTabId = ref(settings.selectedTabId || tabs[0].id);
 const activeTab = computed(
   () => tabs.find((tab) => tab.id === selectedTabId.value) || tabs[0],
 );
+const defaultChartTab = DASHBOARD_TABS.find(
+  (tab): tab is ChartConfig => tab.kind === "chart",
+)!;
+const activeChartTab = computed(() =>
+  activeTab.value.kind === "chart" ? activeTab.value : defaultChartTab,
+);
+
+function displayTabTitle(tab: (typeof tabs)[number]) {
+  return tab.kind === "chart" && tab.subset
+    ? t(tab.titleKey).replace("{0}", tab.subset)
+    : t(tab.titleKey);
+}
 
 const branches = ref<string[]>([]);
 const selectedBranch = ref(settings.selectedBranch || "");
@@ -154,6 +204,197 @@ const isLoading = ref(false);
 const loadingPath = ref("");
 
 const geomeanMissing = ref<Record<number, Record<string, string[]>>>({});
+
+const comparisonSources = ref<ComparisonSource[]>([
+  {
+    id: "a",
+    label: t("comparisonSourceA"),
+    branch: "",
+    branches: [],
+    runs: [],
+    runId: "",
+  },
+  {
+    id: "b",
+    label: t("comparisonSourceB"),
+    branch: "",
+    branches: [],
+    runs: [],
+    runId: "",
+  },
+]);
+const comparisonType = ref<ComparisonSourceType>("nightly");
+
+const comparisonBenchmarkCount = computed(() => {
+  const payloads = comparisonSources.value
+    .map((source) => source.payload || {})
+    .filter((payload) => Object.keys(payload).length > 0);
+  if (!payloads.length) return 0;
+  const names = new Set(payloads.flatMap((payload) => Object.keys(payload)));
+  const countGroup = (prefix: "SPEC06INT" | "SPEC06FP") =>
+    Array.from(names).filter(
+      (name) => !name.startsWith("GEOMEAN") && isPrefixed(name, prefix),
+    ).length;
+  return countGroup("SPEC06INT") + countGroup("SPEC06FP") + 2;
+});
+
+function comparisonSourceConfig() {
+  return comparisonTabs[comparisonType.value];
+}
+
+async function loadComparisonSource(source: ComparisonSource) {
+  const tab = comparisonSourceConfig();
+  source.branches = await loadBranchList(tab);
+  if (!source.branches.includes(source.branch))
+    source.branch = source.branches[0] || "";
+  if (!source.branch) return;
+  source.runs = await loadRunIndex(tab, source.branch);
+  if (!source.runs.some((run) => run.runId === source.runId))
+    source.runId = source.runs[source.runs.length - 1]?.runId || "";
+  const run = source.runs.find((item) => item.runId === source.runId);
+  source.payload = run
+    ? await loadReport(tab, source.branch, run.hash)
+    : undefined;
+}
+
+async function loadComparisonSources() {
+  setLoading();
+  try {
+    await Promise.all(
+      comparisonSources.value
+        .filter((source) => source.runId !== "custom")
+        .map(loadComparisonSource),
+    );
+  } catch (err) {
+    errorText.value = err instanceof Error ? err.message : String(err);
+  } finally {
+    finishLoading();
+  }
+}
+
+async function onComparisonTypeChange(type: ComparisonSourceType) {
+  comparisonType.value = type;
+  comparisonSources.value.forEach((source) => {
+    if (source.runId === "custom") return;
+    source.label = t(
+      source.id === "a" ? "comparisonSourceA" : "comparisonSourceB",
+    );
+    source.customCommit = undefined;
+    source.customDate = undefined;
+    source.branch = "";
+    source.runId = "";
+    source.payload = undefined;
+  });
+  await loadComparisonSources();
+}
+
+async function onComparisonBranchChange(id: "a" | "b", branch: string) {
+  const source = comparisonSources.value.find((item) => item.id === id);
+  if (!source) return;
+  source.label = t(
+    source.id === "a" ? "comparisonSourceA" : "comparisonSourceB",
+  );
+  source.customCommit = undefined;
+  source.customDate = undefined;
+  source.branch = branch;
+  source.runId = "";
+  source.payload = undefined;
+  await loadComparisonSource(source);
+}
+
+async function onComparisonRunChange(id: "a" | "b", runId: string) {
+  const source = comparisonSources.value.find((item) => item.id === id);
+  if (!source) return;
+  source.label = t(
+    source.id === "a" ? "comparisonSourceA" : "comparisonSourceB",
+  );
+  source.customCommit = undefined;
+  source.customDate = undefined;
+  source.runId = runId;
+  const run = source.runs.find((item) => item.runId === runId);
+  source.payload = run
+    ? await loadReport(comparisonSourceConfig(), source.branch, run.hash)
+    : undefined;
+}
+
+function parseClipboardReport(text: string): ReportPayload {
+  const parsed: ReportPayload = {};
+  try {
+    const json = JSON.parse(text) as unknown;
+    if (json && typeof json === "object" && !Array.isArray(json)) {
+      for (const [name, raw] of Object.entries(
+        json as Record<string, unknown>,
+      )) {
+        if (typeof raw === "number") parsed[name] = { score: raw };
+        else if (raw && typeof raw === "object") {
+          const entry = raw as Record<string, unknown>;
+          const value =
+            typeof entry.score === "number"
+              ? entry.score
+              : typeof entry.ipc === "number"
+                ? entry.ipc
+                : null;
+          if (value !== null)
+            parsed[name] =
+              typeof entry.score === "number"
+                ? { score: value }
+                : { ipc: value };
+        }
+      }
+    }
+  } catch {
+    /* fall through to score.txt parser */
+  }
+  if (Object.keys(parsed).length) return parsed;
+  for (const line of text.split(/\r?\n/)) {
+    const match = /^\s*(\d+\.\w+)\s+[\d.NaN]+\s+[\d.NaN]+\s+([\d.NaN]+)/.exec(
+      line,
+    );
+    if (match && match[2] !== "NaN")
+      parsed[match[1]] = { score: Number(match[2]) };
+  }
+  if (!Object.keys(parsed).length)
+    throw new Error(t("comparisonClipboardError"));
+  return parsed;
+}
+
+function extractClipboardMetadata(text: string): {
+  commit?: string;
+  date?: string;
+} {
+  const match = /(?:^|[\\/\s])cr(\d{6})-([0-9a-f]{7,40})-/i.exec(text);
+  if (!match) return {};
+  const [, compactDate, commit] = match;
+  const year = 2000 + Number(compactDate.slice(0, 2));
+  const month = Number(compactDate.slice(2, 4));
+  const day = Number(compactDate.slice(4, 6));
+  const date = new Date(Date.UTC(year, month - 1, day));
+  if (
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day
+  )
+    return {};
+  return {
+    commit,
+    date: `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
+  };
+}
+
+async function pasteComparisonSource(id: "a" | "b") {
+  if (!navigator.clipboard?.readText)
+    throw new Error(t("comparisonClipboardDenied"));
+  const text = await navigator.clipboard.readText();
+  const payload = parseClipboardReport(text);
+  const metadata = extractClipboardMetadata(text);
+  const source = comparisonSources.value.find((item) => item.id === id);
+  if (source) {
+    source.payload = payload;
+    source.runId = "custom";
+    source.customCommit = metadata.commit;
+    source.customDate = metadata.date;
+  }
+}
 
 const chartEmptyText = computed(() => {
   if (isLoading.value) {
@@ -221,10 +462,10 @@ async function refreshRuns() {
     );
     for (const run of needed) {
       setLoading(
-        `${activeTab.value.datasetRoot}/${selectedBranch.value}/${run.hash}.json`,
+        `${activeChartTab.value.datasetRoot}/${selectedBranch.value}/${run.hash}.json`,
       );
       runDataByHash.value[run.hash] = await loadReport(
-        activeTab.value,
+        activeChartTab.value,
         selectedBranch.value,
         run.hash,
       );
@@ -264,7 +505,7 @@ async function refreshRuns() {
           if (!payload) return true;
           if (!Object.prototype.hasOwnProperty.call(payload, tc)) return true;
           const entry = payload?.[tc];
-          const metricValue = entry?.[activeTab.value.metricKey];
+          const metricValue = entry?.[activeChartTab.value.metricKey];
           if (typeof metricValue !== "number" || metricValue <= 0) return true;
           return false;
         });
@@ -288,16 +529,19 @@ async function loadCurrentTabData() {
   runDataByHash.value = {};
 
   try {
-    setLoading(`${activeTab.value.datasetRoot}/branch.json`);
-    branches.value = await loadBranchList(activeTab.value);
+    setLoading(`${activeChartTab.value.datasetRoot}/branch.json`);
+    branches.value = await loadBranchList(activeChartTab.value);
     if (!branches.value.includes(selectedBranch.value)) {
       selectedBranch.value = branches.value[0] || "";
     }
 
     setLoading(
-      `${activeTab.value.datasetRoot}/${selectedBranch.value}/data.json`,
+      `${activeChartTab.value.datasetRoot}/${selectedBranch.value}/data.json`,
     );
-    allRuns.value = await loadRunIndex(activeTab.value, selectedBranch.value);
+    allRuns.value = await loadRunIndex(
+      activeChartTab.value,
+      selectedBranch.value,
+    );
     if (quickRangePreset.value === "last7days") {
       setQuickPreset("last7days", false);
     } else if (quickRangePreset.value === "last31days") {
@@ -356,6 +600,7 @@ function onToggleBenchmark(name: string) {
 
 function onTabChange(nextTabId: string) {
   selectedTabId.value = nextTabId;
+  persist();
 }
 
 function onBranchChange(nextBranch: string) {
@@ -396,6 +641,10 @@ function setQuickPreset(preset: QuickRangePreset, shouldPersist = true) {
 
 watch(selectedTabId, async () => {
   if (isHydrating.value) return;
+  if (activeTab.value.kind === "comparison") {
+    await loadComparisonSources();
+    return;
+  }
   startDateStr.value = "";
   endDateStr.value = "";
   selectedBenchmarks.value = [];
@@ -432,7 +681,10 @@ watch(quickRangePreset, async (preset) => {
 watch(selectedBranch, async () => {
   if (isHydrating.value) return;
   if (!selectedBranch.value) return;
-  allRuns.value = await loadRunIndex(activeTab.value, selectedBranch.value);
+  allRuns.value = await loadRunIndex(
+    activeChartTab.value,
+    selectedBranch.value,
+  );
   if (quickRangePreset.value === "last7days") {
     setQuickPreset("last7days", false);
   } else if (quickRangePreset.value === "last31days") {
@@ -454,7 +706,11 @@ onMounted(async () => {
     endDateStr.value = settings.endDateStr || "";
     quickRangePreset.value = settings.quickRangePreset ?? null;
     selectedBenchmarks.value = settings.selectedBenchmarks || [];
-    await loadCurrentTabData();
+    if (activeTab.value.kind === "comparison") {
+      await loadComparisonSources();
+    } else {
+      await loadCurrentTabData();
+    }
   } finally {
     isHydrating.value = false;
   }

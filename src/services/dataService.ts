@@ -1,4 +1,4 @@
-import type { DashboardTabConfig } from "../config/tabs";
+import type { ChartConfig } from "../config/tabs";
 import {
   assertBranchList,
   assertReportPayload,
@@ -17,14 +17,12 @@ async function fetchJson(path: string): Promise<unknown> {
   return response.json();
 }
 
-export async function loadBranchList(
-  tab: DashboardTabConfig,
-): Promise<string[]> {
+export async function loadBranchList(tab: ChartConfig): Promise<string[]> {
   const payloadRaw = await fetchJson(`${tab.datasetRoot}/branch.json`);
   return assertBranchList(payloadRaw);
 }
 
-function getDatasetPath(tab: DashboardTabConfig, branch: string): string {
+function getDatasetPath(tab: ChartConfig, branch: string): string {
   if (tab.subset) {
     return `${tab.datasetRoot}/${branch}/${tab.subset}`;
   }
@@ -32,7 +30,7 @@ function getDatasetPath(tab: DashboardTabConfig, branch: string): string {
 }
 
 export async function loadRunIndex(
-  tab: DashboardTabConfig,
+  tab: ChartConfig,
   branch: string,
 ): Promise<NormalizedRun[]> {
   const indexRaw = await fetchJson(`${getDatasetPath(tab, branch)}/data.json`);
@@ -49,11 +47,13 @@ export async function loadRunIndex(
 }
 
 export async function loadReport(
-  tab: DashboardTabConfig,
+  tab: ChartConfig,
   branch: string,
   hash: string,
 ): Promise<ReportPayload> {
-  const payloadRaw = await fetchJson(`${getDatasetPath(tab, branch)}/${hash}.json`);
+  const payloadRaw = await fetchJson(
+    `${getDatasetPath(tab, branch)}/${hash}.json`,
+  );
   return assertReportPayload(payloadRaw);
 }
 

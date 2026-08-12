@@ -19,12 +19,12 @@ import {
   watch,
 } from "vue";
 import type { Chart } from "chart.js";
-import type { DashboardTabConfig } from "../../config/tabs";
+import type { ChartConfig } from "../../config/tabs";
 import type { NormalizedRun, ReportPayload } from "../../types/data";
 import { renderMetricChart } from "../../composables/useMetricChart";
 
 const props = defineProps<{
-  tab: DashboardTabConfig;
+  tab: ChartConfig;
   runs: NormalizedRun[];
   selectedBenchmarks: string[];
   runDataByHash: Record<string, ReportPayload>;
