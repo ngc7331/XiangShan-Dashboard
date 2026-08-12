@@ -17,40 +17,25 @@ async function fetchJson(path: string): Promise<unknown> {
   return response.json();
 }
 
-async function loadBranchListByRoot(root: string): Promise<string[]> {
-  const payload = await fetchJson(`${root}/branch.json`);
-  return assertBranchList(payload);
-}
-
 export async function loadBranchList(
   tab: DashboardTabConfig,
 ): Promise<string[]> {
-  try {
-    return await loadBranchListByRoot(tab.datasetRoot);
-  } catch (err) {
-    if (tab.id === "ipc-commit") {
-      const legacy = await fetchJson("data/branch.json");
-      return assertBranchList(legacy);
-    }
-    throw err;
+  const payloadRaw = await fetchJson(`${tab.datasetRoot}/branch.json`);
+  return assertBranchList(payloadRaw);
+}
+
+function getDatasetPath(tab: DashboardTabConfig, branch: string): string {
+  if (tab.subset) {
+    return `${tab.datasetRoot}/${branch}/${tab.subset}`;
   }
+  return `${tab.datasetRoot}/${branch}`;
 }
 
 export async function loadRunIndex(
   tab: DashboardTabConfig,
   branch: string,
 ): Promise<NormalizedRun[]> {
-  let indexRaw: unknown;
-  try {
-    indexRaw = await fetchJson(`${tab.datasetRoot}/${branch}/data.json`);
-  } catch (err) {
-    if (tab.id === "ipc-commit") {
-      indexRaw = await fetchJson(`data/${branch}/data.json`);
-    } else {
-      throw err;
-    }
-  }
-
+  const indexRaw = await fetchJson(`${getDatasetPath(tab, branch)}/data.json`);
   const index = assertRunIndex(indexRaw);
   return Object.entries(index.data)
     .map(([runId, entry]) => ({
@@ -68,16 +53,7 @@ export async function loadReport(
   branch: string,
   hash: string,
 ): Promise<ReportPayload> {
-  let payloadRaw: unknown;
-  try {
-    payloadRaw = await fetchJson(`${tab.datasetRoot}/${branch}/${hash}.json`);
-  } catch (err) {
-    if (tab.id === "ipc-commit") {
-      payloadRaw = await fetchJson(`data/${branch}/${hash}.json`);
-    } else {
-      throw err;
-    }
-  }
+  const payloadRaw = await fetchJson(`${getDatasetPath(tab, branch)}/${hash}.json`);
   return assertReportPayload(payloadRaw);
 }
 

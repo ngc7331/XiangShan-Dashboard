@@ -72,7 +72,7 @@
       <DashboardHero
         :tabs="tabs"
         :selected-tab-id="selectedTabId"
-        :tab-title="t"
+        :tab-title="function(key, subset) { return subset ? t(key).replace('{0}', subset) : t(key); }"
         :runs-label="t('runsLabel')"
         :benchmarks-label="t('testcasesLabel')"
         :run-count="filteredRuns.length"

@@ -9,7 +9,7 @@
         type="button"
         @click="$emit('tabChange', tab.id)"
       >
-        {{ tabTitle(tab.titleKey) }}
+        {{ tabTitle(tab.titleKey, tab.subset) }}
       </button>
     </div>
     <div class="badges">
@@ -25,7 +25,7 @@ import type { DashboardTabConfig } from "../config/tabs";
 defineProps<{
   tabs: DashboardTabConfig[];
   selectedTabId: string;
-  tabTitle: (key: string) => string;
+  tabTitle: (key: string, subset?: string) => string;
   runsLabel: string;
   benchmarksLabel: string;
   runCount: number;

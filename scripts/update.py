@@ -229,23 +229,23 @@ def update_test(gh: GitHub, args: argparse.Namespace) -> None:
 
 
 def update_regression_gh(
-    gh: GitHub, args: argparse.Namespace, target: Literal["nightly", "weekly"]
+    gh: GitHub,
+    args: argparse.Namespace,
+    target: Literal["nightly", "weekly"],
+    compiler: Literal["gcc15", "xscc"],
 ) -> None:
     """Update data for the Regression workflow"""
     match target:
         case "nightly":
             workflow = "Nightly Regression"
+            data_path = DATA_PATH / target / args.branch
+            score_artifact_name = "score"
         case "weekly":
-            workflow = "Performance Regression V3"
-            if args.branch != "kunminghu-v3":
-                raise ValueError(
-                    "Weekly regression workflow is only run on kunminghu-v3 branch, but current branch is %s",
-                    args.branch,
-                )
+            workflow = "Weekly Regression"
+            data_path = DATA_PATH / target / args.branch / compiler
+            score_artifact_name = "score" + (f"-{compiler}" if compiler != "gcc15" else "")
         case _:
-            raise ValueError("Invalid target (%s) for regression update", target)
-
-    data_path = DATA_PATH / target / args.branch
+            raise ValueError(f"Invalid target ({target}) for regression update")
 
     data = DataJson.from_json(data_path / "data.json")
 
@@ -283,7 +283,7 @@ def update_regression_gh(
             commit = gh.commits.get_commit(OWNER, REPO, run["head_sha"])
 
             artifacts = get_artifacts(
-                gh, run["id"], lambda x: x["name"].startswith("score")
+                gh, run["id"], lambda x: x["name"] == score_artifact_name
             )
 
             if len(artifacts) == 0:
@@ -350,7 +350,10 @@ def update_regression_gh(
 
 
 def update_regression_local(
-    gh: GitHub, args: argparse.Namespace, target: Literal["nightly", "weekly"]
+    gh: GitHub,
+    args: argparse.Namespace,
+    target: Literal["nightly", "weekly"],
+    compiler: Literal["gcc15", "xscc"],
 ) -> None:
     """Update data for the Regression workflow from local files"""
     raise NotImplementedError(
@@ -359,13 +362,16 @@ def update_regression_local(
 
 
 def update_regression(
-    gh: GitHub, args: argparse.Namespace, target: Literal["nightly", "weekly"]
+    gh: GitHub,
+    args: argparse.Namespace,
+    target: Literal["nightly", "weekly"],
+    compiler: Literal["gcc15", "xscc"] = "gcc15",
 ) -> None:
     """Update data for the Regression workflow"""
     if args.local:
-        update_regression_local(gh, args, target)
+        update_regression_local(gh, args, target, compiler)
     else:
-        update_regression_gh(gh, args, target)
+        update_regression_gh(gh, args, target, compiler)
 
 
 def main():
@@ -389,6 +395,13 @@ def main():
         "--branch",
         help="Branch to check for commits",
         default="kunminghu-v3",
+    )
+    parser.add_argument(
+        "--compiler",
+        help="Weekly regression compiler [gcc15/xscc], ignored for test and nightly regression",
+        nargs="+",
+        choices=["gcc15", "xscc"],
+        default=["gcc15", "xscc"],
     )
     parser.add_argument(
         "--target",
@@ -420,13 +433,17 @@ def main():
         logging.info("Updating data from GitHub Artifacts")
 
     if "test" in args.target:
+        logging.info("Updating Performance Test workflow")
         update_test(gh, args)
 
     if "nightly" in args.target:
+        logging.info("Updating Nightly Regression workflow")
         update_regression(gh, args, "nightly")
 
     if "weekly" in args.target:
-        update_regression(gh, args, "weekly")
+        for compiler in args.compiler:
+            logging.info("Updating Weekly Regression workflow for compiler %s", compiler)
+            update_regression(gh, args, "weekly", compiler)
 
 
 if __name__ == "__main__":
