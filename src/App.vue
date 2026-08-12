@@ -546,7 +546,10 @@ async function loadCurrentTabData() {
       setQuickPreset("last7days", false);
     } else if (quickRangePreset.value === "last31days") {
       setQuickPreset("last31days", false);
-    } else if (!startDateStr.value || !endDateStr.value) {
+    } else if (
+      !quickRangePreset.value &&
+      (!startDateStr.value || !endDateStr.value)
+    ) {
       setQuickPreset(defaultQuickRangePreset, false);
     }
 
