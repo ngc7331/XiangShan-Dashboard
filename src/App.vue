@@ -127,8 +127,14 @@
               {{ t("comparisonSwapSources") }}
             </button>
           </section>
+          <ComparisonExportSelector
+            :t="t"
+            :disabled="comparisonBenchmarkCount === 0"
+            :on-export="exportComparisonPng"
+          />
         </aside>
         <ComparisonPanel
+          ref="comparisonPanel"
           :t="t"
           :sources="comparisonSources"
           :spec-version="comparisonSpecVersion"
@@ -145,6 +151,7 @@ import RangeSelector from "./components/sidebars/RangeSelector.vue";
 import BenchmarkSelector from "./components/sidebars/BenchmarkSelector.vue";
 import ComparisonTypeSelector from "./components/sidebars/ComparisonTypeSelector.vue";
 import ComparisonSourceSelector from "./components/sidebars/ComparisonSourceSelector.vue";
+import ComparisonExportSelector from "./components/sidebars/ComparisonExportSelector.vue";
 import MetricChartPanel from "./components/panels/MetricChartPanel.vue";
 import ComparisonPanel from "./components/panels/ComparisonPanel.vue";
 import {
@@ -259,6 +266,10 @@ const comparisonSources = ref<ComparisonSource[]>([
   },
 ]);
 const comparisonType = ref<ComparisonSourceType>("nightly");
+type ComparisonPanelInstance = {
+  exportPng: () => Promise<string>;
+};
+const comparisonPanel = ref<ComparisonPanelInstance | null>(null);
 const activeSpecVersion = computed(() =>
   activeChartTab.value.subsets?.length
     ? specVersionFromSubset(activeChartSubset.value)
@@ -491,6 +502,46 @@ async function pasteComparisonSource(id: "a" | "b") {
 function onComparisonPasteError(id: "a" | "b", message: string) {
   const source = comparisonSources.value.find((item) => item.id === id);
   if (source) source.clipboardError = message;
+}
+
+function comparisonFilePart(value: string): string {
+  return (
+    value
+      .replace(/[^a-z0-9._-]+/gi, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 80) || "source"
+  );
+}
+
+function comparisonSourceFileName(source?: ComparisonSource): string {
+  if (!source) return "source";
+  if (source.runId === "custom") {
+    return source.customCommit
+      ? `clipboard-${source.customCommit.slice(0, 12)}`
+      : "clipboard";
+  }
+  const run = source.runs.find((item) => item.runId === source.runId);
+  return run
+    ? `${source.branch}-${run.runId}-${run.hash.slice(0, 8)}`
+    : source.label;
+}
+
+async function exportComparisonPng() {
+  const dataUrl = await comparisonPanel.value?.exportPng();
+  if (!dataUrl) throw new Error(t("comparisonExportError"));
+
+  const sourceA = comparisonFilePart(
+    comparisonSourceFileName(comparisonSources.value[0]),
+  );
+  const sourceB = comparisonFilePart(
+    comparisonSourceFileName(comparisonSources.value[1]),
+  );
+  const link = document.createElement("a");
+  link.href = dataUrl;
+  link.download = `performance-comparison-${sourceA}-vs-${sourceB}.png`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }
 
 function swapComparisonSources() {

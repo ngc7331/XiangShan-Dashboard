@@ -1,5 +1,5 @@
 <template>
-  <div class="comparison-layout">
+  <div ref="exportRoot" class="comparison-layout">
     <section class="comparison-table-shell">
       <div class="comparison-header">
         <h2>
@@ -55,7 +55,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
+import { toPng } from "html-to-image";
 import { getSpecGeomeanName, getSpecGroup } from "../../config/spec";
 import type { SpecCategory, SpecVersion } from "../../config/spec";
 import { isSpecBenchmark } from "../../composables/useBenchmarkSelection";
@@ -76,6 +77,8 @@ const props = defineProps<{
   sources: ComparisonSource[];
   specVersion: SpecVersion;
 }>();
+
+const exportRoot = ref<HTMLElement | null>(null);
 
 const sources = computed(() => props.sources);
 const sourceAName = computed(() => sourceName(sources.value[0]));
@@ -256,6 +259,72 @@ function format(value: number | null) {
 function formatPct(value: number | null) {
   return value === null ? "—" : `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
 }
+
+async function exportPng(): Promise<string> {
+  const source = exportRoot.value;
+  if (!source) throw new Error("comparison panel is not mounted");
+
+  const clone = source.cloneNode(true) as HTMLElement;
+  const width = Math.ceil(source.getBoundingClientRect().width);
+  const renderHost = document.createElement("div");
+  renderHost.style.position = "fixed";
+  renderHost.style.left = "-100000px";
+  renderHost.style.top = "0";
+  renderHost.style.width = `${width}px`;
+  renderHost.style.height = "auto";
+  renderHost.style.overflow = "visible";
+
+  clone.style.position = "static";
+  clone.style.width = `${width}px`;
+  clone.style.height = "auto";
+  clone.style.minHeight = "0";
+  clone.style.backgroundColor = "#ffffff";
+  clone.style.borderRadius = "12px";
+  clone.style.overflow = "hidden";
+
+  clone.querySelectorAll<HTMLElement>(".comparison-layout").forEach((node) => {
+    node.style.height = "auto";
+    node.style.minHeight = "0";
+    node.style.overflow = "visible";
+  });
+  clone
+    .querySelectorAll<HTMLElement>(".comparison-table-shell")
+    .forEach((node) => {
+      node.style.height = "auto";
+      node.style.minHeight = "0";
+      node.style.flex = "none";
+      node.style.overflow = "visible";
+    });
+  clone.querySelectorAll<HTMLElement>(".comparison-tables").forEach((node) => {
+    node.style.height = "auto";
+    node.style.flex = "none";
+  });
+  clone
+    .querySelectorAll<HTMLElement>(".table-group, .table-wrap")
+    .forEach((node) => {
+      node.style.height = "auto";
+      node.style.minHeight = "0";
+      node.style.flex = "none";
+      node.style.overflow = "visible";
+    });
+
+  renderHost.appendChild(clone);
+  document.body.appendChild(renderHost);
+  try {
+    const height = Math.ceil(clone.getBoundingClientRect().height);
+    if (!height) throw new Error("comparison panel has no visible content");
+    return await toPng(clone, {
+      width,
+      height,
+      pixelRatio: 2,
+      cacheBust: true,
+    });
+  } finally {
+    renderHost.remove();
+  }
+}
+
+defineExpose({ exportPng });
 </script>
 
 <style scoped>
