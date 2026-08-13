@@ -105,7 +105,8 @@ h1 {
   min-height: 0;
 }
 
-.tab-workspace {
+.tab-workspace,
+.comparison-workspace {
   display: grid;
   grid-template-columns: minmax(260px, 320px) 1fr;
   gap: 20px;
@@ -119,7 +120,8 @@ h1 {
   flex-direction: column;
   gap: 16px;
   min-height: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .panel-sidebar .field-row {
@@ -271,8 +273,8 @@ h1 {
 }
 
 .benchmark-card {
-  flex: 1 1 auto;
-  min-height: 0;
+  flex: 1 0 280px;
+  min-height: 280px;
   overflow: hidden;
 }
 
@@ -282,23 +284,10 @@ h1 {
   overflow-y: auto;
 }
 
-.comparison-workspace {
-  display: grid;
-  grid-template-columns: minmax(260px, 320px) 1fr;
-  gap: 20px;
-  flex: 1;
-  min-height: 0;
-  height: 100%;
-}
-
 .comparison-workspace > .panel-sidebar,
 .comparison-workspace > .comparison-layout {
   min-height: 0;
   height: 100%;
-}
-
-.comparison-workspace > .panel-sidebar {
-  overflow-y: hidden;
 }
 
 .comparison-swap-btn {
@@ -365,14 +354,84 @@ h1 {
   fill: var(--accent);
 }
 
-@media (max-width: 960px) {
+@media (orientation: portrait) {
   .topbar {
     align-items: flex-start;
     flex-direction: column;
     padding: 16px 20px;
   }
 
-  .tab-workspace {
+  .tab-workspace,
+  .comparison-workspace {
     grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    height: auto;
+    flex: none;
+  }
+
+  .tab-workspace > .panel-sidebar,
+  .comparison-workspace > .panel-sidebar {
+    height: auto;
+    max-height: none;
+  }
+
+  .tab-workspace > .panel-shell,
+  .comparison-workspace > .comparison-layout {
+    height: auto;
+  }
+
+  html,
+  body,
+  #app {
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  body {
+    display: block;
+  }
+
+  #app-root {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .content {
+    flex: none;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .content > :last-child {
+    flex: none;
+  }
+
+  .tab-workspace,
+  .comparison-workspace {
+    grid-template-rows: auto auto;
+    height: auto;
+    min-height: 0;
+  }
+
+  .tab-workspace > .panel-sidebar,
+  .comparison-workspace > .panel-sidebar {
+    height: auto;
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .tab-workspace > .panel-shell,
+  .comparison-workspace > .comparison-layout {
+    height: auto;
+    min-height: 380px;
+  }
+
+  .comparison-workspace .comparison-tables {
+    height: auto;
+    flex: none;
   }
 }
