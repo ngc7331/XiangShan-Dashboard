@@ -1,5 +1,15 @@
 {
   "data": {
+    "31567456697": {
+      "hash": "24a1d614aea650346aac7ee2bcd672751477f16d",
+      "title": "ci(perf): automaticly trigger xscc weekly regression (#6346)",
+      "date": 1786513373
+    },
+    "31556234401": {
+      "hash": "f0624139063e12b87ad396144a5ddeaabc9c8a5c",
+      "title": "feat(CDP): add CDP prefetcher in L2 (#6341)",
+      "date": 1786500860
+    },
     "31469429837": {
       "hash": "689018340eb22cb639bdfa1f83c5abb508be0df5",
       "title": "fix(loadPipe): fix index error in latency flag write (#6339)",
