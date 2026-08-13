@@ -1,0 +1,4 @@
+export const EXPORT_LAYOUT_WIDTH = 1920;
+export const COMPARISON_EXPORT_LAYOUT_WIDTH = 1200;
+export const EXPORT_LAYOUT_HEIGHT = 1080;
+export const EXPORT_PIXEL_RATIO = 2;

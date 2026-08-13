@@ -30,6 +30,11 @@ import type { ChartConfig } from "../../config/tabs";
 import type { SpecVersion } from "../../config/spec";
 import type { NormalizedRun, ReportPayload } from "../../types/data";
 import { renderMetricChart } from "../../composables/useMetricChart";
+import {
+  EXPORT_LAYOUT_HEIGHT,
+  EXPORT_LAYOUT_WIDTH,
+  EXPORT_PIXEL_RATIO,
+} from "../../constants/export";
 
 const props = defineProps<{
   tab: ChartConfig;
@@ -107,16 +112,47 @@ async function exportPng(): Promise<string> {
     throw new Error(props.t("exportNoData"));
   }
 
-  const rect = source.getBoundingClientRect();
-  const width = Math.ceil(rect.width);
-  const height = Math.ceil(rect.height);
-  if (!width || !height) throw new Error(props.t("exportError"));
-  return await toPng(source, {
-    width,
-    height,
-    pixelRatio: 2,
-    cacheBust: true,
-  });
+  const clone = source.cloneNode(true) as HTMLElement;
+  const renderHost = document.createElement("div");
+  renderHost.style.position = "fixed";
+  renderHost.style.left = "-100000px";
+  renderHost.style.top = "0";
+  renderHost.style.width = `${EXPORT_LAYOUT_WIDTH}px`;
+  renderHost.style.height = `${EXPORT_LAYOUT_HEIGHT}px`;
+  renderHost.style.overflow = "visible";
+
+  clone.style.position = "static";
+  clone.style.width = `${EXPORT_LAYOUT_WIDTH}px`;
+  clone.style.height = `${EXPORT_LAYOUT_HEIGHT}px`;
+  clone.style.minHeight = "0";
+  clone.style.backgroundColor = "#ffffff";
+  clone.style.borderRadius = "var(--radius-card)";
+  clone.style.overflow = "hidden";
+
+  const sourceCanvas = source.querySelector("canvas");
+  const cloneCanvas = clone.querySelector("canvas");
+  if (sourceCanvas && cloneCanvas) {
+    const image = document.createElement("img");
+    image.src = sourceCanvas.toDataURL("image/png");
+    image.alt = "";
+    image.style.display = "block";
+    image.style.width = "100%";
+    image.style.height = "100%";
+    cloneCanvas.replaceWith(image);
+  }
+
+  renderHost.appendChild(clone);
+  document.body.appendChild(renderHost);
+  try {
+    return await toPng(clone, {
+      width: EXPORT_LAYOUT_WIDTH,
+      height: EXPORT_LAYOUT_HEIGHT,
+      pixelRatio: EXPORT_PIXEL_RATIO,
+      cacheBust: true,
+    });
+  } finally {
+    renderHost.remove();
+  }
 }
 
 defineExpose({ exportPng });
