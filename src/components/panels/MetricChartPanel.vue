@@ -20,6 +20,7 @@ import {
 } from "vue";
 import type { Chart } from "chart.js";
 import type { ChartConfig } from "../../config/tabs";
+import type { SpecVersion } from "../../config/spec";
 import type { NormalizedRun, ReportPayload } from "../../types/data";
 import { renderMetricChart } from "../../composables/useMetricChart";
 
@@ -30,6 +31,7 @@ const props = defineProps<{
   runDataByHash: Record<string, ReportPayload>;
   noDataText: string;
   geomeanMissing: Record<number, Record<string, string[]>>;
+  specVersion: SpecVersion;
   t: (key: string) => string;
 }>();
 
@@ -64,6 +66,7 @@ async function redraw() {
     selectedBenchmarks: props.selectedBenchmarks,
     runDataByHash: props.runDataByHash,
     geomeanMissing: props.geomeanMissing,
+    specVersion: props.specVersion,
     t: props.t,
   });
 }
@@ -76,6 +79,7 @@ watch(
     props.selectedBenchmarks,
     props.runDataByHash,
     props.geomeanMissing,
+    props.specVersion,
   ],
   redraw,
   { deep: true },

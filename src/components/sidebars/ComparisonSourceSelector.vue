@@ -22,7 +22,9 @@
         :value="source.runId"
         @change="emit('runChange', ($event.target as HTMLSelectElement).value)"
       >
-        <option v-if="!source.runs.length" value="">{{ t("comparisonNoRuns") }}</option>
+        <option v-if="!source.runs.length" value="">
+          {{ t("comparisonNoRuns") }}
+        </option>
         <option v-for="run in sortedRuns" :key="run.hash" :value="run.runId">
           {{ run.runId }} · {{ run.hash.slice(0, 8) }}
         </option>
@@ -36,12 +38,11 @@
     >
       {{ t("comparisonPaste") }}
     </button>
-    <p v-if="clipboardError" class="error-text">{{ clipboardError }}</p>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import type {
   ComparisonSource,
   ComparisonSourceId,
@@ -56,22 +57,23 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "branchChange", value: string): void;
   (e: "runChange", value: string): void;
+  (e: "pasteError", value: string): void;
 }>();
 
-const clipboardError = ref("");
 const sortedRuns = computed(() =>
   [...props.source.runs].sort((a, b) => Number(b.runId) - Number(a.runId)),
 );
 
 async function paste() {
-  clipboardError.value = "";
   try {
     await props.onPaste(props.source.id);
   } catch (error) {
-    clipboardError.value =
+    emit(
+      "pasteError",
       error instanceof Error
         ? error.message
-        : props.t("comparisonClipboardError");
+        : props.t("comparisonClipboardError"),
+    );
   }
 }
 </script>

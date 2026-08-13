@@ -15,6 +15,20 @@
         </option>
       </select>
     </div>
+    <div v-if="subsets.length" class="row">
+      <label>{{ t("subset") }}</label>
+      <select
+        class="control-input"
+        :value="selectedSubset"
+        @change="
+          $emit('subsetChange', ($event.target as HTMLSelectElement).value)
+        "
+      >
+        <option v-for="subset in subsets" :key="subset" :value="subset">
+          {{ subset }}
+        </option>
+      </select>
+    </div>
     <div class="row">
       <label>{{ t("startDate") }}</label>
       <input
@@ -75,6 +89,8 @@ defineProps<{
   t: (key: string) => string;
   branches: string[];
   selectedBranch: string;
+  subsets: readonly string[];
+  selectedSubset: string;
   startDateStr: string;
   endDateStr: string;
   activeQuickPreset: QuickRangePreset | null;
@@ -82,6 +98,7 @@ defineProps<{
 
 defineEmits<{
   (e: "branchChange", value: string): void;
+  (e: "subsetChange", value: string): void;
   (e: "startDateChange", value: string): void;
   (e: "endDateChange", value: string): void;
   (e: "setQuickPreset", preset: QuickRangePreset): void;

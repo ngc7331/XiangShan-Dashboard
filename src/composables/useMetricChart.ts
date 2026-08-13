@@ -11,9 +11,14 @@ import {
   type ChartDataset,
 } from "chart.js";
 import type { ChartConfig } from "../config/tabs";
+import {
+  getSpecGeomeanName,
+  type SpecCategory,
+  type SpecVersion,
+} from "../config/spec";
 import type { NormalizedRun, ReportPayload } from "../types/data";
 import { formatDisplayDate } from "../services/dataService";
-import { isPrefixed, SELECT_PREFIXES } from "./useBenchmarkSelection";
+import { isSpecBenchmark } from "./useBenchmarkSelection";
 
 Chart.register(
   LineController,
@@ -86,21 +91,27 @@ function applyLegendHighlight(chart: Chart, highlightedIndex: number | null) {
   chart.update();
 }
 
-function pointStyleFor(name: string): "circle" | "triangle" | "star" | "rect" {
+function pointStyleFor(
+  name: string,
+  specVersion: SpecVersion,
+): "circle" | "triangle" | "star" | "rect" {
   name = name.replace(/^\d+\./, ""); // remove numeric prefix
   if (name.startsWith("GEOMEAN")) return "star";
-  if (isPrefixed(name, "SPEC06INT")) return "rect";
-  if (isPrefixed(name, "SPEC06FP")) return "triangle";
+  if (isSpecBenchmark(name, specVersion, "int")) return "rect";
+  if (isSpecBenchmark(name, specVersion, "fp")) return "triangle";
   return "circle";
 }
 
 function computeGeomean(
   payload: ReportPayload,
   metricKey: "ipc" | "score",
-  prefix?: keyof typeof SELECT_PREFIXES,
+  specVersion?: SpecVersion,
+  category?: SpecCategory,
 ): number | null {
   const filtered = Object.entries(payload).filter(([name]) =>
-    prefix ? isPrefixed(name, prefix) : !name.startsWith("legacy"),
+    specVersion && category
+      ? isSpecBenchmark(name, specVersion, category)
+      : !name.startsWith("legacy"),
   );
   if (!filtered.length) return null;
 
@@ -117,14 +128,15 @@ function resolveValue(
   payload: ReportPayload | undefined,
   benchmark: string,
   metricKey: "ipc" | "score",
+  specVersion: SpecVersion,
 ): number | null {
   if (!payload) return null;
   if (benchmark === "GEOMEAN") return computeGeomean(payload, metricKey);
-  if (benchmark === "GEOMEAN-SPEC06INT") {
-    return computeGeomean(payload, metricKey, "SPEC06INT");
+  if (benchmark === getSpecGeomeanName(specVersion, "int")) {
+    return computeGeomean(payload, metricKey, specVersion, "int");
   }
-  if (benchmark === "GEOMEAN-SPEC06FP") {
-    return computeGeomean(payload, metricKey, "SPEC06FP");
+  if (benchmark === getSpecGeomeanName(specVersion, "fp")) {
+    return computeGeomean(payload, metricKey, specVersion, "fp");
   }
   const value = payload[benchmark]?.[metricKey];
   return typeof value === "number" ? value : null;
@@ -138,6 +150,7 @@ export function renderMetricChart(args: {
   selectedBenchmarks: string[];
   runDataByHash: Record<string, ReportPayload>;
   geomeanMissing: Record<number, Record<string, string[]>>;
+  specVersion: SpecVersion;
   t: (key: string) => string;
 }): Chart | null {
   const {
@@ -148,6 +161,7 @@ export function renderMetricChart(args: {
     selectedBenchmarks,
     runDataByHash,
     geomeanMissing,
+    specVersion,
     t,
   } = args;
 
@@ -172,7 +186,12 @@ export function renderMetricChart(args: {
       return {
         label: name,
         data: runs.map((run) =>
-          resolveValue(runDataByHash[run.hash], name, tab.metricKey),
+          resolveValue(
+            runDataByHash[run.hash],
+            name,
+            tab.metricKey,
+            specVersion,
+          ),
         ),
         borderColor: color,
         backgroundColor: color,
@@ -181,7 +200,7 @@ export function renderMetricChart(args: {
         pointRadius: isGeomean ? 6 : 3,
         pointHoverRadius: isGeomean ? 9 : 5,
         borderWidth: isGeomean ? 4 : 2,
-        pointStyle: pointStyleFor(name),
+        pointStyle: pointStyleFor(name, specVersion),
         _baseColor: color,
         _baseBorderWidth: isGeomean ? 4 : 2,
         _basePointRadius: isGeomean ? 6 : 3,
@@ -240,6 +259,10 @@ export function renderMetricChart(args: {
                 `${t("runId")}: ${run.runId}`,
                 `${t("date")}: ${formatDisplayDate(run.dateMs)}`,
               ];
+
+              if (run.coverage) {
+                lines.push(`${t("coverage")}: ${run.coverage}`);
+              }
 
               if (run.note) {
                 lines.push(`${t("note")}: ${run.note}`);

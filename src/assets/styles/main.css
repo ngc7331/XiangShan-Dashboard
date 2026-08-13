@@ -246,6 +246,21 @@ h1 {
   overflow-y: hidden;
 }
 
+.comparison-swap-btn {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #b8cdfb;
+  border-radius: 8px;
+  background: #eef4ff;
+  color: var(--accent);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.comparison-swap-btn:hover {
+  background: #e2edff;
+}
+
 .muted {
   color: var(--muted);
   font-size: 13px;

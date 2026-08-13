@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { MESSAGES, type Locale } from "../constants/messages";
+import { COMMON_MESSAGES, MESSAGES, type Locale } from "../constants/messages";
 
 function detectBrowserLocale(): Locale {
   try {
@@ -18,7 +18,7 @@ function detectBrowserLocale(): Locale {
 export function useLocale() {
   const locale = ref<Locale>(detectBrowserLocale());
   const messages = computed(() => MESSAGES[locale.value]);
-  const t = (key: string) => messages.value[key] || key;
+  const t = (key: string) => messages.value[key] || COMMON_MESSAGES[key] || key;
 
   return {
     locale,

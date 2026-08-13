@@ -1,61 +1,63 @@
-export const SELECT_PREFIXES = {
-  SPEC06INT: [
-    "perlbench",
-    "bzip2",
-    "gcc",
-    "mcf",
-    "gobmk",
-    "hmmer",
-    "sjeng",
-    "libquantum",
-    "h264ref",
-    "omnetpp",
-    "astar",
-    "xalancbmk",
-  ],
-  SPEC06FP: [
-    "bwaves",
-    "gamess",
-    "milc",
-    "zeusmp",
-    "gromacs",
-    "cactusADM",
-    "leslie3d",
-    "namd",
-    "dealII",
-    "soplex",
-    "povray",
-    "calculix",
-    "GemsFDTD",
-    "tonto",
-    "lbm",
-    "wrf",
-    "sphinx3",
-    "specrand",
-  ],
-} as const;
+import {
+  getSpecGeomeanName,
+  getSpecGroup,
+  type SpecCategory,
+  type SpecVersion,
+} from "../config/spec";
 
 export function selectDefault(benchmarks: string[]): string[] {
   const nonLegacy = benchmarks.filter((tc) => !tc.startsWith("legacy-"));
   return nonLegacy.length ? nonLegacy : [...benchmarks];
 }
 
-export function isPrefixed(
+export function isSpecBenchmark(
   name: string,
-  prefix: keyof typeof SELECT_PREFIXES,
+  version: SpecVersion,
+  category: SpecCategory,
 ): boolean {
-  return (
-    SELECT_PREFIXES[prefix].some((pf) =>
-      name.replace(/^\d+\./, "").startsWith(pf),
-    ) || name === `GEOMEAN-${prefix}`
-  );
+  if (name === getSpecGeomeanName(version, category)) return true;
+
+  const normalizedName = name.toLowerCase();
+  const hasNumericPrefix = /^\d+\./.test(name);
+  return getSpecGroup(version, category).benchmarks.some((benchmark) => {
+    const candidate = hasNumericPrefix
+      ? benchmark
+      : benchmark.replace(/^\d+\./, "");
+    if (normalizedName === candidate.toLowerCase()) return true;
+
+    // SPEC rate data may omit the conventional `_r` suffix while retaining
+    // the 5xx/7xx benchmark number. Keep the numeric prefix in the match.
+    return (
+      /^(?:5|7)\d{2}\./.test(benchmark) &&
+      normalizedName === candidate.replace(/_r$/, "").toLowerCase()
+    );
+  });
 }
 
-export function selectPrefix(
+export function detectSpecVersion(
   benchmarks: string[],
-  prefix: keyof typeof SELECT_PREFIXES,
+): SpecVersion | undefined {
+  const versions: SpecVersion[] = ["06", "17", "26"];
+  const matches = versions.map((version) => ({
+    version,
+    count: benchmarks.filter(
+      (name) =>
+        isSpecBenchmark(name, version, "int") ||
+        isSpecBenchmark(name, version, "fp"),
+    ).length,
+  }));
+  const best = matches.reduce((current, item) =>
+    item.count > current.count ? item : current,
+  );
+  return best.count ? best.version : undefined;
+}
+
+export function selectSpecCategory(
+  benchmarks: string[],
+  version: SpecVersion,
+  category: SpecCategory,
 ): string[] {
-  return benchmarks.filter((tc) => isPrefixed(tc, prefix));
+  return benchmarks.filter((name) => isSpecBenchmark(name, version, category));
 }
 
 export function toggleSelection(

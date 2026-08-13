@@ -1,3 +1,5 @@
+import type { SpecVersion } from "../config/spec";
+
 export type MetricKey = "ipc" | "score";
 
 export interface RunIndexEntry {
@@ -20,6 +22,8 @@ export interface NormalizedRun {
   title: string;
   dateMs: number;
   note: string | undefined;
+  coverage: string | null;
+  specVersion: SpecVersion;
 }
 
 export function isMetricKey(key: string): key is MetricKey {

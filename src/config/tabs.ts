@@ -1,7 +1,8 @@
 import type { MetricKey } from "../types/data";
+import type { SpecVersion } from "./spec";
 
 export type AxisMode = "run-id" | "date";
-export type ComparisonSourceType = "nightly" | "weekly-gcc15" | "weekly-xscc";
+export type ComparisonSourceType = "nightly" | `weekly-${string}`;
 
 interface TabConfigBase {
   id: string;
@@ -10,16 +11,15 @@ interface TabConfigBase {
 
 export interface ChartConfig extends TabConfigBase {
   kind: "chart";
-  id:
-    | "ipc-commit"
-    | "score-nightly"
-    | "score-weekly-gcc15"
-    | "score-weekly-xscc";
+  id: "ipc-commit" | "score-nightly" | "score-weekly";
   datasetRoot: string;
-  subset?: string;
+  subsets?: readonly string[];
+  defaultSubset?: string;
   metricKey: MetricKey;
   axisMode: AxisMode;
   supportsSpecButtons: boolean;
+  defaultSpecVersion: SpecVersion;
+  coverage: string | null;
 }
 
 export interface ComparisonConfig extends TabConfigBase {
@@ -37,7 +37,9 @@ export const DASHBOARD_TABS: TabConfig[] = [
     datasetRoot: "data/test",
     metricKey: "ipc",
     axisMode: "run-id",
-    supportsSpecButtons: true,
+    supportsSpecButtons: false,
+    defaultSpecVersion: "06",
+    coverage: null,
   },
   {
     kind: "chart",
@@ -47,26 +49,21 @@ export const DASHBOARD_TABS: TabConfig[] = [
     metricKey: "score",
     axisMode: "date",
     supportsSpecButtons: true,
+    defaultSpecVersion: "06",
+    coverage: "0.3c",
   },
   {
     kind: "chart",
-    id: "score-weekly-gcc15",
+    id: "score-weekly",
     titleKey: "tabsWeekly",
     datasetRoot: "data/weekly",
-    subset: "gcc15",
+    subsets: ["gcc15", "xscc"],
+    defaultSubset: "gcc15",
     metricKey: "score",
     axisMode: "date",
     supportsSpecButtons: true,
-  },
-  {
-    kind: "chart",
-    id: "score-weekly-xscc",
-    titleKey: "tabsWeekly",
-    datasetRoot: "data/weekly",
-    subset: "xscc",
-    metricKey: "score",
-    axisMode: "date",
-    supportsSpecButtons: true,
+    defaultSpecVersion: "06",
+    coverage: "1.0c",
   },
   {
     kind: "comparison",

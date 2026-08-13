@@ -1,4 +1,5 @@
 import type { NormalizedRun, ReportPayload } from "./data";
+import type { SpecVersion } from "../config/spec";
 
 export type ComparisonSourceId = "a" | "b";
 
@@ -12,4 +13,7 @@ export interface ComparisonSource {
   payload?: ReportPayload;
   customCommit?: string;
   customDate?: string;
+  customCoverage?: string;
+  customSpecVersion?: SpecVersion;
+  clipboardError?: string;
 }

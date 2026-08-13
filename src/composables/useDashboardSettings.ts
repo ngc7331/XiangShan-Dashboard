@@ -9,6 +9,7 @@ export interface DashboardSettings {
   quickRangePreset: QuickRangePreset | null;
   selectedBenchmarks: string[];
   selectedTabId: string;
+  selectedSubset: string;
 }
 
 const settingsKey = "xs-dashboard-settings-v2";
@@ -21,6 +22,7 @@ export function useDashboardSettings() {
     quickRangePreset: null,
     selectedBenchmarks: [],
     selectedTabId: "ipc-commit",
+    selectedSubset: "",
   });
 
   function load() {
@@ -51,6 +53,7 @@ export function useDashboardSettings() {
         ? data.selectedBenchmarks
         : [];
       state.selectedTabId = data.selectedTabId || "ipc-commit";
+      state.selectedSubset = data.selectedSubset || "";
     } catch (err) {
       console.warn("Failed to load settings", err);
     }

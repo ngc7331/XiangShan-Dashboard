@@ -25,6 +25,7 @@ import type { ComparisonSourceType } from "../../config/tabs";
 const props = defineProps<{
   t: (key: string) => string;
   comparisonType: ComparisonSourceType;
+  weeklySubsets: readonly string[];
 }>();
 
 const emit = defineEmits<{
@@ -36,13 +37,9 @@ const typeOptions = computed(() => [
     id: "nightly" as ComparisonSourceType,
     label: props.t("comparisonNightly"),
   },
-  {
-    id: "weekly-gcc15" as ComparisonSourceType,
-    label: props.t("comparisonWeeklyGcc15"),
-  },
-  {
-    id: "weekly-xscc" as ComparisonSourceType,
-    label: props.t("comparisonWeeklyXscc"),
-  },
+  ...props.weeklySubsets.map((subset) => ({
+    id: `weekly-${subset}` as ComparisonSourceType,
+    label: props.t("comparisonWeeklySubset").replace("{0}", subset),
+  })),
 ]);
 </script>

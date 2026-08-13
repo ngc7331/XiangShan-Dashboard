@@ -65,10 +65,13 @@
             :t="t"
             :branches="branches"
             :selected-branch="selectedBranch"
+            :subsets="activeChartTab.subsets || []"
+            :selected-subset="selectedSubset"
             :start-date-str="startDateStr"
             :end-date-str="endDateStr"
             :active-quick-preset="quickRangePreset"
             @branch-change="onBranchChange"
+            @subset-change="onSubsetChange"
             @start-date-change="onStartDateChange"
             @end-date-change="onEndDateChange"
             @set-quick-preset="setQuickPreset"
@@ -93,6 +96,7 @@
           :run-data-by-hash="runDataByHash"
           :no-data-text="chartEmptyText"
           :geomean-missing="geomeanMissing"
+          :spec-version="activeSpecVersion"
           :t="t"
         />
       </div>
@@ -101,6 +105,7 @@
           <ComparisonTypeSelector
             :t="t"
             :comparison-type="comparisonType"
+            :weekly-subsets="weeklyTab.subsets || []"
             @change="onComparisonTypeChange"
           />
           <ComparisonSourceSelector
@@ -111,9 +116,23 @@
             :on-paste="pasteComparisonSource"
             @branch-change="onComparisonBranchChange(source.id, $event)"
             @run-change="onComparisonRunChange(source.id, $event)"
+            @paste-error="onComparisonPasteError(source.id, $event)"
           />
+          <section class="panel-card comparison-swap-card">
+            <button
+              class="comparison-swap-btn"
+              type="button"
+              @click="swapComparisonSources"
+            >
+              {{ t("comparisonSwapSources") }}
+            </button>
+          </section>
         </aside>
-        <ComparisonPanel :t="t" :sources="comparisonSources" />
+        <ComparisonPanel
+          :t="t"
+          :sources="comparisonSources"
+          :spec-version="comparisonSpecVersion"
+        />
       </div>
     </main>
   </div>
@@ -137,11 +156,19 @@ import { useLocale } from "./composables/useLocale";
 import { useDashboardSettings } from "./composables/useDashboardSettings";
 import type { QuickRangePreset } from "./composables/useDashboardSettings";
 import {
+  detectSpecVersion,
+  isSpecBenchmark,
   selectDefault,
-  selectPrefix,
+  selectSpecCategory,
   toggleSelection,
-  isPrefixed,
 } from "./composables/useBenchmarkSelection";
+import {
+  getSpecGeomeanName,
+  specVersionFromText,
+  specVersionFromSubset,
+  type SpecCategory,
+  type SpecVersion,
+} from "./config/spec";
 import {
   formatInputDate,
   getDateRange,
@@ -154,12 +181,14 @@ import type { ComparisonSource } from "./types/comparison";
 const dayMs = 24 * 60 * 60 * 1000;
 const defaultQuickRangePreset: QuickRangePreset = "last7days";
 const tabs = DASHBOARD_TABS;
-const comparisonTabs: Record<ComparisonSourceType, ChartConfig> = {
-  nightly: tabs[1] as ChartConfig,
-  "weekly-gcc15": tabs[2] as ChartConfig,
-  "weekly-xscc": tabs[3] as ChartConfig,
-};
-
+const nightlyTab = tabs.find(
+  (tab): tab is ChartConfig =>
+    tab.kind === "chart" && tab.id === "score-nightly",
+)!;
+const weeklyTab = tabs.find(
+  (tab): tab is ChartConfig =>
+    tab.kind === "chart" && tab.id === "score-weekly",
+)!;
 const { t } = useLocale();
 const {
   state: settings,
@@ -179,13 +208,19 @@ const activeChartTab = computed(() =>
 );
 
 function displayTabTitle(tab: (typeof tabs)[number]) {
-  return tab.kind === "chart" && tab.subset
-    ? t(tab.titleKey).replace("{0}", tab.subset)
-    : t(tab.titleKey);
+  return t(tab.titleKey);
 }
 
 const branches = ref<string[]>([]);
 const selectedBranch = ref(settings.selectedBranch || "");
+const selectedSubset = ref(settings.selectedSubset || "");
+const activeChartSubset = computed(() => {
+  const subsets = activeChartTab.value.subsets || [];
+  if (!subsets.length) return undefined;
+  return subsets.includes(selectedSubset.value)
+    ? selectedSubset.value
+    : activeChartTab.value.defaultSubset || subsets[0];
+});
 const startDateStr = ref(settings.startDateStr || "");
 const endDateStr = ref(settings.endDateStr || "");
 const quickRangePreset = ref<QuickRangePreset | null>(
@@ -224,6 +259,26 @@ const comparisonSources = ref<ComparisonSource[]>([
   },
 ]);
 const comparisonType = ref<ComparisonSourceType>("nightly");
+const activeSpecVersion = computed(() =>
+  activeChartTab.value.subsets?.length
+    ? specVersionFromSubset(activeChartSubset.value)
+    : activeChartTab.value.defaultSpecVersion,
+);
+const comparisonSpecVersion = computed(() => {
+  const sourceVersion = comparisonSources.value
+    .map((source) =>
+      source.runId === "custom"
+        ? source.customSpecVersion ||
+          detectSpecVersion(Object.keys(source.payload || {}))
+        : source.runs.find((run) => run.runId === source.runId)?.specVersion,
+    )
+    .find((version) => version !== undefined);
+  if (sourceVersion) return sourceVersion;
+  const target = comparisonTarget();
+  return target.subset
+    ? specVersionFromSubset(target.subset)
+    : target.tab.defaultSpecVersion;
+});
 
 const comparisonBenchmarkCount = computed(() => {
   const payloads = comparisonSources.value
@@ -231,29 +286,37 @@ const comparisonBenchmarkCount = computed(() => {
     .filter((payload) => Object.keys(payload).length > 0);
   if (!payloads.length) return 0;
   const names = new Set(payloads.flatMap((payload) => Object.keys(payload)));
-  const countGroup = (prefix: "SPEC06INT" | "SPEC06FP") =>
+  const countGroup = (category: SpecCategory) =>
     Array.from(names).filter(
-      (name) => !name.startsWith("GEOMEAN") && isPrefixed(name, prefix),
+      (name) =>
+        !name.startsWith("GEOMEAN") &&
+        isSpecBenchmark(name, comparisonSpecVersion.value, category),
     ).length;
-  return countGroup("SPEC06INT") + countGroup("SPEC06FP") + 2;
+  const intCount = countGroup("int");
+  const fpCount = countGroup("fp");
+  return intCount + fpCount + Number(intCount > 0) + Number(fpCount > 0);
 });
 
-function comparisonSourceConfig() {
-  return comparisonTabs[comparisonType.value];
+function comparisonTarget() {
+  if (comparisonType.value === "nightly") return { tab: nightlyTab };
+  return {
+    tab: weeklyTab,
+    subset: comparisonType.value.slice("weekly-".length),
+  };
 }
 
 async function loadComparisonSource(source: ComparisonSource) {
-  const tab = comparisonSourceConfig();
+  const { tab, subset } = comparisonTarget();
   source.branches = await loadBranchList(tab);
   if (!source.branches.includes(source.branch))
     source.branch = source.branches[0] || "";
   if (!source.branch) return;
-  source.runs = await loadRunIndex(tab, source.branch);
+  source.runs = await loadRunIndex(tab, source.branch, subset);
   if (!source.runs.some((run) => run.runId === source.runId))
     source.runId = source.runs[source.runs.length - 1]?.runId || "";
   const run = source.runs.find((item) => item.runId === source.runId);
   source.payload = run
-    ? await loadReport(tab, source.branch, run.hash)
+    ? await loadReport(tab, source.branch, run.hash, subset)
     : undefined;
 }
 
@@ -281,6 +344,9 @@ async function onComparisonTypeChange(type: ComparisonSourceType) {
     );
     source.customCommit = undefined;
     source.customDate = undefined;
+    source.customCoverage = undefined;
+    source.customSpecVersion = undefined;
+    source.clipboardError = undefined;
     source.branch = "";
     source.runId = "";
     source.payload = undefined;
@@ -296,6 +362,9 @@ async function onComparisonBranchChange(id: "a" | "b", branch: string) {
   );
   source.customCommit = undefined;
   source.customDate = undefined;
+  source.customCoverage = undefined;
+  source.customSpecVersion = undefined;
+  source.clipboardError = undefined;
   source.branch = branch;
   source.runId = "";
   source.payload = undefined;
@@ -310,10 +379,18 @@ async function onComparisonRunChange(id: "a" | "b", runId: string) {
   );
   source.customCommit = undefined;
   source.customDate = undefined;
+  source.customCoverage = undefined;
+  source.customSpecVersion = undefined;
+  source.clipboardError = undefined;
   source.runId = runId;
   const run = source.runs.find((item) => item.runId === runId);
   source.payload = run
-    ? await loadReport(comparisonSourceConfig(), source.branch, run.hash)
+    ? await loadReport(
+        comparisonTarget().tab,
+        source.branch,
+        run.hash,
+        comparisonTarget().subset,
+      )
     : undefined;
 }
 
@@ -361,9 +438,21 @@ function parseClipboardReport(text: string): ReportPayload {
 function extractClipboardMetadata(text: string): {
   commit?: string;
   date?: string;
+  coverage?: string;
+  specVersion?: SpecVersion;
 } {
   const match = /(?:^|[\\/\s])cr(\d{6})-([0-9a-f]{7,40})-/i.exec(text);
-  if (!match) return {};
+  const metadata: {
+    commit?: string;
+    date?: string;
+    coverage?: string;
+    specVersion?: SpecVersion;
+  } = {
+    coverage: /(?:^|[-_/])(\d+(?:\.\d+)?c)(?=\.txt|[-_/\s]|$)/i.exec(text)?.[1],
+    specVersion: specVersionFromText(text),
+  };
+  if (!match) return metadata;
+
   const [, compactDate, commit] = match;
   const year = 2000 + Number(compactDate.slice(0, 2));
   const month = Number(compactDate.slice(2, 4));
@@ -374,11 +463,10 @@ function extractClipboardMetadata(text: string): {
     date.getUTCMonth() !== month - 1 ||
     date.getUTCDate() !== day
   )
-    return {};
-  return {
-    commit,
-    date: `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
-  };
+    return metadata;
+  metadata.commit = commit;
+  metadata.date = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  return metadata;
 }
 
 async function pasteComparisonSource(id: "a" | "b") {
@@ -393,7 +481,54 @@ async function pasteComparisonSource(id: "a" | "b") {
     source.runId = "custom";
     source.customCommit = metadata.commit;
     source.customDate = metadata.date;
+    source.customCoverage = metadata.coverage;
+    source.customSpecVersion =
+      metadata.specVersion || detectSpecVersion(Object.keys(payload));
+    source.clipboardError = undefined;
   }
+}
+
+function onComparisonPasteError(id: "a" | "b", message: string) {
+  const source = comparisonSources.value.find((item) => item.id === id);
+  if (source) source.clipboardError = message;
+}
+
+function swapComparisonSources() {
+  const sourceA = comparisonSources.value.find((source) => source.id === "a");
+  const sourceB = comparisonSources.value.find((source) => source.id === "b");
+  if (!sourceA || !sourceB) return;
+
+  const stateA = {
+    branch: sourceA.branch,
+    branches: sourceA.branches,
+    runs: sourceA.runs,
+    runId: sourceA.runId,
+    payload: sourceA.payload,
+    customCommit: sourceA.customCommit,
+    customDate: sourceA.customDate,
+    customCoverage: sourceA.customCoverage,
+    customSpecVersion: sourceA.customSpecVersion,
+    clipboardError: sourceA.clipboardError,
+  };
+  const stateB = {
+    branch: sourceB.branch,
+    branches: sourceB.branches,
+    runs: sourceB.runs,
+    runId: sourceB.runId,
+    payload: sourceB.payload,
+    customCommit: sourceB.customCommit,
+    customDate: sourceB.customDate,
+    customCoverage: sourceB.customCoverage,
+    customSpecVersion: sourceB.customSpecVersion,
+    clipboardError: sourceB.clipboardError,
+  };
+
+  Object.assign(sourceA, stateB, {
+    label: t("comparisonSourceA"),
+  });
+  Object.assign(sourceB, stateA, {
+    label: t("comparisonSourceB"),
+  });
 }
 
 const chartEmptyText = computed(() => {
@@ -417,6 +552,7 @@ function finishLoading() {
 
 function persist() {
   settings.selectedTabId = selectedTabId.value;
+  settings.selectedSubset = selectedSubset.value;
   settings.selectedBranch = selectedBranch.value;
   settings.startDateStr = startDateStr.value;
   settings.endDateStr = endDateStr.value;
@@ -462,12 +598,13 @@ async function refreshRuns() {
     );
     for (const run of needed) {
       setLoading(
-        `${activeChartTab.value.datasetRoot}/${selectedBranch.value}/${run.hash}.json`,
+        `${activeChartTab.value.datasetRoot}/${selectedBranch.value}/${activeChartSubset.value ? `${activeChartSubset.value}/` : ""}${run.hash}.json`,
       );
       runDataByHash.value[run.hash] = await loadReport(
         activeChartTab.value,
         selectedBranch.value,
         run.hash,
+        activeChartSubset.value,
       );
     }
 
@@ -479,8 +616,14 @@ async function refreshRuns() {
     }
 
     set.add("GEOMEAN");
-    set.add("GEOMEAN-SPEC06INT");
-    set.add("GEOMEAN-SPEC06FP");
+    const intGeomean = getSpecGeomeanName(activeSpecVersion.value, "int");
+    const fpGeomean = getSpecGeomeanName(activeSpecVersion.value, "fp");
+    const geomeanNames = ["GEOMEAN"];
+    if (activeChartTab.value.supportsSpecButtons) {
+      set.add(intGeomean);
+      set.add(fpGeomean);
+      geomeanNames.push(intGeomean, fpGeomean);
+    }
 
     availableBenchmarks.value = Array.from(set).sort();
 
@@ -488,17 +631,17 @@ async function refreshRuns() {
     const geomean: Record<number, Record<string, string[]>> = {};
     filteredRuns.value.forEach((run, runIdx) => {
       const payload = runDataByHash.value[run.hash];
-      ["GEOMEAN", "GEOMEAN-SPEC06INT", "GEOMEAN-SPEC06FP"].forEach((name) => {
+      geomeanNames.forEach((name) => {
         let scopeTestcases = availableBenchmarks.value.filter(
           (n) => !n.startsWith("GEOMEAN") && !n.startsWith("legacy"),
         );
-        if (name === "GEOMEAN-SPEC06INT") {
+        if (name === intGeomean) {
           scopeTestcases = scopeTestcases.filter((n) =>
-            isPrefixed(n, "SPEC06INT"),
+            isSpecBenchmark(n, activeSpecVersion.value, "int"),
           );
-        } else if (name === "GEOMEAN-SPEC06FP") {
+        } else if (name === fpGeomean) {
           scopeTestcases = scopeTestcases.filter((n) =>
-            isPrefixed(n, "SPEC06FP"),
+            isSpecBenchmark(n, activeSpecVersion.value, "fp"),
           );
         }
         const missing = scopeTestcases.filter((tc) => {
@@ -529,6 +672,12 @@ async function loadCurrentTabData() {
   runDataByHash.value = {};
 
   try {
+    if (
+      activeChartTab.value.subsets?.length &&
+      activeChartSubset.value !== selectedSubset.value
+    ) {
+      selectedSubset.value = activeChartSubset.value || "";
+    }
     setLoading(`${activeChartTab.value.datasetRoot}/branch.json`);
     branches.value = await loadBranchList(activeChartTab.value);
     if (!branches.value.includes(selectedBranch.value)) {
@@ -536,11 +685,12 @@ async function loadCurrentTabData() {
     }
 
     setLoading(
-      `${activeChartTab.value.datasetRoot}/${selectedBranch.value}/data.json`,
+      `${activeChartTab.value.datasetRoot}/${selectedBranch.value}/${activeChartSubset.value ? `${activeChartSubset.value}/` : ""}data.json`,
     );
     allRuns.value = await loadRunIndex(
       activeChartTab.value,
       selectedBranch.value,
+      activeChartSubset.value,
     );
     if (quickRangePreset.value === "last7days") {
       setQuickPreset("last7days", false);
@@ -580,8 +730,12 @@ function onClearSelection() {
   persist();
 }
 
-function onSelectSpec(prefix: "SPEC06INT" | "SPEC06FP") {
-  selectedBenchmarks.value = selectPrefix(availableBenchmarks.value, prefix);
+function onSelectSpec(category: SpecCategory) {
+  selectedBenchmarks.value = selectSpecCategory(
+    availableBenchmarks.value,
+    activeSpecVersion.value,
+    category,
+  );
   persist();
 }
 
@@ -608,6 +762,13 @@ function onTabChange(nextTabId: string) {
 
 function onBranchChange(nextBranch: string) {
   selectedBranch.value = nextBranch;
+}
+
+async function onSubsetChange(nextSubset: string) {
+  selectedSubset.value = nextSubset;
+  persist();
+  selectedBenchmarks.value = [];
+  await loadCurrentTabData();
 }
 
 function onStartDateChange(value: string) {
@@ -687,6 +848,7 @@ watch(selectedBranch, async () => {
   allRuns.value = await loadRunIndex(
     activeChartTab.value,
     selectedBranch.value,
+    activeChartSubset.value,
   );
   if (quickRangePreset.value === "last7days") {
     setQuickPreset("last7days", false);
@@ -704,7 +866,15 @@ onMounted(async () => {
   try {
     loadSettings();
     selectedTabId.value = settings.selectedTabId || tabs[0].id;
+    if (selectedTabId.value === "score-weekly-gcc15") {
+      selectedTabId.value = "score-weekly";
+      settings.selectedSubset = "gcc15";
+    } else if (selectedTabId.value === "score-weekly-xscc") {
+      selectedTabId.value = "score-weekly";
+      settings.selectedSubset = "xscc";
+    }
     selectedBranch.value = settings.selectedBranch || "";
+    selectedSubset.value = settings.selectedSubset || "";
     startDateStr.value = settings.startDateStr || "";
     endDateStr.value = settings.endDateStr || "";
     quickRangePreset.value = settings.quickRangePreset ?? null;

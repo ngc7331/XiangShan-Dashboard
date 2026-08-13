@@ -11,24 +11,24 @@
       <button class="btn" type="button" @click="$emit('clearSelection')">
         {{ t("clear") }}
       </button>
-      <button
-        v-if="showSpecButtons"
-        class="btn"
-        type="button"
-        @click="$emit('selectSpec', 'SPEC06INT')"
-      >
-        {{ t("spec06int") }}
-      </button>
-      <button
-        v-if="showSpecButtons"
-        class="btn"
-        type="button"
-        @click="$emit('selectSpec', 'SPEC06FP')"
-      >
-        {{ t("spec06fp") }}
-      </button>
       <button class="btn" type="button" @click="$emit('selectGeomean')">
         {{ t("geomean") }}
+      </button>
+      <button
+        v-if="showSpecButtons"
+        class="btn"
+        type="button"
+        @click="$emit('selectSpec', 'int')"
+      >
+        {{ t("specInt") }}
+      </button>
+      <button
+        v-if="showSpecButtons"
+        class="btn"
+        type="button"
+        @click="$emit('selectSpec', 'fp')"
+      >
+        {{ t("specFp") }}
       </button>
     </div>
     <div class="list">
@@ -51,6 +51,8 @@
 </template>
 
 <script setup lang="ts">
+import type { SpecCategory } from "../../config/spec";
+
 defineProps<{
   t: (key: string) => string;
   benchmarks: string[];
@@ -62,7 +64,7 @@ defineEmits<{
   (e: "selectDefault"): void;
   (e: "selectAll"): void;
   (e: "clearSelection"): void;
-  (e: "selectSpec", value: "SPEC06INT" | "SPEC06FP"): void;
+  (e: "selectSpec", value: SpecCategory): void;
   (e: "selectGeomean"): void;
   (e: "toggleBenchmark", name: string): void;
 }>();

@@ -1,4 +1,5 @@
 import type { ChartConfig } from "../config/tabs";
+import { specVersionFromSubset } from "../config/spec";
 import {
   assertBranchList,
   assertReportPayload,
@@ -22,9 +23,13 @@ export async function loadBranchList(tab: ChartConfig): Promise<string[]> {
   return assertBranchList(payloadRaw);
 }
 
-function getDatasetPath(tab: ChartConfig, branch: string): string {
-  if (tab.subset) {
-    return `${tab.datasetRoot}/${branch}/${tab.subset}`;
+function getDatasetPath(
+  tab: ChartConfig,
+  branch: string,
+  subset?: string,
+): string {
+  if (subset) {
+    return `${tab.datasetRoot}/${branch}/${subset}`;
   }
   return `${tab.datasetRoot}/${branch}`;
 }
@@ -32,8 +37,11 @@ function getDatasetPath(tab: ChartConfig, branch: string): string {
 export async function loadRunIndex(
   tab: ChartConfig,
   branch: string,
+  subset?: string,
 ): Promise<NormalizedRun[]> {
-  const indexRaw = await fetchJson(`${getDatasetPath(tab, branch)}/data.json`);
+  const indexRaw = await fetchJson(
+    `${getDatasetPath(tab, branch, subset)}/data.json`,
+  );
   const index = assertRunIndex(indexRaw);
   return Object.entries(index.data)
     .map(([runId, entry]) => ({
@@ -42,6 +50,10 @@ export async function loadRunIndex(
       title: entry.title,
       dateMs: entry.date > 1e12 ? entry.date : entry.date * 1000,
       note: entry.note,
+      coverage: tab.coverage,
+      specVersion: subset
+        ? specVersionFromSubset(subset)
+        : tab.defaultSpecVersion,
     }))
     .sort((a, b) => Number(a.runId) - Number(b.runId));
 }
@@ -50,9 +62,10 @@ export async function loadReport(
   tab: ChartConfig,
   branch: string,
   hash: string,
+  subset?: string,
 ): Promise<ReportPayload> {
   const payloadRaw = await fetchJson(
-    `${getDatasetPath(tab, branch)}/${hash}.json`,
+    `${getDatasetPath(tab, branch, subset)}/${hash}.json`,
   );
   return assertReportPayload(payloadRaw);
 }
