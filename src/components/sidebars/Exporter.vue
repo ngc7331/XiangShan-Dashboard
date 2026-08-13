@@ -1,13 +1,13 @@
 <template>
   <section class="panel-card">
-    <div class="section-title">{{ t("comparisonExportTitle") }}</div>
+    <div class="section-title">{{ t("exportTitle") }}</div>
     <button
       class="paste-btn paste-row export-btn"
       type="button"
       :disabled="disabled || exporting"
       @click="exportImage"
     >
-      {{ exporting ? t("comparisonExporting") : t("comparisonExportPng") }}
+      {{ exporting ? t("exporting") : t("exportPng") }}
     </button>
     <p v-if="error" class="export-error">{{ error }}</p>
   </section>
@@ -32,9 +32,7 @@ async function exportImage() {
     await props.onExport();
   } catch (reason) {
     error.value =
-      reason instanceof Error
-        ? reason.message
-        : props.t("comparisonExportError");
+      reason instanceof Error ? reason.message : props.t("exportError");
   } finally {
     exporting.value = false;
   }

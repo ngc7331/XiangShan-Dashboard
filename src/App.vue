@@ -88,9 +88,19 @@
             @select-geomean="onSelectGeomean"
             @toggle-benchmark="onToggleBenchmark"
           />
+          <Exporter
+            :t="t"
+            :disabled="
+              selectedBenchmarks.length === 0 || filteredRuns.length === 0
+            "
+            :on-export="exportChartPng"
+          />
         </aside>
         <MetricChartPanel
+          ref="metricChartPanel"
           :tab="activeChartTab"
+          :title="t(activeChartTab.titleKey)"
+          :summary="chartSummary"
           :runs="filteredRuns"
           :selected-benchmarks="selectedBenchmarks"
           :run-data-by-hash="runDataByHash"
@@ -120,7 +130,7 @@
             @run-change="onComparisonRunChange(source.id, $event)"
             @paste-error="onComparisonPasteError(source.id, $event)"
           />
-          <ComparisonExportSelector
+          <Exporter
             :t="t"
             :disabled="comparisonBenchmarkCount === 0"
             :on-export="exportComparisonPng"
@@ -144,7 +154,7 @@ import RangeSelector from "./components/sidebars/RangeSelector.vue";
 import BenchmarkSelector from "./components/sidebars/BenchmarkSelector.vue";
 import ComparisonTypeSelector from "./components/sidebars/ComparisonTypeSelector.vue";
 import ComparisonSourceSelector from "./components/sidebars/ComparisonSourceSelector.vue";
-import ComparisonExportSelector from "./components/sidebars/ComparisonExportSelector.vue";
+import Exporter from "./components/sidebars/Exporter.vue";
 import MetricChartPanel from "./components/panels/MetricChartPanel.vue";
 import ComparisonPanel from "./components/panels/ComparisonPanel.vue";
 import {
@@ -170,6 +180,7 @@ import {
   type SpecVersion,
 } from "./config/spec";
 import {
+  formatDisplayDate,
   formatInputDate,
   getDateRange,
   loadBranchList,
@@ -227,6 +238,28 @@ const quickRangePreset = ref<QuickRangePreset | null>(
   settings.quickRangePreset ?? null,
 );
 
+const chartSummary = computed(() => {
+  const parts = [selectedBranch.value || t("branch")];
+  if (activeChartTab.value.subsets?.length && activeChartSubset.value) {
+    parts.push(activeChartSubset.value);
+  }
+
+  const first = filteredRuns.value[0];
+  const last = filteredRuns.value[filteredRuns.value.length - 1];
+  if (first && last) {
+    if (quickRangePreset.value === "latest10") {
+      parts.push(
+        `${t("lastTenRuns")} · ${first.hash.slice(0, 8)} ~ ${last.hash.slice(0, 8)}`,
+      );
+    } else {
+      parts.push(
+        `${formatDisplayDate(first.dateMs)}·${first.hash.slice(0, 8)} ~ ${formatDisplayDate(last.dateMs)}·${last.hash.slice(0, 8)}`,
+      );
+    }
+  }
+  return parts.join(" · ");
+});
+
 const allRuns = ref<NormalizedRun[]>([]);
 const filteredRuns = ref<NormalizedRun[]>([]);
 const runDataByHash = ref<Record<string, ReportPayload>>({});
@@ -259,10 +292,11 @@ const comparisonSources = ref<ComparisonSource[]>([
   },
 ]);
 const comparisonType = ref<ComparisonSourceType>("nightly");
-type ComparisonPanelInstance = {
+type ExportablePanel = {
   exportPng: () => Promise<string>;
 };
-const comparisonPanel = ref<ComparisonPanelInstance | null>(null);
+const comparisonPanel = ref<ExportablePanel | null>(null);
+const metricChartPanel = ref<ExportablePanel | null>(null);
 const activeSpecVersion = computed(() =>
   activeChartTab.value.subsets?.length
     ? specVersionFromSubset(activeChartSubset.value)
@@ -521,7 +555,7 @@ function comparisonSourceFileName(source?: ComparisonSource): string {
 
 async function exportComparisonPng() {
   const dataUrl = await comparisonPanel.value?.exportPng();
-  if (!dataUrl) throw new Error(t("comparisonExportError"));
+  if (!dataUrl) throw new Error(t("exportError"));
 
   const sourceA = comparisonFilePart(
     comparisonSourceFileName(comparisonSources.value[0]),
@@ -532,6 +566,32 @@ async function exportComparisonPng() {
   const link = document.createElement("a");
   link.href = dataUrl;
   link.download = `performance-comparison-${sourceA}-vs-${sourceB}.png`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
+function chartFilePart(value: string): string {
+  return (
+    value
+      .replace(/[^a-z0-9._-]+/gi, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 80) || "chart"
+  );
+}
+
+async function exportChartPng() {
+  const dataUrl = await metricChartPanel.value?.exportPng();
+  if (!dataUrl) throw new Error(t("exportError"));
+
+  const tabName = chartFilePart(t(activeChartTab.value.titleKey));
+  const branchName = chartFilePart(selectedBranch.value || "branch");
+  const subsetName = activeChartSubset.value
+    ? `-${chartFilePart(activeChartSubset.value)}`
+    : "";
+  const link = document.createElement("a");
+  link.href = dataUrl;
+  link.download = `metric-chart-${tabName}-${branchName}${subsetName}.png`;
   document.body.appendChild(link);
   link.click();
   link.remove();

@@ -20,10 +20,11 @@ export const COMMON_MESSAGES: Record<string, string> = {
   comparisonWeeklySubset: "Weekly (1.0c) · {0}",
   comparisonBenchmark: "Benchmark",
   comparisonSwapSources: "Swap Baseline/Comparison",
-  comparisonExportTitle: "Export",
-  comparisonExportPng: "Download PNG",
-  comparisonExporting: "Rendering PNG...",
-  comparisonExportError: "Unable to export the comparison as PNG",
+  exportTitle: "Export",
+  exportPng: "Download PNG",
+  exporting: "Rendering PNG...",
+  exportError: "Unable to export as PNG",
+  exportNoData: "No chart data available to export",
 };
 
 export const MESSAGES: Record<Locale, Record<string, string>> = {
@@ -93,10 +94,11 @@ export const MESSAGES: Record<Locale, Record<string, string>> = {
     comparisonSourceA: "基线",
     comparisonSourceB: "对比",
     comparisonSwapSources: "交换基线/对比",
-    comparisonExportTitle: "导出",
-    comparisonExportPng: "下载 PNG",
-    comparisonExporting: "正在生成 PNG...",
-    comparisonExportError: "无法将性能对比导出为 PNG",
+    exportTitle: "导出",
+    exportPng: "下载 PNG",
+    exporting: "正在生成 PNG...",
+    exportError: "无法导出 PNG",
+    exportNoData: "没有可导出的图表数据",
     comparisonClipboard: "剪贴板",
     comparisonPaste: "从剪贴板粘贴",
     comparisonPasteHint:
