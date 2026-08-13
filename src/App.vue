@@ -114,19 +114,12 @@
             :t="t"
             :source="source"
             :on-paste="pasteComparisonSource"
+            :show-swap="source.id === 'b'"
+            :on-swap="swapComparisonSources"
             @branch-change="onComparisonBranchChange(source.id, $event)"
             @run-change="onComparisonRunChange(source.id, $event)"
             @paste-error="onComparisonPasteError(source.id, $event)"
           />
-          <section class="panel-card">
-            <button
-              class="comparison-swap-btn"
-              type="button"
-              @click="swapComparisonSources"
-            >
-              {{ t("comparisonSwapSources") }}
-            </button>
-          </section>
           <ComparisonExportSelector
             :t="t"
             :disabled="comparisonBenchmarkCount === 0"

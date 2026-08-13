@@ -251,6 +251,7 @@ h1 {
 
 .comparison-swap-btn {
   width: 100%;
+  margin-top: 10px;
   padding: 10px 12px;
   border: 1px solid #b8cdfb;
   border-radius: 8px;

@@ -38,6 +38,14 @@
     >
       {{ t("comparisonPaste") }}
     </button>
+    <button
+      v-if="showSwap"
+      class="comparison-swap-btn"
+      type="button"
+      @click="onSwap"
+    >
+      {{ t("comparisonSwapSources") }}
+    </button>
   </section>
 </template>
 
@@ -52,6 +60,8 @@ const props = defineProps<{
   t: (key: string) => string;
   source: ComparisonSource;
   onPaste: (id: ComparisonSourceId) => Promise<void>;
+  showSwap: boolean;
+  onSwap: () => void;
 }>();
 
 const emit = defineEmits<{
