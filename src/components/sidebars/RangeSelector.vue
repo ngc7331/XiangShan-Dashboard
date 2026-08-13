@@ -1,5 +1,5 @@
 <template>
-  <div class="panel-card controls">
+  <div class="panel-card">
     <div class="section-title">{{ t("filtersTitle") }}</div>
     <div class="row">
       <label>{{ t("branch") }}</label>
@@ -55,7 +55,7 @@
     </div>
     <div class="btn-row">
       <button
-        class="btn"
+        class="sidebar-btn"
         :class="{ active: activeQuickPreset === 'last7days' }"
         type="button"
         @click="$emit('setQuickPreset', 'last7days')"
@@ -63,7 +63,7 @@
         {{ t("lastWeek") }}
       </button>
       <button
-        class="btn"
+        class="sidebar-btn"
         :class="{ active: activeQuickPreset === 'last31days' }"
         type="button"
         @click="$emit('setQuickPreset', 'last31days')"
@@ -71,7 +71,7 @@
         {{ t("lastMonth") }}
       </button>
       <button
-        class="btn"
+        class="sidebar-btn"
         :class="{ active: activeQuickPreset === 'latest10' }"
         type="button"
         @click="$emit('setQuickPreset', 'latest10')"
@@ -113,48 +113,10 @@ defineEmits<{
   align-items: center;
 }
 
-.controls label {
-  display: block;
-  font-size: 13px;
-  color: #5b6070;
-  margin-bottom: 6px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.controls .control-input {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid #e1e6ef;
-  background: #fdfefe;
-  font-size: 14px;
-  color: #1c1f2a;
-}
-
 .btn-row {
   margin-top: 10px;
   display: flex;
   gap: 8px;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid #e1e6ef;
-  background: #f2f6ff;
-  color: #3a7ff6;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.btn.active {
-  background: #3a7ff6;
-  border-color: #3a7ff6;
-  color: #ffffff;
 }
 
 .input-inactive {

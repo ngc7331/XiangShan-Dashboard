@@ -171,27 +171,30 @@ h1 {
   color: var(--text);
 }
 
-.panel-sidebar .source-block {
-  border-top: 1px solid var(--border);
-  padding-top: 14px;
-  margin-top: 14px;
-}
-
-.panel-sidebar .source-heading {
-  color: var(--muted);
-  font-size: 14px;
-  font-weight: 800;
-  margin-bottom: 10px;
-}
-
-.panel-sidebar .run-row {
-  display: flex;
-  gap: 8px;
+.sidebar-btn {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f2f6ff;
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
 }
 
-.panel-sidebar .run-row .control-input {
-  min-width: 0;
+.benchmark-card .sidebar-btn {
+  padding: 8px 10px;
+}
+
+.btn-row .sidebar-btn {
+  padding: 10px 12px;
+}
+
+.sidebar-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
 }
 
 .panel-sidebar .paste-row {

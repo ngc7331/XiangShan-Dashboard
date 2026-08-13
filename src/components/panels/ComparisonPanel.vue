@@ -38,16 +38,10 @@
                   <td>{{ row.name }}</td>
                   <td>{{ format(row.a) }}</td>
                   <td>{{ format(row.b) }}</td>
-                  <td
-                    :class="diffClass(row.diff)"
-                    :style="conditionalStyle(row.diff, maxAbsDiff)"
-                  >
+                  <td :style="conditionalStyle(row.diff, maxAbsDiff)">
                     {{ format(row.diff) }}
                   </td>
-                  <td
-                    :class="diffClass(row.diffPct)"
-                    :style="conditionalStyle(row.diffPct, maxAbsDiffPct)"
-                  >
+                  <td :style="conditionalStyle(row.diffPct, maxAbsDiffPct)">
                     {{ formatPct(row.diffPct) }}
                   </td>
                 </tr>
@@ -262,11 +256,6 @@ function format(value: number | null) {
 function formatPct(value: number | null) {
   return value === null ? "—" : `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
 }
-
-function diffClass(value: number | null) {
-  if (value === null || value === 0) return "";
-  return value > 0 ? "positive" : "negative";
-}
 </script>
 
 <style scoped>
@@ -383,12 +372,6 @@ td:first-child {
 }
 .geomean-row td {
   font-weight: 800;
-}
-.positive {
-  color: var(--text);
-}
-.negative {
-  color: var(--text);
 }
 .empty {
   flex: 1;

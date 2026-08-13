@@ -101,7 +101,7 @@
         />
       </div>
       <div v-else class="comparison-workspace">
-        <aside class="panel-sidebar comparison-sidebar">
+        <aside class="panel-sidebar">
           <ComparisonTypeSelector
             :t="t"
             :comparison-type="comparisonType"
@@ -118,7 +118,7 @@
             @run-change="onComparisonRunChange(source.id, $event)"
             @paste-error="onComparisonPasteError(source.id, $event)"
           />
-          <section class="panel-card comparison-swap-card">
+          <section class="panel-card">
             <button
               class="comparison-swap-btn"
               type="button"

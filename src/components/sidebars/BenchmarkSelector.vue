@@ -2,21 +2,25 @@
   <div class="panel-card benchmark-card">
     <div class="section-title">{{ t("testcasesTitle") }}</div>
     <div class="actions">
-      <button class="btn" type="button" @click="$emit('selectDefault')">
+      <button class="sidebar-btn" type="button" @click="$emit('selectDefault')">
         {{ t("default") }}
       </button>
-      <button class="btn" type="button" @click="$emit('selectAll')">
+      <button class="sidebar-btn" type="button" @click="$emit('selectAll')">
         {{ t("selectAll") }}
       </button>
-      <button class="btn" type="button" @click="$emit('clearSelection')">
+      <button
+        class="sidebar-btn"
+        type="button"
+        @click="$emit('clearSelection')"
+      >
         {{ t("clear") }}
       </button>
-      <button class="btn" type="button" @click="$emit('selectGeomean')">
+      <button class="sidebar-btn" type="button" @click="$emit('selectGeomean')">
         {{ t("geomean") }}
       </button>
       <button
         v-if="showSpecButtons"
-        class="btn"
+        class="sidebar-btn"
         type="button"
         @click="$emit('selectSpec', 'int')"
       >
@@ -24,7 +28,7 @@
       </button>
       <button
         v-if="showSpecButtons"
-        class="btn"
+        class="sidebar-btn"
         type="button"
         @click="$emit('selectSpec', 'fp')"
       >
@@ -81,19 +85,6 @@ defineEmits<{
   gap: 8px;
   margin-bottom: 8px;
   flex-wrap: wrap;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid #e1e6ef;
-  background: #f2f6ff;
-  color: #3a7ff6;
-  font-weight: 700;
-  cursor: pointer;
 }
 
 .list {

@@ -1,5 +1,5 @@
 <template>
-  <section class="panel-card source-card">
+  <section class="panel-card">
     <div class="section-title">{{ source.label }}</div>
     <div class="field-row">
       <label>{{ t("comparisonBranch") }}</label>
