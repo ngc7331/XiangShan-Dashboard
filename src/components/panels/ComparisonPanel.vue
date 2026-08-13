@@ -64,7 +64,7 @@ import { formatDisplayDate } from "../../services/dataService";
 import type { ReportPayload } from "../../types/data";
 import type { ComparisonSource } from "../../types/comparison";
 import {
-  COMPARISON_EXPORT_LAYOUT_WIDTH,
+  EXPORT_LAYOUT_WIDTH,
   EXPORT_PIXEL_RATIO,
 } from "../../constants/export";
 
@@ -269,7 +269,7 @@ async function exportPng(): Promise<string> {
   if (!source) throw new Error("comparison panel is not mounted");
 
   const clone = source.cloneNode(true) as HTMLElement;
-  const width = COMPARISON_EXPORT_LAYOUT_WIDTH;
+  const width = EXPORT_LAYOUT_WIDTH;
   const renderHost = document.createElement("div");
   renderHost.style.position = "fixed";
   renderHost.style.left = "-100000px";
