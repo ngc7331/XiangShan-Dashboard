@@ -1,10 +1,10 @@
 <template>
   <div ref="exportRoot" class="comparison-layout">
-    <section class="comparison-table-shell">
-      <div class="comparison-header">
-        <h2>
+    <section class="panel-surface panel-shell">
+      <div class="panel-header">
+        <h2 class="panel-title">
           {{ t("comparisonTitle") }}
-          <span class="comparison-sources"
+          <span class="panel-subtitle"
             >{{ sourceAName }} <strong>vs</strong> {{ sourceBName }}</span
           >
         </h2>
@@ -36,10 +36,10 @@
                   :class="{ 'geomean-row': row.name.startsWith('GEOMEAN') }"
                 >
                   <td>{{ row.name }}</td>
-                  <td>{{ format(row.a) }}</td>
-                  <td>{{ format(row.b) }}</td>
+                  <td>{{ format(row.a, row.name.startsWith("GEOMEAN")) }}</td>
+                  <td>{{ format(row.b, row.name.startsWith("GEOMEAN")) }}</td>
                   <td :style="conditionalStyle(row.diff, maxAbsDiff)">
-                    {{ format(row.diff) }}
+                    {{ format(row.diff, row.name.startsWith("GEOMEAN")) }}
                   </td>
                   <td :style="conditionalStyle(row.diffPct, maxAbsDiffPct)">
                     {{ formatPct(row.diffPct) }}
@@ -252,12 +252,12 @@ function conditionalStyle(value: number | null, max: number) {
 const MAX_POSITIVE_COLOR = [99, 190, 123] as const;
 const MAX_NEGATIVE_COLOR = [248, 105, 107] as const;
 
-function format(value: number | null) {
-  return value === null ? "—" : value.toFixed(4);
+function format(value: number | null, isGeomean = false) {
+  return value === null ? "—" : value.toFixed(isGeomean ? 6 : 3);
 }
 
 function formatPct(value: number | null) {
-  return value === null ? "—" : `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
+  return value === null ? "—" : `${value >= 0 ? "+" : ""}${value.toFixed(3)}%`;
 }
 
 async function exportPng(): Promise<string> {
@@ -279,7 +279,7 @@ async function exportPng(): Promise<string> {
   clone.style.height = "auto";
   clone.style.minHeight = "0";
   clone.style.backgroundColor = "#ffffff";
-  clone.style.borderRadius = "12px";
+  clone.style.borderRadius = "var(--radius-card)";
   clone.style.overflow = "hidden";
 
   clone.querySelectorAll<HTMLElement>(".comparison-layout").forEach((node) => {
@@ -287,14 +287,12 @@ async function exportPng(): Promise<string> {
     node.style.minHeight = "0";
     node.style.overflow = "visible";
   });
-  clone
-    .querySelectorAll<HTMLElement>(".comparison-table-shell")
-    .forEach((node) => {
-      node.style.height = "auto";
-      node.style.minHeight = "0";
-      node.style.flex = "none";
-      node.style.overflow = "visible";
-    });
+  clone.querySelectorAll<HTMLElement>(".panel-shell").forEach((node) => {
+    node.style.height = "auto";
+    node.style.minHeight = "0";
+    node.style.flex = "none";
+    node.style.overflow = "visible";
+  });
   clone.querySelectorAll<HTMLElement>(".comparison-tables").forEach((node) => {
     node.style.height = "auto";
     node.style.flex = "none";
@@ -334,18 +332,6 @@ defineExpose({ exportPng });
   flex: 1;
   height: 100%;
 }
-.comparison-table-shell {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  padding: 18px;
-  min-height: 0;
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
 .comparison-tables {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -353,6 +339,7 @@ defineExpose({ exportPng });
   min-height: 0;
   flex: 1;
   height: 0;
+  margin: 0 18px 18px;
 }
 .table-group {
   min-width: 0;
@@ -365,31 +352,6 @@ defineExpose({ exportPng });
   margin: 0 0 8px;
   font-size: 14px;
   color: var(--muted);
-}
-.comparison-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-h2 {
-  margin: 4px 0 0;
-  font-size: 22px;
-}
-h2 span {
-  color: var(--muted);
-  font-weight: 500;
-}
-.comparison-sources {
-  margin-left: 8px;
-  font-size: 16px;
-}
-.comparison-sources strong {
-  color: var(--text);
-  font-size: 22px;
-  font-weight: 700;
-  margin: 0 10px;
 }
 .comparison-warnings {
   margin: -4px 0 12px;

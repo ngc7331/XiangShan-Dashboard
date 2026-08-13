@@ -1,9 +1,9 @@
 <template>
-  <div ref="exportRoot" class="chart-shell">
-    <div class="chart-header">
-      <h2 class="chart-title">
+  <div ref="exportRoot" class="panel-surface panel-shell chart-panel">
+    <div class="panel-header">
+      <h2 class="panel-title">
         {{ title }}
-        <span v-if="summary" class="chart-summary">{{ summary }}</span>
+        <span v-if="summary" class="panel-subtitle">{{ summary }}</span>
       </h2>
     </div>
     <div class="chart-wrap" v-if="hasData">
@@ -123,35 +123,9 @@ defineExpose({ exportPng });
 </script>
 
 <style scoped>
-.chart-shell {
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #e1e6ef;
-  box-shadow: 0 12px 32px rgba(17, 31, 64, 0.08);
-  padding: 12px;
+.chart-panel {
   min-height: 380px;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.chart-header {
-  flex: 0 0 auto;
-  padding: 4px 6px 12px;
-}
-
-.chart-title {
-  margin: 0;
-  font-size: 22px;
-  line-height: 1.3;
-  overflow-wrap: anywhere;
-}
-
-.chart-summary {
-  margin-left: 8px;
-  color: #5b6070;
-  font-size: 16px;
-  font-weight: 500;
 }
 
 .chart-wrap {

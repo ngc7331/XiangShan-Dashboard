@@ -1,5 +1,5 @@
 <template>
-  <div class="hero">
+  <div class="hero panel-surface">
     <div class="hero-tabs">
       <button
         v-for="tab in tabs"
@@ -47,10 +47,6 @@ defineEmits<{
   align-items: center;
   justify-content: space-between;
   padding: 18px 20px;
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #e1e6ef;
-  box-shadow: 0 12px 32px rgba(17, 31, 64, 0.08);
 }
 
 .hero-tabs {
@@ -61,7 +57,7 @@ defineEmits<{
 
 .tab-btn {
   border: 1px solid #dce5f6;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   padding: 8px 12px;
   background: #f7f9ff;
   color: #31435f;
@@ -85,7 +81,7 @@ defineEmits<{
   padding: 6px 10px;
   background: #e6efff;
   color: #3a7ff6;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   font-weight: 700;
   font-size: 12px;
 }
