@@ -1,5 +1,10 @@
 {
   "data": {
+    "31614672446": {
+      "hash": "a4f4b53068d85b583bb09f7d8a8ec04905678aad",
+      "title": "ci(perf): drop legacy and add new gcc15-spec26 checkpoints (#6352)",
+      "date": 1786525790
+    },
     "31509411521": {
       "hash": "689018340eb22cb639bdfa1f83c5abb508be0df5",
       "title": "fix(loadPipe): fix index error in latency flag write (#6339)",
