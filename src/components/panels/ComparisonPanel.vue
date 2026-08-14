@@ -3,7 +3,7 @@
     <section class="panel-surface panel-shell">
       <div class="panel-header">
         <h2 class="panel-title">
-          {{ t("comparisonTitle") }}
+          {{ t("comparisonTitle") }} ({{ coverage }})
           <span class="panel-subtitle"
             >{{ sourceAName }} <strong>vs</strong> {{ sourceBName }}</span
           >
@@ -87,6 +87,9 @@ const exportRoot = ref<HTMLElement | null>(null);
 const sources = computed(() => props.sources);
 const sourceAName = computed(() => sourceName(sources.value[0]));
 const sourceBName = computed(() => sourceName(sources.value[1]));
+const coverage = computed(
+  () => sourceCoverage(sources.value[0]) || "Unknown Coverage",
+);
 const tableGroups = computed(() =>
   (["int", "fp"] as const).map((key) => ({
     key,
