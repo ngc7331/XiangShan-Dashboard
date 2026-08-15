@@ -1,5 +1,10 @@
 {
   "data": {
+    "31717750438": {
+      "hash": "31350f1295e763820be8ca35ddffb51f1d2548a1",
+      "title": "perf(berti): bugfix and enhance (#5965)",
+      "date": 1786619484
+    },
     "31614672446": {
       "hash": "a4f4b53068d85b583bb09f7d8a8ec04905678aad",
       "title": "ci(perf): drop legacy and add new gcc15-spec26 checkpoints (#6352)",
