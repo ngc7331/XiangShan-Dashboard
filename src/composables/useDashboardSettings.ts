@@ -1,6 +1,10 @@
 import { reactive } from "vue";
 
-export type QuickRangePreset = "last7days" | "last31days" | "latest10";
+export type QuickRangePreset =
+  | "lastWeek"
+  | "lastMonth"
+  | "last3Months"
+  | "lastTenRuns";
 
 export interface DashboardSettings {
   selectedBranch: string;
@@ -33,22 +37,7 @@ export function useDashboardSettings() {
       state.selectedBranch = data.selectedBranch || "";
       state.startDateStr = data.startDateStr || "";
       state.endDateStr = data.endDateStr || "";
-      if (
-        data.quickRangePreset === "last7days" ||
-        data.quickRangePreset === "last31days" ||
-        data.quickRangePreset === "latest10"
-      ) {
-        state.quickRangePreset = data.quickRangePreset;
-      } else {
-        const legacyData = data as Partial<{ quickRangeDays: number }>;
-        if (legacyData.quickRangeDays === 7) {
-          state.quickRangePreset = "last7days";
-        } else if (legacyData.quickRangeDays === 31) {
-          state.quickRangePreset = "last31days";
-        } else {
-          state.quickRangePreset = null;
-        }
-      }
+      state.quickRangePreset = data.quickRangePreset || "lastWeek";
       state.selectedBenchmarks = Array.isArray(data.selectedBenchmarks)
         ? data.selectedBenchmarks
         : [];

@@ -15,7 +15,7 @@
         </option>
       </select>
     </div>
-    <div v-if="subsets.length" class="row">
+    <div v-if="tab.subsets?.length" class="row">
       <label>{{ t("subset") }}</label>
       <select
         class="control-input"
@@ -24,7 +24,7 @@
           $emit('subsetChange', ($event.target as HTMLSelectElement).value)
         "
       >
-        <option v-for="subset in subsets" :key="subset" :value="subset">
+        <option v-for="subset in tab.subsets" :key="subset" :value="subset">
           {{ subset }}
         </option>
       </select>
@@ -33,7 +33,7 @@
       <label>{{ t("startDate") }}</label>
       <input
         class="control-input"
-        :class="{ 'input-inactive': activeQuickPreset === 'latest10' }"
+        :class="{ 'input-inactive': activeQuickPreset === 'lastTenRuns' }"
         type="date"
         :value="startDateStr"
         @change="
@@ -45,7 +45,7 @@
       <label>{{ t("endDate") }}</label>
       <input
         class="control-input"
-        :class="{ 'input-inactive': activeQuickPreset === 'latest10' }"
+        :class="{ 'input-inactive': activeQuickPreset === 'lastTenRuns' }"
         type="date"
         :value="endDateStr"
         @change="
@@ -56,25 +56,35 @@
     <div class="btn-row">
       <button
         class="sidebar-btn"
-        :class="{ active: activeQuickPreset === 'last7days' }"
+        v-if="tab.id !== 'score-weekly'"
+        :class="{ active: activeQuickPreset === 'lastWeek' }"
         type="button"
-        @click="$emit('setQuickPreset', 'last7days')"
+        @click="$emit('setQuickPreset', 'lastWeek')"
       >
         {{ t("lastWeek") }}
       </button>
       <button
         class="sidebar-btn"
-        :class="{ active: activeQuickPreset === 'last31days' }"
+        :class="{ active: activeQuickPreset === 'lastMonth' }"
         type="button"
-        @click="$emit('setQuickPreset', 'last31days')"
+        @click="$emit('setQuickPreset', 'lastMonth')"
       >
         {{ t("lastMonth") }}
       </button>
       <button
         class="sidebar-btn"
-        :class="{ active: activeQuickPreset === 'latest10' }"
+        v-if="tab.id === 'score-weekly'"
+        :class="{ active: activeQuickPreset === 'last3Months' }"
         type="button"
-        @click="$emit('setQuickPreset', 'latest10')"
+        @click="$emit('setQuickPreset', 'last3Months')"
+      >
+        {{ t("last3Months") }}
+      </button>
+      <button
+        class="sidebar-btn"
+        :class="{ active: activeQuickPreset === 'lastTenRuns' }"
+        type="button"
+        @click="$emit('setQuickPreset', 'lastTenRuns')"
       >
         {{ t("lastTenRuns") }}
       </button>
@@ -84,12 +94,13 @@
 
 <script setup lang="ts">
 import type { QuickRangePreset } from "../../composables/useDashboardSettings";
+import { ChartConfig } from "../../config/tabs";
 
 defineProps<{
   t: (key: string) => string;
+  tab: ChartConfig;
   branches: string[];
   selectedBranch: string;
-  subsets: readonly string[];
   selectedSubset: string;
   startDateStr: string;
   endDateStr: string;

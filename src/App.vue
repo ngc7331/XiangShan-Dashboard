@@ -63,9 +63,9 @@
         <aside class="panel-sidebar">
           <RangeSelector
             :t="t"
+            :tab="activeChartTab"
             :branches="branches"
             :selected-branch="selectedBranch"
-            :subsets="activeChartTab.subsets || []"
             :selected-subset="selectedSubset"
             :start-date-str="startDateStr"
             :end-date-str="endDateStr"
@@ -190,7 +190,7 @@ import {
 import type { NormalizedRun, ReportPayload } from "./types/data";
 import type { ComparisonSource } from "./types/comparison";
 const dayMs = 24 * 60 * 60 * 1000;
-const defaultQuickRangePreset: QuickRangePreset = "last7days";
+const defaultQuickRangePreset: QuickRangePreset = "lastWeek";
 const tabs = DASHBOARD_TABS;
 const nightlyTab = tabs.find(
   (tab): tab is ChartConfig =>
@@ -247,7 +247,7 @@ const chartSummary = computed(() => {
   const first = filteredRuns.value[0];
   const last = filteredRuns.value[filteredRuns.value.length - 1];
   if (first && last) {
-    if (quickRangePreset.value === "latest10") {
+    if (quickRangePreset.value === "lastTenRuns") {
       parts.push(
         `${t("lastTenRuns")} · ${first.hash.slice(0, 8)} ~ ${last.hash.slice(0, 8)}`,
       );
@@ -677,7 +677,7 @@ function syncSelection() {
 
 async function refreshRuns() {
   if (
-    quickRangePreset.value !== "latest10" &&
+    quickRangePreset.value !== "lastTenRuns" &&
     (!startDateStr.value || !endDateStr.value)
   ) {
     return;
@@ -685,7 +685,7 @@ async function refreshRuns() {
 
   setLoading();
   try {
-    if (quickRangePreset.value === "latest10") {
+    if (quickRangePreset.value === "lastTenRuns") {
       filteredRuns.value = allRuns.value.slice(-10);
     } else {
       const { startMs, endMs } = getDateRange(
@@ -796,15 +796,18 @@ async function loadCurrentTabData() {
       selectedBranch.value,
       activeChartSubset.value,
     );
-    if (quickRangePreset.value === "last7days") {
-      setQuickPreset("last7days", false);
-    } else if (quickRangePreset.value === "last31days") {
-      setQuickPreset("last31days", false);
-    } else if (
+    if (quickRangePreset.value === "lastWeek" && activeChartTab.value.id === "score-weekly") {
+      quickRangePreset.value = "lastMonth";
+    } else if (quickRangePreset.value === "last3Months" && activeChartTab.value.id !== "score-weekly") {
+      quickRangePreset.value = "lastMonth";
+    }
+    if (
       !quickRangePreset.value &&
       (!startDateStr.value || !endDateStr.value)
     ) {
       setQuickPreset(defaultQuickRangePreset, false);
+    } else {
+      setQuickPreset(quickRangePreset.value || defaultQuickRangePreset, false);
     }
 
     await refreshRuns();
@@ -889,14 +892,21 @@ function onEndDateChange(value: string) {
 
 function setQuickPreset(preset: QuickRangePreset, shouldPersist = true) {
   quickRangePreset.value = preset;
-  if (preset === "latest10") {
+  if (preset === "lastTenRuns") {
     if (shouldPersist) {
       persist();
     }
     return;
   }
 
-  const days = preset === "last31days" ? 31 : 7;
+  const days =
+    preset === "lastWeek"
+      ? 7
+      : preset === "lastMonth"
+        ? 31
+        : preset === "last3Months"
+          ? 90
+          : 0;
   const end = new Date();
   end.setHours(23, 59, 59, 999);
   const start = new Date(end.getTime() - (days - 1) * dayMs);
@@ -923,7 +933,7 @@ watch([selectedBranch, startDateStr, endDateStr], async () => {
   if (isHydrating.value) return;
   if (!selectedBranch.value) return;
   if (
-    quickRangePreset.value !== "latest10" &&
+    quickRangePreset.value !== "lastTenRuns" &&
     (!startDateStr.value || !endDateStr.value)
   ) {
     return;
@@ -954,10 +964,12 @@ watch(selectedBranch, async () => {
     selectedBranch.value,
     activeChartSubset.value,
   );
-  if (quickRangePreset.value === "last7days") {
-    setQuickPreset("last7days", false);
-  } else if (quickRangePreset.value === "last31days") {
-    setQuickPreset("last31days", false);
+  if (quickRangePreset.value === "lastWeek") {
+    setQuickPreset("lastWeek", false);
+  } else if (quickRangePreset.value === "lastMonth") {
+    setQuickPreset("lastMonth", false);
+  } else if (quickRangePreset.value === "last3Months") {
+    setQuickPreset("last3Months", false);
   } else if (!quickRangePreset.value) {
     setQuickPreset(defaultQuickRangePreset, false);
   }
