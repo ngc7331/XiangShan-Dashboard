@@ -26,7 +26,8 @@
           {{ t("comparisonNoRuns") }}
         </option>
         <option v-for="run in sortedRuns" :key="run.hash" :value="run.runId">
-          {{ run.runId }} · {{ run.hash.slice(0, 8) }}
+          {{ run.runId }} · {{ run.hash.slice(0, 8) }} ·
+          {{ formatDisplayDate(run.dateMs) }}
         </option>
       </select>
     </div>
@@ -55,6 +56,7 @@ import type {
   ComparisonSource,
   ComparisonSourceId,
 } from "../../types/comparison";
+import { formatDisplayDate } from "../../services/dataService";
 
 const props = defineProps<{
   t: (key: string) => string;

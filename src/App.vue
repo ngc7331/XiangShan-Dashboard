@@ -796,15 +796,18 @@ async function loadCurrentTabData() {
       selectedBranch.value,
       activeChartSubset.value,
     );
-    if (quickRangePreset.value === "lastWeek" && activeChartTab.value.id === "score-weekly") {
+    if (
+      quickRangePreset.value === "lastWeek" &&
+      activeChartTab.value.id === "score-weekly"
+    ) {
       quickRangePreset.value = "lastMonth";
-    } else if (quickRangePreset.value === "last3Months" && activeChartTab.value.id !== "score-weekly") {
+    } else if (
+      quickRangePreset.value === "last3Months" &&
+      activeChartTab.value.id !== "score-weekly"
+    ) {
       quickRangePreset.value = "lastMonth";
     }
-    if (
-      !quickRangePreset.value &&
-      (!startDateStr.value || !endDateStr.value)
-    ) {
+    if (!quickRangePreset.value && (!startDateStr.value || !endDateStr.value)) {
       setQuickPreset(defaultQuickRangePreset, false);
     } else {
       setQuickPreset(quickRangePreset.value || defaultQuickRangePreset, false);
