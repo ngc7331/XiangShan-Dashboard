@@ -1,5 +1,40 @@
 {
   "data": {
+    "32003895863": {
+      "hash": "89a02bdb6e58a60ae42d94861891aed917007912",
+      "title": "fix(MissQueue): secondary_ready should gate req_valid (#6308)",
+      "date": 1786949993
+    },
+    "31995695820": {
+      "hash": "3594ce9da0e79394015da1d906d61d5d5da50206",
+      "title": "fix(ifu): correct checkerRedirect taken (#6354)",
+      "date": 1786942068
+    },
+    "31993403151": {
+      "hash": "bb887b59604a890a13cf376aff8d45c8caf5e4e9",
+      "title": "feat(Tage): random allocate (#6349)",
+      "date": 1786939687
+    },
+    "31991042098": {
+      "hash": "1d6b1b2a90338845afd07afd135d428c2485c6cb",
+      "title": "refactor(regfile): banked regfile use index's lower bit as bankIndex (#6357)",
+      "date": 1786937053
+    },
+    "31990797510": {
+      "hash": "a026e93e742bcaa4ce0ea6d6f2ea03544f3fe2ca",
+      "title": "feat(Ftq): remove dropTarinCounter (#6358)",
+      "date": 1786936774
+    },
+    "31989247997": {
+      "hash": "18a20db32be4f7920bf7de849b3b94abd730d0ce",
+      "title": "fix(transforms): resolve module names before CHIRRTL serialization (#6361)",
+      "date": 1786935047
+    },
+    "31988802040": {
+      "hash": "06f8d4fac4dc561883d1b40be31f94eda343ba35",
+      "title": "configs: update MinimalConfig frontend mbtb&sc (#6359)",
+      "date": 1786934529
+    },
     "31778425653": {
       "hash": "ff4720da42bf8a3a6eef996b0a712cf029523578",
       "title": "fix(csr): fix first fetch fault after satp flush (#6014)",
