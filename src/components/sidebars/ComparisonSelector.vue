@@ -2,16 +2,20 @@
   <section class="panel-card">
     <div class="section-title">{{ source.label }}</div>
     <div class="field-row">
-      <label>{{ t("comparisonBranch") }}</label>
+      <label>{{ t("comparisonDataset") }}</label>
       <select
         class="control-input"
-        :value="source.branch"
+        :value="source.dataset?.id || ''"
         @change="
-          emit('branchChange', ($event.target as HTMLSelectElement).value)
+          emit('datasetChange', ($event.target as HTMLSelectElement).value)
         "
       >
-        <option v-for="branch in source.branches" :key="branch" :value="branch">
-          {{ branch }}
+        <option
+          v-for="dataset in datasets"
+          :key="dataset.id"
+          :value="dataset.id"
+        >
+          {{ dataset.label }}
         </option>
       </select>
     </div>
@@ -53,6 +57,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type {
+  ComparisonDataset,
   ComparisonSource,
   ComparisonSourceId,
 } from "../../types/comparison";
@@ -61,13 +66,14 @@ import { formatDisplayDate } from "../../services/dataService";
 const props = defineProps<{
   t: (key: string) => string;
   source: ComparisonSource;
+  datasets: ComparisonDataset[];
   onPaste: (id: ComparisonSourceId) => Promise<void>;
   showSwap: boolean;
   onSwap: () => void;
 }>();
 
 const emit = defineEmits<{
-  (e: "branchChange", value: string): void;
+  (e: "datasetChange", value: string): void;
   (e: "runChange", value: string): void;
   (e: "pasteError", value: string): void;
 }>();

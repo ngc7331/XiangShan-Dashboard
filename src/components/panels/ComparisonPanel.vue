@@ -215,8 +215,19 @@ function sourceName(source?: ComparisonSource) {
   }
   const run = source.runs.find((item) => item.runId === source.runId);
   return run
-    ? `${source.branch} · ${run.runId} · ${run.hash.slice(0, 8)} · ${formatDisplayDate(run.dateMs)}`
+    ? `${sourceDatasetName(source)} · ${run.runId} · ${run.hash.slice(0, 8)} · ${formatDisplayDate(run.dateMs)}`
     : source.label;
+}
+
+function sourceDatasetName(source: ComparisonSource): string {
+  if (!source.dataset) return "";
+  return [
+    source.dataset.branch,
+    source.dataset.tab.coverage,
+    source.dataset.subset,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 function sourceCoverage(source?: ComparisonSource): string | undefined {

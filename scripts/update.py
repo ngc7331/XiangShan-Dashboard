@@ -232,7 +232,7 @@ def update_regression_gh(
     gh: GitHub,
     args: argparse.Namespace,
     target: Literal["nightly", "weekly"],
-    compiler: Literal["gcc15", "xscc"],
+    compiler: Literal["gcc", "xscc"],
 ) -> None:
     """Update data for the Regression workflow"""
     match target:
@@ -243,7 +243,7 @@ def update_regression_gh(
         case "weekly":
             workflow = "Weekly Regression"
             data_path = DATA_PATH / target / args.branch / compiler
-            score_artifact_name = "score" + (f"-{compiler}" if compiler != "gcc15" else "")
+            score_artifact_name = "score" + (f"-{compiler}" if compiler != "gcc" else "")
         case _:
             raise ValueError(f"Invalid target ({target}) for regression update")
 
@@ -353,7 +353,7 @@ def update_regression_local(
     gh: GitHub,
     args: argparse.Namespace,
     target: Literal["nightly", "weekly"],
-    compiler: Literal["gcc15", "xscc"],
+    compiler: Literal["gcc", "xscc"],
 ) -> None:
     """Update data for the Regression workflow from local files"""
     raise NotImplementedError(
@@ -365,7 +365,7 @@ def update_regression(
     gh: GitHub,
     args: argparse.Namespace,
     target: Literal["nightly", "weekly"],
-    compiler: Literal["gcc15", "xscc"] = "gcc15",
+    compiler: Literal["gcc", "xscc"] = "gcc",
 ) -> None:
     """Update data for the Regression workflow"""
     if args.local:
@@ -398,10 +398,10 @@ def main():
     )
     parser.add_argument(
         "--compiler",
-        help="Weekly regression compiler [gcc15/xscc], ignored for test and nightly regression",
+        help="Weekly regression compiler [gcc/xscc], ignored for test and nightly regression",
         nargs="+",
-        choices=["gcc15", "xscc"],
-        default=["gcc15", "xscc"],
+        choices=["gcc", "xscc"],
+        default=["gcc", "xscc"],
     )
     parser.add_argument(
         "--target",

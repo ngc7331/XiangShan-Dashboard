@@ -112,21 +112,16 @@
       </div>
       <div v-else class="comparison-workspace">
         <aside class="panel-sidebar">
-          <ComparisonTypeSelector
-            :t="t"
-            :comparison-type="comparisonType"
-            :weekly-subsets="weeklyTab.subsets || []"
-            @change="onComparisonTypeChange"
-          />
-          <ComparisonSourceSelector
+          <ComparisonSelector
             v-for="source in comparisonSources"
             :key="source.id"
             :t="t"
             :source="source"
+            :datasets="comparisonDatasets"
             :on-paste="pasteComparisonSource"
             :show-swap="source.id === 'b'"
             :on-swap="swapComparisonSources"
-            @branch-change="onComparisonBranchChange(source.id, $event)"
+            @dataset-change="onComparisonDatasetChange(source.id, $event)"
             @run-change="onComparisonRunChange(source.id, $event)"
             @paste-error="onComparisonPasteError(source.id, $event)"
           />
@@ -152,16 +147,11 @@ import { computed, onMounted, ref, watch } from "vue";
 import DashboardHero from "./components/DashboardHero.vue";
 import RangeSelector from "./components/sidebars/RangeSelector.vue";
 import BenchmarkSelector from "./components/sidebars/BenchmarkSelector.vue";
-import ComparisonTypeSelector from "./components/sidebars/ComparisonTypeSelector.vue";
-import ComparisonSourceSelector from "./components/sidebars/ComparisonSourceSelector.vue";
+import ComparisonSelector from "./components/sidebars/ComparisonSelector.vue";
 import Exporter from "./components/sidebars/Exporter.vue";
 import MetricChartPanel from "./components/panels/MetricChartPanel.vue";
 import ComparisonPanel from "./components/panels/ComparisonPanel.vue";
-import {
-  DASHBOARD_TABS,
-  type ChartConfig,
-  type ComparisonSourceType,
-} from "./config/tabs";
+import { DASHBOARD_TABS, type ChartConfig } from "./config/tabs";
 import { useLocale } from "./composables/useLocale";
 import { useDashboardSettings } from "./composables/useDashboardSettings";
 import type { QuickRangePreset } from "./composables/useDashboardSettings";
@@ -188,7 +178,7 @@ import {
   loadRunIndex,
 } from "./services/dataService";
 import type { NormalizedRun, ReportPayload } from "./types/data";
-import type { ComparisonSource } from "./types/comparison";
+import type { ComparisonDataset, ComparisonSource } from "./types/comparison";
 const dayMs = 24 * 60 * 60 * 1000;
 const defaultQuickRangePreset: QuickRangePreset = "lastWeek";
 const tabs = DASHBOARD_TABS;
@@ -277,21 +267,17 @@ const comparisonSources = ref<ComparisonSource[]>([
   {
     id: "a",
     label: t("comparisonSourceA"),
-    branch: "",
-    branches: [],
     runs: [],
     runId: "",
   },
   {
     id: "b",
     label: t("comparisonSourceB"),
-    branch: "",
-    branches: [],
     runs: [],
     runId: "",
   },
 ]);
-const comparisonType = ref<ComparisonSourceType>("nightly");
+const comparisonDatasets = ref<ComparisonDataset[]>([]);
 type ExportablePanel = {
   exportPng: () => Promise<string>;
 };
@@ -312,10 +298,12 @@ const comparisonSpecVersion = computed(() => {
     )
     .find((version) => version !== undefined);
   if (sourceVersion) return sourceVersion;
-  const target = comparisonTarget();
-  return target.subset
-    ? specVersionFromSubset(target.subset)
-    : target.tab.defaultSpecVersion;
+  const dataset = comparisonSources.value
+    .map((source) => source.dataset)
+    .find((value) => value !== undefined);
+  return dataset?.subset
+    ? specVersionFromSubset(dataset.subset)
+    : dataset?.tab.defaultSpecVersion || nightlyTab.defaultSpecVersion;
 });
 
 const comparisonBenchmarkCount = computed(() => {
@@ -335,32 +323,58 @@ const comparisonBenchmarkCount = computed(() => {
   return intCount + fpCount + Number(intCount > 0) + Number(fpCount > 0);
 });
 
-function comparisonTarget() {
-  if (comparisonType.value === "nightly") return { tab: nightlyTab };
-  return {
-    tab: weeklyTab,
-    subset: comparisonType.value.slice("weekly-".length),
-  };
+function comparisonDatasetId(
+  tab: ChartConfig,
+  branch: string,
+  subset?: string,
+): string {
+  return [tab.id, branch, subset].filter(Boolean).join(":");
+}
+
+async function loadComparisonDatasets() {
+  const [nightlyBranches, weeklyBranches] = await Promise.all([
+    loadBranchList(nightlyTab),
+    loadBranchList(weeklyTab),
+  ]);
+  comparisonDatasets.value = [
+    ...nightlyBranches.map((branch) => ({
+      id: comparisonDatasetId(nightlyTab, branch),
+      label: `${branch} · ${t("comparisonNightly")}`,
+      tab: nightlyTab,
+      branch,
+    })),
+    ...weeklyBranches.flatMap((branch) =>
+      (weeklyTab.subsets || []).map((subset) => ({
+        id: comparisonDatasetId(weeklyTab, branch, subset),
+        label: `${branch} · ${t("comparisonWeeklySubset").replace("{0}", subset)}`,
+        tab: weeklyTab,
+        branch,
+        subset,
+      })),
+    ),
+  ];
 }
 
 async function loadComparisonSource(source: ComparisonSource) {
-  const { tab, subset } = comparisonTarget();
-  source.branches = await loadBranchList(tab);
-  if (!source.branches.includes(source.branch))
-    source.branch = source.branches[0] || "";
-  if (!source.branch) return;
-  source.runs = await loadRunIndex(tab, source.branch, subset);
+  source.dataset =
+    comparisonDatasets.value.find(
+      (dataset) => dataset.id === source.dataset?.id,
+    ) || comparisonDatasets.value[0];
+  if (!source.dataset) return;
+  const { tab, branch, subset } = source.dataset;
+  source.runs = await loadRunIndex(tab, branch, subset);
   if (!source.runs.some((run) => run.runId === source.runId))
     source.runId = source.runs[source.runs.length - 1]?.runId || "";
   const run = source.runs.find((item) => item.runId === source.runId);
   source.payload = run
-    ? await loadReport(tab, source.branch, run.hash, subset)
+    ? await loadReport(tab, branch, run.hash, subset)
     : undefined;
 }
 
 async function loadComparisonSources() {
   setLoading();
   try {
+    await loadComparisonDatasets();
     await Promise.all(
       comparisonSources.value
         .filter((source) => source.runId !== "custom")
@@ -373,28 +387,13 @@ async function loadComparisonSources() {
   }
 }
 
-async function onComparisonTypeChange(type: ComparisonSourceType) {
-  comparisonType.value = type;
-  comparisonSources.value.forEach((source) => {
-    if (source.runId === "custom") return;
-    source.label = t(
-      source.id === "a" ? "comparisonSourceA" : "comparisonSourceB",
-    );
-    source.customCommit = undefined;
-    source.customDate = undefined;
-    source.customCoverage = undefined;
-    source.customSpecVersion = undefined;
-    source.clipboardError = undefined;
-    source.branch = "";
-    source.runId = "";
-    source.payload = undefined;
-  });
-  await loadComparisonSources();
-}
-
-async function onComparisonBranchChange(id: "a" | "b", branch: string) {
+async function onComparisonDatasetChange(id: "a" | "b", datasetId: string) {
   const source = comparisonSources.value.find((item) => item.id === id);
   if (!source) return;
+  const dataset = comparisonDatasets.value.find(
+    (item) => item.id === datasetId,
+  );
+  if (!dataset) return;
   source.label = t(
     source.id === "a" ? "comparisonSourceA" : "comparisonSourceB",
   );
@@ -403,7 +402,8 @@ async function onComparisonBranchChange(id: "a" | "b", branch: string) {
   source.customCoverage = undefined;
   source.customSpecVersion = undefined;
   source.clipboardError = undefined;
-  source.branch = branch;
+  source.dataset = dataset;
+  source.runs = [];
   source.runId = "";
   source.payload = undefined;
   await loadComparisonSource(source);
@@ -421,13 +421,14 @@ async function onComparisonRunChange(id: "a" | "b", runId: string) {
   source.customSpecVersion = undefined;
   source.clipboardError = undefined;
   source.runId = runId;
+  if (!source.dataset) return;
   const run = source.runs.find((item) => item.runId === runId);
   source.payload = run
     ? await loadReport(
-        comparisonTarget().tab,
-        source.branch,
+        source.dataset.tab,
+        source.dataset.branch,
         run.hash,
-        comparisonTarget().subset,
+        source.dataset.subset,
       )
     : undefined;
 }
@@ -549,7 +550,7 @@ function comparisonSourceFileName(source?: ComparisonSource): string {
   }
   const run = source.runs.find((item) => item.runId === source.runId);
   return run
-    ? `${source.branch}-${run.runId}-${run.hash.slice(0, 8)}`
+    ? `${source.dataset?.id || "dataset"}-${run.runId}-${run.hash.slice(0, 8)}`
     : source.label;
 }
 
@@ -603,8 +604,7 @@ function swapComparisonSources() {
   if (!sourceA || !sourceB) return;
 
   const stateA = {
-    branch: sourceA.branch,
-    branches: sourceA.branches,
+    dataset: sourceA.dataset,
     runs: sourceA.runs,
     runId: sourceA.runId,
     payload: sourceA.payload,
@@ -615,8 +615,7 @@ function swapComparisonSources() {
     clipboardError: sourceA.clipboardError,
   };
   const stateB = {
-    branch: sourceB.branch,
-    branches: sourceB.branches,
+    dataset: sourceB.dataset,
     runs: sourceB.runs,
     runId: sourceB.runId,
     payload: sourceB.payload,
@@ -985,12 +984,18 @@ onMounted(async () => {
   try {
     loadSettings();
     selectedTabId.value = settings.selectedTabId || tabs[0].id;
-    if (selectedTabId.value === "score-weekly-gcc15") {
+    if (selectedTabId.value.startsWith("score-weekly-")) {
+      const legacySubset = selectedTabId.value.slice("score-weekly-".length);
       selectedTabId.value = "score-weekly";
-      settings.selectedSubset = "gcc15";
-    } else if (selectedTabId.value === "score-weekly-xscc") {
-      selectedTabId.value = "score-weekly";
-      settings.selectedSubset = "xscc";
+      settings.selectedSubset = weeklyTab.subsets?.includes(legacySubset)
+        ? legacySubset
+        : weeklyTab.defaultSubset || weeklyTab.subsets?.[0] || "";
+    } else if (
+      settings.selectedSubset &&
+      !weeklyTab.subsets?.includes(settings.selectedSubset)
+    ) {
+      settings.selectedSubset =
+        weeklyTab.defaultSubset || weeklyTab.subsets?.[0] || "";
     }
     selectedBranch.value = settings.selectedBranch || "";
     selectedSubset.value = settings.selectedSubset || "";

@@ -2,7 +2,6 @@ import type { MetricKey } from "../types/data";
 import type { SpecVersion } from "./spec";
 
 export type AxisMode = "run-id" | "date";
-export type ComparisonSourceType = "nightly" | `weekly-${string}`;
 
 interface TabConfigBase {
   id: string;
@@ -57,8 +56,8 @@ export const DASHBOARD_TABS: TabConfig[] = [
     id: "score-weekly",
     titleKey: "tabsWeekly",
     datasetRoot: "data/weekly",
-    subsets: ["gcc15", "xscc"],
-    defaultSubset: "gcc15",
+    subsets: ["gcc", "xscc"],
+    defaultSubset: "gcc",
     metricKey: "score",
     axisMode: "date",
     supportsSpecButtons: true,
