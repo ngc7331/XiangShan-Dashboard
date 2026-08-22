@@ -1,5 +1,40 @@
 {
   "data": {
+    "32488721433": {
+      "hash": "59086b8a5d0e574f6a80ae113dc7715403afe4e0",
+      "title": "fix(IFU): ifu redirect canTrain add notCfiTaken signal (#6398)",
+      "date": 1787320070
+    },
+    "32459014941": {
+      "hash": "53a9576674bd8f99e2d17491d7b8e6f9241b7b09",
+      "title": "perf(ubtb): use resolve+fast train (#6237)",
+      "date": 1787297494
+    },
+    "32456713775": {
+      "hash": "b2f13caee83db50b379e66ecccbca7c6509d0e03",
+      "title": "feat(aia): support chiselAIA and align APLIC params (#6386)",
+      "date": 1787295604
+    },
+    "32440777968": {
+      "hash": "91053ff25038e2ae531efdf46f330d4a5504cc6f",
+      "title": "timing(Bpu): Pre-compute t0_firstMispredictMask  before trainCache (#6375)",
+      "date": 1787280139
+    },
+    "32440200935": {
+      "hash": "5d5e6cab032e08e21e6ca831ca7cb85f86653f9e",
+      "title": "fix(Tage): not re-read when use basePred (#6356)",
+      "date": 1787279543
+    },
+    "32439102125": {
+      "hash": "a99a09b01eb961b27553675dae4f2c8f42fb0365",
+      "title": "feat(Tage): flush usefulCtrWriteBuffer when reset useful (#6377)",
+      "date": 1787278411
+    },
+    "32438299188": {
+      "hash": "1362c16324b82eed298ef594eb7bf0487ed73e59",
+      "title": "fix(MMU, COVE) : remove test code for mpt and bitmap (#6222)",
+      "date": 1787277625
+    },
     "32398142495": {
       "hash": "3f90bb54497bf115170cd7a42a79a24bad1c0e19",
       "title": " fix(uart16550): expose DesignWare status register (#6385)",
