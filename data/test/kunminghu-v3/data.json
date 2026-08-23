@@ -1,5 +1,15 @@
 {
   "data": {
+    "32543657305": {
+      "hash": "0ff31c2dd83eb47660dc54a3175956f8faaf5cc7",
+      "title": "build: add -Wunused to scalaOptions (#6396)",
+      "date": 1787362256
+    },
+    "32543629752": {
+      "hash": "28d8dce32ca78bf97495e10f4ec51f5104e6cab4",
+      "title": "chore(xiangshan.py): better get_free_cores (#6395)",
+      "date": 1787362225
+    },
     "32488721433": {
       "hash": "59086b8a5d0e574f6a80ae113dc7715403afe4e0",
       "title": "fix(IFU): ifu redirect canTrain add notCfiTaken signal (#6398)",
