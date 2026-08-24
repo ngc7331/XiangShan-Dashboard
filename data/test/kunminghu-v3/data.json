@@ -1,5 +1,15 @@
 {
   "data": {
+    "32650442640": {
+      "hash": "e63121132b46903af63bf368afde9e76fccc93e2",
+      "title": "fix(MMU, COVE) : fix bug for mpt miss queue, twReq.valid Gated by ready (#6300)",
+      "date": 1787500961
+    },
+    "32650428475": {
+      "hash": "545d31c624cbe0b2adcbe5156c5e70ae76bffc36",
+      "title": "fix(MMU, COVE) : reject out-of-range Smmpt addresses (#6299)",
+      "date": 1787500945
+    },
     "32543657305": {
       "hash": "0ff31c2dd83eb47660dc54a3175956f8faaf5cc7",
       "title": "build: add -Wunused to scalaOptions (#6396)",
