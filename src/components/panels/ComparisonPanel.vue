@@ -148,6 +148,23 @@ const warnings = computed(() => {
         .replace("{1}", bVersion),
     );
   }
+
+  const aRun = a.runs.find((item) => item.runId === a.runId);
+  const bRun = b.runs.find((item) => item.runId === b.runId);
+  for (const [run, source] of [
+    [aRun, a],
+    [bRun, b],
+  ] as const) {
+    if (run?.note) {
+      result.push(
+        props
+          .t("comparisonNote")
+          .replace("{0}", source.id.toUpperCase())
+          .replace("{1}", run.note),
+      );
+    }
+  }
+
   return result;
 });
 

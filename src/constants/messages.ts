@@ -67,6 +67,7 @@ export const MESSAGES: Record<Locale, Record<string, string>> = {
       "Coverage differs (A: {0}, B: {1}), the comparison may be inaccurate.",
     comparisonSpecMismatch:
       "SPEC versions differ (A: {0}, B: {1}), cannot compare.",
+    comparisonNote: "{0} has note: {1}",
     geomeanMissingWarning:
       "⚠️ Some testcases are missing for GEOMEAN ({0}), result may be biased.",
   },
@@ -114,6 +115,7 @@ export const MESSAGES: Record<Locale, Record<string, string>> = {
     comparisonCoverageMismatch:
       "Coverage 不一致（A: {0}，B: {1}），对比结果可能有偏差。",
     comparisonSpecMismatch: "SPEC 版本不一致（A: {0}，B: {1}），无法进行对比。",
+    comparisonNote: "{0} 存在备注：{1}",
     geomeanMissingWarning:
       "⚠️ GEOMEAN 缺失部分 testcase（{0}），结果可能有偏差。",
   },
