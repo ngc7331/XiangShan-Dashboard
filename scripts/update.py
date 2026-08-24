@@ -155,6 +155,9 @@ def update_test_gh(gh: GitHub, args: argparse.Namespace) -> None:
 
 def update_test_local(gh: GitHub, args: argparse.Namespace) -> None:
     """Update data for the Performance Test workflow from local files"""
+    if not args.local.is_dir():
+        raise ValueError(f"Invalid local data dir: {args.local}")
+
     workflow = "EMU Performance Test"
     data_path = DATA_PATH / "test" / args.branch
 
@@ -356,10 +359,74 @@ def update_regression_local(
     compiler: Literal["gcc", "xscc"],
 ) -> None:
     """Update data for the Regression workflow from local files"""
-    raise NotImplementedError(
-        "Local update for regression workflow is not implemented yet"
-    )
+    if not args.local.is_file():
+        raise ValueError(f"Invalid local data file: {args.local}")
 
+    match target:
+        case "nightly":
+            workflow = "Nightly Regression"
+            data_path = DATA_PATH / target / args.branch
+        case "weekly":
+            workflow = "Weekly Regression"
+            data_path = DATA_PATH / target / args.branch / compiler
+        case _:
+            raise ValueError(f"Invalid target ({target}) for regression update")
+
+    data = DataJson.from_json(data_path / "data.json")
+
+    commit_sha = input("Please input the commit hash for this data: ")
+
+    commit = gh.commits.get_commit(OWNER, REPO, commit_sha)
+
+    runs = gh.actions.list_workflow_runs(
+        OWNER,
+        REPO,
+        event="schedule",
+        status="completed",
+        head_sha=commit_sha,
+    )["workflow_runs"]
+
+    runs = list(filter(lambda x: x["name"] == workflow, runs))
+
+    if not runs:
+        logging.info(
+            "No success workflow run found for this commit, try manually inputting the workflow run id"
+        )
+        run_id = input(
+            "Please input the workflow run id for this data, enter to abort: "
+        )
+        if not run_id:
+            logging.info("No workflow run id provided, abort")
+            return
+        run_id = int(run_id)
+    else:
+        if len(runs) > 1:
+            logging.warning(
+                "Multiple workflow runs found (%s), using the first one",
+                str(map(lambda x: x["id"], runs)),
+            )
+        run_id = runs[0]["id"]
+
+    report = ReportRegressionJson()
+
+    with args.local.open("r", encoding="utf-8") as f:
+        txt = f.read().strip()
+
+    report.append_score_txt(txt)
+    report.to_json(data_path / f"{commit_sha}.json")
+    data.append(
+        run_id,
+        commit_sha,
+        commit["commit"]["message"].splitlines()[0],
+        int(
+            calendar.timegm(
+                time.strptime(
+                    commit["commit"]["committer"]["date"], "%Y-%m-%dT%H:%M:%SZ"
+                )
+            )
+        ),
+    )
+    data.to_json(data_path / "data.json")
 
 def update_regression(
     gh: GitHub,
@@ -427,8 +494,10 @@ def main():
             raise ValueError(
                 "When --local is specified, only one target can be updated"
             )
-        if not args.local.is_dir():
-            raise ValueError(f"Invalid local data dir: {args.local}")
+        if len(args.compiler) != 1 and "weekly" in args.target:
+            raise ValueError(
+                "When --local is specified, only one compiler can be updated for weekly regression"
+            )
     else:
         logging.info("Updating data from GitHub Artifacts")
 
