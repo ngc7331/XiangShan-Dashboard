@@ -1,9 +1,10 @@
 {
   "data": {
-    "32582373251": {
+    "32649295355": {
       "hash": "91ea1a167a2a8a598d514c6cc840d7c0804c2e6d",
       "title": "chore(perf): update checkpoints (#6402)",
-      "date": 1787382729
+      "date": 1787382729,
+      "note": "Switched to new gcc16-rva23-novec checkpoints, which may cause some performance differences. Do not compare with previous runs."
     },
     "32500603650": {
       "hash": "59086b8a5d0e574f6a80ae113dc7715403afe4e0",
