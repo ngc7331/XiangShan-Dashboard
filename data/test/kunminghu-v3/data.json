@@ -1,5 +1,40 @@
 {
   "data": {
+    "32743492393": {
+      "hash": "12df8283f42ca9e286de7520c9e1a7eb07b3cbcf",
+      "title": "fix(MMU, COVE) : fix mpt walker bug, pre-flush transaction not properly cleaned (#6314)",
+      "date": 1787584374
+    },
+    "32730659637": {
+      "hash": "91068d41b9cb300cd1ada4dc4297e6f6c2ee44bf",
+      "title": "feat(difftest): port v2 difftest changes to v3 (#6387)",
+      "date": 1787576737
+    },
+    "32730593198": {
+      "hash": "f11c808b6dc0bccb39571045f9c518e514334cfd",
+      "title": "feat(extLLC): support external LLC to v3 (#6384)",
+      "date": 1787576697
+    },
+    "32714923380": {
+      "hash": "6891f912cddf49318ca89d69a37da44dda49c882",
+      "title": "feat(openLLC): enlarge openLLC to 32MB (#6401)",
+      "date": 1787565883
+    },
+    "32713190467": {
+      "hash": "25283283102e7b0fecc2c04bf87b8c114f35b40b",
+      "title": "feat(prefetch): add L3 prefetch path for stash prefetch (#6274)",
+      "date": 1787564689
+    },
+    "32683217064": {
+      "hash": "d20805685cde8da3985f7eb26e5eb1d7f1f9011e",
+      "title": "feat(MMU): improve performance counters (#6383)",
+      "date": 1787538558
+    },
+    "32682714000": {
+      "hash": "debaca8f6b0c37e4a54de12534628ce425414d01",
+      "title": "fix(mpt): correct mfence operand decoding (#6400)",
+      "date": 1787537995
+    },
     "32650442640": {
       "hash": "e63121132b46903af63bf368afde9e76fccc93e2",
       "title": "fix(MMU, COVE) : fix bug for mpt miss queue, twReq.valid Gated by ready (#6300)",
