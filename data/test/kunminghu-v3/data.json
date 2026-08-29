@@ -1,5 +1,15 @@
 {
   "data": {
+    "33226301433": {
+      "hash": "066950d0fad34e9bffa8c913e752dee8a84d88f2",
+      "title": "perf(Ftq): set BpRunAheadDistance to icache wayLookupSize (#6425)",
+      "date": 1787966636
+    },
+    "33156540120": {
+      "hash": "dfcb5748e9e7e6f710871a783102bdbf53317d17",
+      "title": "feat(decode,mem): add ZICBO extension and unify cbo opcode via LSUOpType",
+      "date": 1787906666
+    },
     "33041300062": {
       "hash": "fc62fdcfcc5dd59995020d7179734aa95a1a11a9",
       "title": "chore(difftest): add missing `KMHV3` for XSTileDiffTop/NoCDiffTop (#6429)",
