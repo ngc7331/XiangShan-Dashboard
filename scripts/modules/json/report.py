@@ -91,8 +91,10 @@ class ReportRegressionJson(ReportJson):
         """Append a single testcase to report"""
         self._data[testcase] = ReportJsonEntry(score=score)
 
-    def append_score_txt(self, txt: str) -> None:
+    def append_score_txt(self, txt: str) -> str | None:
         """Append multiple testcase from a score.txt file"""
+        failed = 0
+        total = 0
         for line in txt.splitlines():
             # match "id.name time ref_time score coverage"
             m = re.match(
@@ -103,12 +105,25 @@ class ReportRegressionJson(ReportJson):
                 testcase = m.group(1)
                 score = float(m.group(2))
                 self.append(testcase, score)
+            # match Checkpoints Number : 545/1094
+            m = re.match(r"^\s*Checkpoints Number\s*:\s*(\d+)/(\d+)", line)
+            if m:
+                success, total = int(m.group(1)), int(m.group(2))
+                failed = total - success
+        if failed > 0:
+            return f"{failed} out of {total} checkpoints failed, score may be inaccurate"
+        return None
 
-    def append_artifact_zip(self, artifact_zip: ZipFile) -> None:
+    def append_artifact_zip(self, artifact_zip: ZipFile) -> str | None:
         """Append multiple testcase from a artifact zip file"""
+        results = []
         for name in artifact_zip.namelist():
             if not (name.startswith("score") and name.endswith(".txt")):
                 continue
             with artifact_zip.open(name) as f:
                 txt = f.read().decode("utf-8").strip()
-                self.append_score_txt(txt)
+                if (result := self.append_score_txt(txt)) is not None:
+                    results.append(result)
+        if results:
+            return "\n".join(results)
+        return None

@@ -296,6 +296,7 @@ def update_regression_gh(
             logging.info("  -> Found %d artifacts", len(artifacts))
 
             report = ReportRegressionJson()
+            note = None
 
             for artifact in artifacts:
                 logging.info("  -> Download %s ...", artifact["name"])
@@ -309,7 +310,7 @@ def update_regression_gh(
                 if isinstance(artifact_body, bytes):
                     logging.debug("    -> is a raw file")
                     txt = artifact_body.decode("utf-8").strip()
-                    report.append_score_txt(txt)
+                    note = report.append_score_txt(txt)
                 elif isinstance(artifact_body, ZipFile):
                     logging.debug("    -> is a zipfile")
                     extra = list(
@@ -326,7 +327,7 @@ def update_regression_gh(
                             artifact["name"],
                             str(extra),
                         )
-                    report.append_artifact_zip(artifact_body)
+                    note = report.append_artifact_zip(artifact_body)
                 else:
                     logging.warning("    -> unknown file type, ignore")
                     continue
@@ -344,6 +345,7 @@ def update_regression_gh(
                         )
                     )
                 ),
+                note,
             )
 
         if found_existing or page >= args.page_limit:
@@ -412,7 +414,7 @@ def update_regression_local(
     with args.local.open("r", encoding="utf-8") as f:
         txt = f.read().strip()
 
-    report.append_score_txt(txt)
+    note = report.append_score_txt(txt)
     report.to_json(data_path / f"{commit_sha}.json")
     data.append(
         run_id,
@@ -425,6 +427,7 @@ def update_regression_local(
                 )
             )
         ),
+        note,
     )
     data.to_json(data_path / "data.json")
 
