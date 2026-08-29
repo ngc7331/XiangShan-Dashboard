@@ -57,7 +57,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { toPng } from "html-to-image";
-import { getSpecGeomeanName, getSpecGroup } from "../../config/spec";
+import { getSpecGeomeanName, getSpecGroup, SPEC_BENCHMARK_GROUPS } from "../../config/spec";
 import type { SpecCategory, SpecVersion } from "../../config/spec";
 import { isSpecBenchmark } from "../../composables/useBenchmarkSelection";
 import { formatDisplayDate } from "../../services/dataService";
@@ -171,14 +171,7 @@ const warnings = computed(() => {
 function buildRows(category: SpecCategory): ComparisonRow[] {
   const a = sources.value[0]?.payload || {};
   const b = sources.value[1]?.payload || {};
-  const names = Array.from(new Set([...Object.keys(a), ...Object.keys(b)]))
-    .filter(
-      (name) =>
-        !name.startsWith("GEOMEAN") &&
-        isSpecBenchmark(name, props.specVersion, category),
-    )
-    .sort();
-  if (!names.length) return [];
+  const names = SPEC_BENCHMARK_GROUPS[props.specVersion][category].benchmarks;
 
   const rows = names.map((name) =>
     makeRow(name, metric(a[name]), metric(b[name])),
