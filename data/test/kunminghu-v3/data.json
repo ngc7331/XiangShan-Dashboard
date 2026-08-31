@@ -1,5 +1,10 @@
 {
   "data": {
+    "33304755833": {
+      "hash": "986e0072cd529c9a220c59e2a100fbd55a9e9d58",
+      "title": "fix(difftest): record the dedicated VL RAT destination",
+      "date": 1788083020
+    },
     "33226301433": {
       "hash": "066950d0fad34e9bffa8c913e752dee8a84d88f2",
       "title": "perf(Ftq): set BpRunAheadDistance to icache wayLookupSize (#6425)",

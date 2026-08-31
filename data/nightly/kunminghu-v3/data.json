@@ -1,5 +1,11 @@
 {
   "data": {
+    "33260773066": {
+      "hash": "ac4b54afcc7f32c7b00d991df697d5e8ecd2fd95",
+      "title": "ci(perf): add KunminghuV2Config trigger option (#6437)",
+      "date": 1787987799,
+      "note": "80 out of 145 checkpoints failed, score may be inaccurate"
+    },
     "33204420012": {
       "hash": "dfcb5748e9e7e6f710871a783102bdbf53317d17",
       "title": "feat(decode,mem): add ZICBO extension and unify cbo opcode via LSUOpType",
