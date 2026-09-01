@@ -1,5 +1,11 @@
 {
   "data": {
+    "33320200911": {
+      "hash": "986e0072cd529c9a220c59e2a100fbd55a9e9d58",
+      "title": "fix(difftest): record the dedicated VL RAT destination",
+      "date": 1788083020,
+      "note": "80 out of 145 checkpoints failed, score may be inaccurate"
+    },
     "33260773066": {
       "hash": "ac4b54afcc7f32c7b00d991df697d5e8ecd2fd95",
       "title": "ci(perf): add KunminghuV2Config trigger option (#6437)",
