@@ -1,5 +1,10 @@
 {
   "data": {
+    "33461170307": {
+      "hash": "aee742c92250058644c3166fae54c489161347cc",
+      "title": "fix(IOPMP, COVE): integrate IOPMP register error handling (#6449)",
+      "date": 1788228271
+    },
     "33374077838": {
       "hash": "e5c70547f3a966accf20a4b065ec1d8e33443180",
       "title": "perf(l2pf): add F-POP prefetch controller (#6255)",
