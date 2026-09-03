@@ -1,5 +1,10 @@
 {
   "data": {
+    "33709247675": {
+      "hash": "50cdcfc2c45d0631591310435835c0180c105489",
+      "title": "config(isa): align isa extensions with implementation (#6463)",
+      "date": 1788403927
+    },
     "33663219813": {
       "hash": "10d44a55204bc091afcc9498fda6b0c15fbbd97d",
       "title": "fix(SelImmField,ImmIsUnsign5b): VMSGTU.VI etc should use sign-extended",
