@@ -12,7 +12,22 @@
     />
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
+    <p>XiangShan Dashboard has been moved to official OpenXiangShan organization.</p>
+    <p>You will be redirected to the new version in <span id="countdown">5</span> seconds.</p>
+    <p>If you are not redirected automatically, please visit <a href="https://dashboard.xiangshan.cc">https://dashboard.xiangshan.cc</a>.</p>
+    <script>
+      const countdown = document.getElementById('countdown');
+      let timeLeft = 5;
+
+      const timer = setInterval(() => {
+        timeLeft--;
+        countdown.textContent = timeLeft;
+
+        if (timeLeft === 0) {
+          clearInterval(timer);
+          window.location.href = "https://dashboard.xiangshan.cc";
+        }
+      }, 1000);
+    </script>
   </body>
 </html>
